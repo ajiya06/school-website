@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Faculty Application – Global Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- ============================================================
+     CSS SECTION
+     ============================================================ -->
+<style>
+/* ── Tokens ─────────────────────────────────────────────── */
+:root{
+  --navy:     #1a2340;
+  --navy-mid: #253060;
+  --navy-lt:  #2d3f6e;
+  --gold:     #e8a020;
+  --gold-dk:  #c8870a;
+  --gold-pl:  #fef3e2;
+  --white:    #ffffff;
+  --cream:    #faf8f4;
+  --off:      #f4f5f9;
+  --border:   #e5e7eb;
+  --text:     #1e2535;
+  --muted:    #64748b;
+  --green:    #16a34a;
+  --green-pl: #dcfce7;
+  --red:      #dc2626;
+  --red-pl:   #fee2e2;
+  --sh-sm:    0 2px 12px rgba(0,0,0,.07);
+  --sh-md:    0 10px 36px rgba(0,0,0,.12);
+  --sh-lg:    0 24px 64px rgba(0,0,0,.17);
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);line-height:1.65;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+
+/* ── Utility ────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;border-radius:7px;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .25s;border:2px solid transparent;font-family:'DM Sans',sans-serif}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold-dk);transform:translateY(-1px)}
+.btn-navy{background:var(--navy);color:var(--white)}.btn-navy:hover{background:var(--navy-lt)}
+.btn-outline{background:transparent;border-color:var(--white);color:var(--white)}.btn-outline:hover{background:rgba(255,255,255,.12)}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}.btn-ghost:hover{border-color:var(--gold);color:var(--gold-dk)}
+.btn-full{width:100%;justify-content:center}
+.btn-lg{padding:14px 36px;font-size:1rem}
+
+.sec-tag{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pl);color:var(--gold-dk);font-size:.72rem;font-weight:700;padding:5px 13px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.3rem);color:var(--navy);line-height:1.18;margin-bottom:10px}
+.sec-sub{color:var(--muted);font-size:.94rem;line-height:1.75}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.reveal.left{transform:translateX(-26px)}.reveal.right{transform:translateX(26px)}
+.reveal.in{opacity:1;transform:translate(0)}
+
+/* ── NAVBAR ─────────────────────────────────────────────── */
+.navbar{position:sticky;top:0;z-index:1000;background:var(--white);box-shadow:0 1px 20px rgba(0,0,0,.08);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:64px;transition:box-shadow .3s}
+.navbar-brand{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--navy)}
+.logo-icon{width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem}
+.navbar-links{display:flex;gap:26px;align-items:center}
+.navbar-links a{font-size:1rem;font-weight:700;color:var(--text);transition:color .2s;font-family: sans-serif;}
+.navbar-links a:hover,.navbar-links a.active{color:var(--gold-dk)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:24px;height:2px;background:var(--navy);border-radius:2px;transition:.3s}
+.mobile-menu{display:none;flex-direction:column;background:var(--white);box-shadow:0 8px 20px rgba(0,0,0,.1);padding:16px 5%;gap:14px;position:absolute;top:64px;left:0;right:0;z-index:999}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-weight:500;color:var(--text);font-size:1rem}
+
+/* ── HERO ───────────────────────────────────────────────── */
+.apply-hero{
+  position:relative;background:var(--navy);
+  padding:80px 5%;overflow:hidden;
+  display:grid;grid-template-columns:1.1fr 1fr;
+  gap:60px;align-items:center;min-height:460px;
+}
+.apply-hero::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1400&q=80') center/cover no-repeat;opacity:.1}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.hero-bar{position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,transparent,var(--gold),transparent)}
+.hero-text{position:relative;z-index:2}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;color:var(--gold);font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px}
+.hero-eyebrow::before{content:'';width:28px;height:2px;background:var(--gold);border-radius:2px}
+.hero-text h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4.5vw,3.2rem);color:var(--white);line-height:1.12;margin-bottom:16px;animation:hUp .7s both}
+.hero-text h1 em{color:var(--gold);font-style:italic}
+.hero-text p{color:rgba(255,255,255,.58);font-size:.98rem;max-width:440px;line-height:1.8;margin-bottom:28px;animation:hUp .9s both}
+.hero-pills{display:flex;gap:10px;flex-wrap:wrap;animation:hUp 1.05s both}
+.hero-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-size:.78rem;font-weight:500;padding:7px 14px;border-radius:99px}
+.hero-pill i{color:var(--gold);font-size:.75rem}
+.hero-img-col{position:relative;z-index:2}
+.hero-img-frame{border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.hero-img-frame img{width:100%;height:320px;object-fit:cover;filter:brightness(.82)}
+.hero-badge{position:absolute;bottom:20px;left:-16px;background:var(--gold);border-radius:12px;padding:14px 20px;box-shadow:0 8px 24px rgba(232,160,32,.4)}
+.hero-badge .hb-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--navy);line-height:1}
+.hero-badge .hb-lbl{font-size:.68rem;font-weight:600;color:rgba(26,35,64,.65);text-transform:uppercase;letter-spacing:.4px}
+@keyframes hUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PERKS STRIP ────────────────────────────────────────── */
+.perks-strip{background:var(--gold);padding:32px 5%}
+.perks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.perk-item{display:flex;align-items:center;gap:12px}
+.perk-icon{width:44px;height:44px;background:rgba(26,35,64,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--navy);flex-shrink:0}
+.perk-text h4{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:2px}
+.perk-text p{font-size:.75rem;color:rgba(26,35,64,.65)}
+
+/* ── MAIN LAYOUT ────────────────────────────────────────── */
+.main-layout{padding:80px 5%;background:var(--cream);display:grid;grid-template-columns:1fr 1.55fr;gap:52px;align-items:start}
+
+/* ── SIDEBAR ────────────────────────────────────────────── */
+.sidebar{position:sticky;top:90px;display:flex;flex-direction:column;gap:20px}
+.sidebar-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:var(--sh-md);border:1px solid var(--border)}
+.sidebar-card-hdr{background:var(--navy);padding:18px 22px;display:flex;align-items:center;gap:10px}
+.sidebar-card-hdr i{color:var(--gold)}
+.sidebar-card-hdr h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--white)}
+.sidebar-card-body{padding:20px 22px}
+.info-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none;padding-bottom:0}
+.ir-icon{width:34px;height:34px;background:var(--gold-pl);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--gold-dk);font-size:.82rem;flex-shrink:0;margin-top:1px}
+.ir-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.ir-val{font-size:.88rem;font-weight:600;color:var(--navy);line-height:1.4}
+
+/* dept list */
+.dept-list{display:flex;flex-direction:column;gap:8px}
+.dept-tag{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--off);border-radius:8px;border:1px solid var(--border);font-size:.82rem;font-weight:500;color:var(--navy);transition:border-color .2s}
+.dept-tag:hover{border-color:var(--gold)}
+.dept-tag i{color:var(--gold-dk);font-size:.78rem;width:14px}
+
+/* process steps sidebar */
+.process-steps{display:flex;flex-direction:column;gap:0}
+.proc-step{display:flex;gap:14px;padding-bottom:18px;position:relative}
+.proc-step:last-child{padding-bottom:0}
+.proc-dot{width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;flex-shrink:0;position:relative;z-index:1}
+.proc-step:not(:last-child) .proc-dot::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);width:2px;height:18px;background:var(--border)}
+.proc-content h4{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:3px;padding-top:5px}
+.proc-content p{font-size:.78rem;color:var(--muted);line-height:1.55}
+
+/* ── APPLICATION FORM ───────────────────────────────────── */
+.form-card{background:var(--white);border-radius:20px;box-shadow:var(--sh-lg);overflow:hidden;border:1px solid var(--border)}
+.form-card-hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-lt) 100%);padding:26px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.fch-text h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--white);margin-bottom:3px}
+.fch-text p{font-size:.8rem;color:rgba(255,255,255,.5)}
+.fch-icon{width:50px;height:50px;background:rgba(232,160,32,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(232,160,32,.3);flex-shrink:0}
+.fch-icon i{font-size:1.25rem;color:var(--gold)}
+
+/* progress */
+.form-progress{padding:0 32px;background:var(--off);border-bottom:1px solid var(--border)}
+.progress-steps{display:flex;position:relative;padding:16px 0}
+.progress-steps::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:var(--border);transform:translateY(-50%)}
+.prog-fill{position:absolute;top:50%;left:0;height:2px;background:var(--gold);transform:translateY(-50%);transition:width .4s ease}
+.ps-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1}
+.ps-dot{width:26px;height:26px;border-radius:50%;background:var(--white);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--muted);transition:all .3s}
+.ps-step.s-done .ps-dot{background:var(--green);border-color:var(--green);color:var(--white)}
+.ps-step.s-active .ps-dot{background:var(--navy);border-color:var(--navy);color:var(--gold)}
+.ps-label{font-size:.65rem;font-weight:600;color:var(--muted);text-align:center;transition:color .3s;white-space:nowrap}
+.ps-step.s-active .ps-label{color:var(--navy)}
+.ps-step.s-done .ps-label{color:var(--green)}
+
+/* form body */
+.form-body{padding:32px}
+.form-step{display:none}.form-step.active{display:block}
+.fsec-title{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.fsec-title i{color:var(--gold)}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-row.full{grid-template-columns:1fr}
+.form-row.three{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.76rem;font-weight:600;color:var(--navy)}
+.req{color:var(--red)}
+.form-control{padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;background:var(--white);transition:border-color .2s,box-shadow .2s}
+.form-control:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,160,32,.1)}
+.form-control.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.07)}
+select.form-control{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+textarea.form-control{resize:vertical;min-height:100px}
+.form-hint{font-size:.7rem;color:var(--muted);margin-top:2px}
+.err-msg{font-size:.7rem;color:var(--red);display:none;margin-top:2px}
+.form-control.error ~ .err-msg{display:block}
+
+/* radio gender */
+.radio-row{display:flex;gap:12px;flex-wrap:wrap}
+.radio-opt{display:flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;font-size:.86rem;font-weight:500;color:var(--text)}
+.radio-opt:hover{border-color:var(--gold)}
+.radio-opt.selected{background:var(--gold-pl);border-color:var(--gold);color:var(--navy)}
+.radio-opt input{display:none}
+.radio-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.radio-opt.selected .radio-dot{border-color:var(--gold-dk);background:var(--gold)}
+.radio-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--white);opacity:0;transition:opacity .2s}
+.radio-opt.selected .radio-dot::after{opacity:1}
+
+/* availability checkboxes */
+.avail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.avail-opt{display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:.8rem;font-weight:500;color:var(--text);transition:all .2s}
+.avail-opt:hover{border-color:var(--gold)}
+.avail-opt.selected{background:var(--gold-pl);border-color:var(--gold);color:var(--navy)}
+.avail-opt input{display:none}
+
+/* review box */
+.review-box{background:var(--off);border-radius:12px;padding:22px;margin-bottom:20px;border:1px solid var(--border)}
+.review-section{margin-bottom:18px}
+.review-section:last-child{margin-bottom:0}
+.review-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rv-item .rv-label{font-size:.7rem;font-weight:600;color:var(--muted);margin-bottom:2px}
+.rv-item .rv-val{font-size:.88rem;font-weight:600;color:var(--navy)}
+
+/* declaration */
+.declaration-box{background:var(--off);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}
+.declaration-box p{font-size:.8rem;color:var(--muted);line-height:1.7}
+.check-opt{display:flex;align-items:flex-start;gap:9px;cursor:pointer;margin-bottom:8px}
+.check-opt:last-child{margin-bottom:0}
+.check-opt input{accent-color:var(--navy);width:15px;height:15px;flex-shrink:0;margin-top:2px;cursor:pointer}
+.check-opt span{font-size:.83rem;color:var(--muted);line-height:1.5}
+.check-opt span a{color:var(--gold-dk);font-weight:600}
+
+/* error alert */
+.form-alert{background:var(--red-pl);border:1px solid rgba(220,38,38,.25);border-radius:8px;padding:12px 16px;display:none;align-items:center;gap:10px;font-size:.83rem;color:var(--red);margin-bottom:16px}
+.form-alert.show{display:flex}
+
+/* form nav */
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:20px;border-top:1px solid var(--border)}
+.step-dots{display:flex;gap:6px}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer;transition:all .25s}
+.sd.cur{background:var(--gold);width:20px;border-radius:4px}
+.sd.done-d{background:var(--green)}
+
+/* success */
+.success-screen{display:none;padding:48px 32px;text-align:center}
+.success-anim{width:80px;height:80px;background:var(--green-pl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;animation:popIn .5s cubic-bezier(.68,-.55,.27,1.55) both}
+.success-anim i{font-size:2rem;color:var(--green)}
+@keyframes popIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+.success-screen h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--navy);margin-bottom:10px}
+.success-screen p{color:var(--muted);font-size:.9rem;line-height:1.7;max-width:380px;margin:0 auto 16px}
+.app-ref{background:var(--gold-pl);border:1px solid rgba(232,160,32,.3);border-radius:10px;padding:14px 24px;display:inline-block;font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--navy);letter-spacing:3px;margin:16px 0}
+.success-detail{background:var(--off);border-radius:12px;padding:18px;margin:12px 0 24px;text-align:left;border:1px solid var(--border)}
+.sd-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.84rem;color:var(--text)}
+.sd-row i{color:var(--gold-dk);width:16px;flex-shrink:0}
+.sd-row span{color:var(--muted);margin-right:5px}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:36px}
+.footer-brand h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--white);margin-bottom:10px}
+.footer-brand p{font-size:.88rem;line-height:1.75}
+.footer-col h4{color:var(--white);font-weight:600;margin-bottom:14px;font-size:.92rem}
+.footer-col ul li{margin-bottom:9px}
+.footer-col ul li a{font-size:.88rem;color:rgba(255,255,255,.58);transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;font-size:.82rem;color:rgba(255,255,255,.32)}
+.whatsapp-fab{position:fixed;bottom:24px;right:24px;z-index:999;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;box-shadow:0 4px 16px rgba(37,211,102,.4);transition:transform .25s}
+.whatsapp-fab:hover{transform:scale(1.1)}
+ .ajay{
+      text-decoration: underline;
+      font-family: sans-serif;
+      /* color: blue; */
+      stroke: #25d366;
+      text-shadow: #d1ff05;
+      font-weight: 700;
+    }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1060px){
+  .navbar-links,.navbar-actions .btn-gold{display:none}.hamburger{display:flex}
+  .apply-hero{grid-template-columns:1fr}.hero-img-col{display:none}
+  .main-layout{grid-template-columns:1fr}.sidebar{position:static}
+  .perks-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:640px){
+  .form-row,.form-row.three{grid-template-columns:1fr}
+  .review-grid{grid-template-columns:1fr}
+  .perks-grid{grid-template-columns:1fr}
+  .avail-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr}
+  .form-body{padding:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HTML SECTION
+     ============================================================ -->
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="navbar-brand">
+    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+    Global Academy
+  </a>
+  <ul class="navbar-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About Us</a></li>
+    <li><a href="admission.html">Admissions</a></li>
+    <li><a href="index.html#programs">Academics</a></li>
+    <li><a href="faculty.html" class="active">Faculty</a></li>
+    <li><a href="campus-life.html">Campus Life</a></li>
+    <li><a href="index.html#contact">Contact Us</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <a href="#" class="btn btn-gold"><i class="fas fa-credit-card"></i> Pay Fees</a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="about.html">About Us</a>
+  <a href="faculty.html">Faculty</a>
+  <a href="campus-life.html">Campus Life</a>
+  <a href="index.html#contact">Contact</a>
+  <a href="#" class="btn btn-gold" style="text-align:center">Pay Fees</a>
+</div>
+
+<!-- ═══ HERO ══════════════════════════════════════════════ -->
+<section class="apply-hero">
+  <div class="hero-dots"></div>
+  <div class="hero-bar"></div>
+  <div class="hero-text">
+    <div class="hero-eyebrow">Join Our Team</div>
+    <h1>Shape the Next<br>Generation with <em>Us</em></h1>
+    <p>We are always looking for passionate, qualified educators who believe that great teaching changes lives. If that sounds like you — we'd love to hear from you.</p>
+    <div class="hero-pills">
+      <div class="hero-pill"><i class="fas fa-rupee-sign"></i> Competitive Salary</div>
+      <div class="hero-pill"><i class="fas fa-graduation-cap"></i> Professional Growth</div>
+      <div class="hero-pill"><i class="fas fa-users"></i> Supportive Culture</div>
+      <div class="hero-pill"><i class="fas fa-clock"></i> Response in 7 Days</div>
+    </div>
+  </div>
+  <div class="hero-img-col">
+    <div class="hero-img-frame">
+      <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=700&q=80" alt="Teacher at Global Academy"/>
+    </div>
+    <div class="hero-badge">
+      <div class="hb-val">52+</div>
+      <div class="hb-lbl">Happy Faculty</div>
+    </div>
+  </div>
+</section>
+
+<!-- PERKS STRIP -->
+<div class="perks-strip">
+  <div class="perks-grid">
+    <div class="perk-item reveal">
+      <div class="perk-icon"><i class="fas fa-medal"></i></div>
+      <div class="perk-text"><h4>Performance Bonuses</h4><p>Rewarded for excellence every year</p></div>
+    </div>
+    <div class="perk-item reveal">
+      <div class="perk-icon"><i class="fas fa-book-reader"></i></div>
+      <div class="perk-text"><h4>Training & Development</h4><p>Sponsored workshops & certifications</p></div>
+    </div>
+    <div class="perk-item reveal">
+      <div class="perk-icon"><i class="fas fa-heartbeat"></i></div>
+      <div class="perk-text"><h4>Health Benefits</h4><p>Medical coverage for you & family</p></div>
+    </div>
+    <div class="perk-item reveal">
+      <div class="perk-icon"><i class="fas fa-bus"></i></div>
+      <div class="perk-text"><h4>Transport Facility</h4><p>Staff bus available on major routes</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN LAYOUT ════════════════════════════════════════ -->
+<div class="main-layout" id="applyForm">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Open Positions -->
+    <div class="sidebar-card reveal left">
+      <div class="sidebar-card-hdr"><i class="fas fa-briefcase"></i><h3>Open Positions</h3></div>
+      <div class="sidebar-card-body">
+        <div class="dept-list">
+          <div class="dept-tag"><i class="fas fa-flask"></i> Science (Physics / Chemistry / Biology)</div>
+          <div class="dept-tag"><i class="fas fa-calculator"></i> Mathematics</div>
+          <div class="dept-tag"><i class="fas fa-book"></i> English Literature</div>
+          <div class="dept-tag"><i class="fas fa-language"></i> Hindi</div>
+          <div class="dept-tag"><i class="fas fa-landmark"></i> Social Studies / History</div>
+          <div class="dept-tag"><i class="fas fa-laptop-code"></i> Computer Science</div>
+          <div class="dept-tag"><i class="fas fa-chart-line"></i> Commerce / Accountancy</div>
+          <div class="dept-tag"><i class="fas fa-running"></i> Physical Education</div>
+          <div class="dept-tag"><i class="fas fa-paint-brush"></i> Fine Arts / Music</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What Happens Next -->
+    <div class="sidebar-card reveal left">
+      <div class="sidebar-card-hdr"><i class="fas fa-route"></i><h3>What Happens Next</h3></div>
+      <div class="sidebar-card-body">
+        <div class="process-steps">
+          <div class="proc-step">
+            <div class="proc-dot">1</div>
+            <div class="proc-content"><h4>Application Received</h4><p>We review every application carefully within 7 working days.</p></div>
+          </div>
+          <div class="proc-step">
+            <div class="proc-dot">2</div>
+            <div class="proc-content"><h4>Shortlisting</h4><p>Shortlisted candidates are contacted for a phone screening call.</p></div>
+          </div>
+          <div class="proc-step">
+            <div class="proc-dot">3</div>
+            <div class="proc-content"><h4>Demo Lesson</h4><p>A 20-minute demo class at our campus to assess teaching style.</p></div>
+          </div>
+          <div class="proc-step">
+            <div class="proc-dot">4</div>
+            <div class="proc-content"><h4>Final Interview</h4><p>Meeting with the Principal and Head of Department.</p></div>
+          </div>
+          <div class="proc-step">
+            <div class="proc-dot">5</div>
+            <div class="proc-content"><h4>Offer Letter</h4><p>Selected candidates receive a formal offer within 5 working days.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="sidebar-card reveal left">
+      <div class="sidebar-card-hdr"><i class="fas fa-phone-alt"></i><h3>HR Contact</h3></div>
+      <div class="sidebar-card-body">
+        <div class="info-row">
+          <div class="ir-icon"><i class="fas fa-envelope"></i></div>
+          <div><div class="ir-label">Email</div><div class="ir-val">hr@globalacademy.edu</div></div>
+        </div>
+        <div class="info-row">
+          <div class="ir-icon"><i class="fas fa-phone"></i></div>
+          <div><div class="ir-label">Phone</div><div class="ir-val">+07.08722, 43710</div></div>
+        </div>
+        <div class="info-row">
+          <div class="ir-icon"><i class="fas fa-clock"></i></div>
+          <div><div class="ir-label">Working Hours</div><div class="ir-val">Mon – Sat, 9AM – 5PM</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ FORM CARD ════════════════════════════════════════ -->
+  <div class="form-card reveal right">
+    <div class="form-card-hdr">
+      <div class="fch-text">
+        <h2>Faculty Application Form</h2>
+        <p>All fields marked * are required — takes about 5 minutes.</p>
+      </div>
+      <div class="fch-icon"><i class="fas fa-user-tie"></i></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="form-progress">
+      <div class="progress-steps" id="progressSteps">
+        <div class="prog-fill" id="progFill" style="width:0%"></div>
+        <div class="ps-step s-active" id="ps0"><div class="ps-dot">1</div><div class="ps-label">Personal</div></div>
+        <div class="ps-step" id="ps1"><div class="ps-dot">2</div><div class="ps-label">Professional</div></div>
+        <div class="ps-step" id="ps2"><div class="ps-dot">3</div><div class="ps-label">Experience</div></div>
+        <div class="ps-step" id="ps3"><div class="ps-dot">4</div><div class="ps-label">Confirm</div></div>
+      </div>
+    </div>
+
+    <div class="form-body">
+
+      <!-- ══ STEP 0 — Personal Info ══ -->
+      <div class="form-step active" id="step0">
+        <div class="fsec-title"><i class="fas fa-user"></i> Personal Information</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name <span class="req">*</span></label>
+            <input class="form-control" id="fName" type="text" placeholder="e.g. Priya"/>
+            <div class="err-msg">Required</div>
+          </div>
+          <div class="form-group">
+            <label>Last Name <span class="req">*</span></label>
+            <input class="form-control" id="lName" type="text" placeholder="e.g. Sharma"/>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email Address <span class="req">*</span></label>
+            <input class="form-control" id="email" type="email" placeholder="you@example.com"/>
+            <div class="err-msg">Enter a valid email</div>
+          </div>
+          <div class="form-group">
+            <label>Mobile Number <span class="req">*</span></label>
+            <input class="form-control" id="mobile" type="tel" placeholder="+91 98765 43210"/>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input class="form-control" id="dob" type="date"/>
+            <div class="err-msg">Required</div>
+          </div>
+          <div class="form-group">
+            <label>City / Location <span class="req">*</span></label>
+            <input class="form-control" id="city" type="text" placeholder="e.g. New Delhi"/>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Gender <span class="req">*</span></label>
+            <div class="radio-row" id="genderGroup">
+              <div class="radio-opt selected" data-val="Male"><div class="radio-dot"></div> Male</div>
+              <div class="radio-opt" data-val="Female"><div class="radio-dot"></div> Female</div>
+              <div class="radio-opt" data-val="Other"><div class="radio-dot"></div> Other</div>
+              <div class="radio-opt" data-val="Prefer not to say"><div class="radio-dot"></div> Prefer not to say</div>
+            </div>
+            <input type="hidden" id="gender" value="Male"/>
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label>LinkedIn Profile</label>
+            <input class="form-control" id="linkedin" type="url" placeholder="https://linkedin.com/in/yourname"/>
+            <div class="form-hint">Optional but recommended — helps us review your background faster</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 1 — Professional Info ══ -->
+      <div class="form-step" id="step1">
+        <div class="fsec-title"><i class="fas fa-graduation-cap"></i> Qualifications & Department</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Highest Qualification <span class="req">*</span></label>
+            <select class="form-control" id="qualification">
+              <option value="">Select</option>
+              <option>B.Ed</option>
+              <option>M.Ed</option>
+              <option>B.Sc + B.Ed</option>
+              <option>M.Sc + B.Ed</option>
+              <option>M.A + B.Ed</option>
+              <option>B.Com + B.Ed</option>
+              <option>M.Com + B.Ed</option>
+              <option>PhD</option>
+              <option>Other</option>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+          <div class="form-group">
+            <label>Specialisation / Major <span class="req">*</span></label>
+            <input class="form-control" id="specialisation" type="text" placeholder="e.g. Mathematics, English Literature"/>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>University / Institution <span class="req">*</span></label>
+            <input class="form-control" id="university" type="text" placeholder="e.g. Delhi University"/>
+            <div class="err-msg">Required</div>
+          </div>
+          <div class="form-group">
+            <label>Year of Graduation <span class="req">*</span></label>
+            <select class="form-control" id="gradYear">
+              <option value="">Select year</option>
+              <script>for(let y=new Date().getFullYear();y>=1980;y--){document.write(`<option>${y}</option>`)}</script>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Department Applying For <span class="req">*</span></label>
+            <select class="form-control" id="department">
+              <option value="">Select department</option>
+              <option>Science – Physics</option>
+              <option>Science – Chemistry</option>
+              <option>Science – Biology</option>
+              <option>Mathematics</option>
+              <option>English Literature</option>
+              <option>Hindi</option>
+              <option>Social Studies / History</option>
+              <option>Computer Science</option>
+              <option>Commerce / Accountancy</option>
+              <option>Physical Education</option>
+              <option>Fine Arts</option>
+              <option>Music</option>
+              <option>Other</option>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Grade Level Comfortable Teaching <span class="req">*</span></label>
+            <select class="form-control" id="gradeLevel">
+              <option value="">Select</option>
+              <option>Pre-Primary(Nursery+LKG+UKG)</option>
+              <option>Primary (Grades 1–5)</option>
+              <option>Middle School (Grades 6–8)</option>
+              <option>Secondary (Grades 9–10)</option>
+              <option>Senior Secondary (Grades 11–12)</option>
+              <option>All Grades</option>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+          <div class="form-group">
+            <label>Position Applying For <span class="req">*</span></label>
+            <select class="form-control" id="position">
+              <option value="">Select</option>
+              <option>Junior Teacher (0–3 yrs exp)</option>
+              <option>Senior Teacher (3–7 yrs exp)</option>
+              <option>Head of Department (7+ yrs exp)</option>
+              <option>Guest / Part-time Lecturer</option>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2 — Experience & Availability ══ -->
+      <div class="form-step" id="step2">
+        <div class="fsec-title"><i class="fas fa-briefcase"></i> Experience & Availability</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Total Teaching Experience <span class="req">*</span></label>
+            <select class="form-control" id="experience">
+              <option value="">Select</option>
+              <option>Fresher (0 years)</option>
+              <option>1 – 2 years</option>
+              <option>3 – 5 years</option>
+              <option>6 – 10 years</option>
+              <option>11 – 15 years</option>
+              <option>15+ years</option>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+          <div class="form-group">
+            <label>Current / Previous School</label>
+            <input class="form-control" id="prevSchool" type="text" placeholder="School name or N/A if fresher"/>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Current CTC (per annum)</label>
+            <select class="form-control" id="currentCtc">
+              <option value="">Select range</option>
+              <option>Fresher / Not applicable</option>
+              <option>Below ₹2 LPA</option>
+              <option>₹2 – 3.5 LPA</option>
+              <option>₹3.5 – 5 LPA</option>
+              <option>₹5 – 7 LPA</option>
+              <option>Above ₹7 LPA</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Expected CTC (per annum) <span class="req">*</span></label>
+            <select class="form-control" id="expectedCtc">
+              <option value="">Select range</option>
+              <option>₹2 – 3 LPA</option>
+              <option>₹3 – 4.5 LPA</option>
+              <option>₹4.5 – 6 LPA</option>
+              <option>₹6 – 8 LPA</option>
+              <option>Above ₹8 LPA</option>
+              <option>Open to discussion</option>
+            </select>
+            <div class="err-msg">Required</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Notice Period</label>
+            <select class="form-control" id="noticePeriod">
+              <option value="">Select</option>
+              <option>Immediate joiner</option>
+              <option>15 days</option>
+              <option>1 month</option>
+              <option>2 months</option>
+              <option>3 months</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Resume / Portfolio Link</label>
+            <input class="form-control" id="resumeLink" type="url" placeholder="Google Drive / Dropbox link"/>
+            <div class="form-hint">Share a publicly accessible link to your CV</div>
+            <div class="err-msg">Please share your resume link</div>
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Availability to Join <span class="req">*</span></label>
+            <div class="avail-grid" id="availGrid">
+              <div class="avail-opt selected" data-val="Immediately"><input type="checkbox" checked/> Immediately</div>
+              <div class="avail-opt" data-val="Within 1 Month"><input type="checkbox"/> Within 1 Month</div>
+              <div class="avail-opt" data-val="1–3 Months"><input type="checkbox"/> 1–3 Months</div>
+              <div class="avail-opt" data-val="After 3 Months"><input type="checkbox"/> After 3 Months</div>
+              <div class="avail-opt" data-val="Academic Year Start"><input type="checkbox"/> Academic Year Start</div>
+              <div class="avail-opt" data-val="Flexible"><input type="checkbox"/> Flexible</div>
+            </div>
+            <input type="hidden" id="availability" value="Immediately"/>
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Cover Letter / Why You Want to Join Global Academy <span class="req">*</span></label>
+            <textarea class="form-control" id="coverLetter" rows="5" placeholder="Tell us about yourself, your teaching philosophy, and why you'd be a great fit for Global Academy…"></textarea>
+            <div class="form-hint">Minimum 50 words — be genuine, not generic</div>
+            <div class="err-msg">Please write a brief cover letter (min 50 words)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 3 — Review & Submit ══ -->
+      <div class="form-step" id="step3">
+        <div class="fsec-title"><i class="fas fa-clipboard-check"></i> Review & Submit</div>
+
+        <div class="form-alert" id="formAlert">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="alertMsg">Something went wrong. Please try again.</span>
+        </div>
+
+        <div class="review-box" id="reviewBox">
+          <div class="review-section">
+            <div class="review-section-title">Personal Information</div>
+            <div class="review-grid" id="rv0"></div>
+          </div>
+          <div class="review-section">
+            <div class="review-section-title">Qualifications & Department</div>
+            <div class="review-grid" id="rv1"></div>
+          </div>
+          <div class="review-section">
+            <div class="review-section-title">Experience & Availability</div>
+            <div class="review-grid" id="rv2"></div>
+          </div>
+        </div>
+
+        <div class="declaration-box">
+          <p>By submitting this application, you confirm that all information provided is accurate and complete. Global Academy will use this data solely for the purpose of evaluating your application.</p>
+        </div>
+        <label class="check-opt">
+          <input type="checkbox" id="agree1"/>
+          <span>I confirm all information is accurate and agree to Global Academy's <a href="#">Privacy Policy</a>.</span>
+        </label>
+        <label class="check-opt">
+          <input type="checkbox" id="agree2"/>
+          <span>I consent to Global Academy contacting me regarding this application and future openings.</span>
+        </label>
+      </div>
+
+      <!-- FORM NAV -->
+      <div class="form-nav" id="formNav">
+        <button class="btn btn-ghost" id="btnPrev" style="visibility:hidden"><i class="fas fa-arrow-left"></i> Back</button>
+        <div class="step-dots" id="stepDots"></div>
+        <button class="btn btn-gold" id="btnNext">Next <i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-anim"><i class="fas fa-check"></i></div>
+        <h2>Application Submitted!</h2>
+        <p>Thank you for applying to Global Academy. We've received your application and will review it carefully. Expect to hear from us within 7 working days.</p>
+        <div class="app-ref" id="appRef">GA-FAC-00000</div>
+        <div class="success-detail" id="successDetail"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="faculty.html" class="btn btn-navy"><i class="fas fa-arrow-left"></i> Back to Faculty</a>
+          <a href="global-academy.html" class="btn btn-gold"><i class="fas fa-home"></i> Home</a>
+        </div>
+      </div>
+
+    </div><!-- /form-body -->
+  </div><!-- /form-card -->
+</div><!-- /main-layout -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand"><h3>Global Academy</h3><p>Empowering minds and building future leaders through quality education, discipline, and innovation since 2005.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="global-academy.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="admissions.html">Admissions</a></li><li><a href="faculty.html">Faculty</a></li></ul></div>
+    <div class="footer-col"><h4>Careers</h4><ul><li><a href="#applyForm">Apply Now</a></li><li><a href="faculty.html">Meet Our Faculty</a></li><li><a href="campus-life.html">Campus Life</a></li><li><a href="about.html#values">Our Values</a></li></ul></div>
+    <div class="footer-col"><h4>Contact HR</h4><ul><li><a href="#">hr@globalacademy.edu</a></li><li><a href="#">+07.08722, 43710</a></li><li><a href="#">Mon – Sat, 9AM – 5PM</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Global Academy. All rights reserved.
+    <br>
+      <a href="https://ajiya06.github.io/ajay-portfolio/" class="ajay">Developed By Ajay Sah</a>
+  </div>
+</footer>
+
+<a href="https://wa.me/0708722437" class="whatsapp-fab"><i class="fab fa-whatsapp"></i></a>
+
+<!-- ============================================================
+     JAVASCRIPT SECTION
+     ============================================================ -->
+<script>
+/* ── Formspree Endpoint ─────────────────────────────────── */
+const FORMSPREE_URL = 'https://formspree.io/f/xlgppagd';
+
+/* ── Mobile Menu ── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+  const sp = hamburger.querySelectorAll('span');
+  const o  = mobileMenu.classList.contains('open');
+  sp[0].style.transform = o ? 'rotate(45deg) translate(5px,5px)' : '';
+  sp[1].style.opacity   = o ? '0' : '';
+  sp[2].style.transform = o ? 'rotate(-45deg) translate(5px,-5px)' : '';
+});
+
+/* ── Navbar shadow ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow =
+    window.scrollY > 40 ? '0 4px 28px rgba(0,0,0,.13)' : '0 1px 20px rgba(0,0,0,.08)';
+}, { passive: true });
+
+/* ── Scroll Reveal ── */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+    setTimeout(() => entry.target.classList.add('in'), siblings.indexOf(entry.target) * 100);
+    revObs.unobserve(entry.target);
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+/* ── Gender Radio ── */
+let selectedGender = 'Male';
+document.querySelectorAll('#genderGroup .radio-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('#genderGroup .radio-opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selectedGender = opt.dataset.val;
+    document.getElementById('gender').value = selectedGender;
+  });
+});
+
+/* ── Availability Checkboxes (single select) ── */
+let selectedAvail = 'Immediately';
+document.querySelectorAll('#availGrid .avail-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('#availGrid .avail-opt').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selectedAvail = opt.dataset.val;
+    document.getElementById('availability').value = selectedAvail;
+  });
+});
+
+/* ── Multi-Step Form ── */
+let currentStep = 0;
+const TOTAL = 4;
+const steps   = document.querySelectorAll('.form-step');
+const pSteps  = [0,1,2,3].map(i => document.getElementById(`ps${i}`));
+const btnNext = document.getElementById('btnNext');
+const btnPrev = document.getElementById('btnPrev');
+const dotsWrap = document.getElementById('stepDots');
+const progFill = document.getElementById('progFill');
+const formAlert = document.getElementById('formAlert');
+const alertMsg  = document.getElementById('alertMsg');
+
+/* Build step dots */
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'sd';
+  d.addEventListener('click', () => { if (i <= currentStep) goTo(i); });
+  dotsWrap.appendChild(d);
+}
+
+function refreshUI() {
+  steps.forEach((s, i) => s.classList.toggle('active', i === currentStep));
+  pSteps.forEach((p, i) => {
+    p.classList.remove('s-active','s-done');
+    if (i < currentStep) p.classList.add('s-done');
+    if (i === currentStep) p.classList.add('s-active');
+    const dot = p.querySelector('.ps-dot');
+    dot.innerHTML = i < currentStep ? '<i class="fas fa-check" style="font-size:.6rem"></i>' : (i + 1);
+  });
+  dotsWrap.querySelectorAll('.sd').forEach((d, i) => {
+    d.className = 'sd' + (i === currentStep ? ' cur' : i < currentStep ? ' done-d' : '');
+  });
+  btnPrev.style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+  const isLast = currentStep === TOTAL - 1;
+  btnNext.innerHTML = isLast
+    ? '<i class="fas fa-paper-plane"></i> Submit Application'
+    : 'Next <i class="fas fa-arrow-right"></i>';
+  progFill.style.width = (currentStep / (TOTAL - 1)) * 100 + '%';
+  if (isLast) buildReview();
+  formAlert.classList.remove('show');
+}
+
+function goTo(n) {
+  currentStep = n;
+  refreshUI();
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Validation ── */
+function validate(step) {
+  const required = {
+    0: ['fName','lName','email','mobile','dob','city'],
+    1: ['qualification','specialisation','university','gradYear','department','gradeLevel','position'],
+    2: ['experience','expectedCtc','resumeLink','coverLetter'],
+    3: []
+  };
+  let ok = true;
+  required[step].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || el.value.trim()) return;
+    el.classList.add('error');
+    el.addEventListener('input', () => el.classList.remove('error'), { once: true });
+    el.addEventListener('change', () => el.classList.remove('error'), { once: true });
+    ok = false;
+  });
+  if (step === 0) {
+    const emailEl = document.getElementById('email');
+    if (emailEl.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+      emailEl.classList.add('error'); ok = false;
+    }
+  }
+  if (step === 2) {
+    const cl = document.getElementById('coverLetter');
+    if (cl.value.trim().split(/\s+/).length < 20) {
+      cl.classList.add('error'); ok = false;
+    }
+  }
+  return ok;
+}
+
+/* ── Review builder ── */
+function rv(id) { return document.getElementById(id)?.value?.trim() || '—'; }
+function rvHtml(pairs) {
+  return pairs.map(([l,v]) =>
+    `<div class="rv-item"><div class="rv-label">${l}</div><div class="rv-val">${v}</div></div>`
+  ).join('');
+}
+function buildReview() {
+  document.getElementById('rv0').innerHTML = rvHtml([
+    ['Full Name', `${rv('fName')} ${rv('lName')}`],
+    ['Email', rv('email')],
+    ['Mobile', rv('mobile')],
+    ['City', rv('city')],
+    ['Gender', selectedGender],
+    ['Date of Birth', rv('dob')],
+  ]);
+  document.getElementById('rv1').innerHTML = rvHtml([
+    ['Qualification', rv('qualification')],
+    ['Specialisation', rv('specialisation')],
+    ['University', rv('university')],
+    ['Department', rv('department')],
+    ['Grade Level', rv('gradeLevel')],
+    ['Position', rv('position')],
+  ]);
+  document.getElementById('rv2').innerHTML = rvHtml([
+    ['Experience', rv('experience')],
+    ['Previous School', rv('prevSchool') || 'N/A'],
+    ['Expected CTC', rv('expectedCtc')],
+    ['Notice Period', rv('noticePeriod') || 'Not specified'],
+    ['Availability', selectedAvail],
+    ['Resume Link', rv('resumeLink')],
+  ]);
+}
+
+/* ── Next / Submit ── */
+btnNext.addEventListener('click', async () => {
+  formAlert.classList.remove('show');
+  if (!validate(currentStep)) {
+    alertMsg.textContent = 'Please fill all required fields before continuing.';
+    formAlert.classList.add('show');
+    return;
+  }
+  if (currentStep < TOTAL - 1) { goTo(currentStep + 1); return; }
+
+  /* Final submission */
+  const a1 = document.getElementById('agree1');
+  const a2 = document.getElementById('agree2');
+  if (!a1.checked || !a2.checked) {
+    alertMsg.textContent = 'Please tick both declarations before submitting.';
+    formAlert.classList.add('show');
+    return;
+  }
+
+  /* Build payload */
+  const payload = {
+    '_subject':       'New Faculty Application – Global Academy',
+    '_replyto':       rv('email'),
+    'Full Name':      `${rv('fName')} ${rv('lName')}`,
+    'Email':          rv('email'),
+    'Mobile':         rv('mobile'),
+    'City':           rv('city'),
+    'Gender':         selectedGender,
+    'Date of Birth':  rv('dob'),
+    'LinkedIn':       rv('linkedin') || 'Not provided',
+    'Qualification':  rv('qualification'),
+    'Specialisation': rv('specialisation'),
+    'University':     rv('university'),
+    'Grad Year':      rv('gradYear'),
+    'Department':     rv('department'),
+    'Grade Level':    rv('gradeLevel'),
+    'Position':       rv('position'),
+    'Experience':     rv('experience'),
+    'Previous School':rv('prevSchool') || 'N/A',
+    'Current CTC':    rv('currentCtc') || 'Not specified',
+    'Expected CTC':   rv('expectedCtc'),
+    'Notice Period':  rv('noticePeriod') || 'Not specified',
+    'Availability':   selectedAvail,
+    'Resume Link':    rv('resumeLink'),
+    'Cover Letter':   rv('coverLetter'),
+  };
+
+  /* Loading state */
+  btnNext.disabled = true;
+  btnNext.style.opacity = '.7';
+  btnNext.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting…';
+
+  try {
+    const res = await fetch(FORMSPREE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      showSuccess();
+    } else {
+      const data = await res.json();
+      throw new Error(data?.errors?.[0]?.message || 'Submission failed');
+    }
+  } catch (err) {
+    btnNext.disabled = false;
+    btnNext.style.opacity = '1';
+    btnNext.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+    alertMsg.textContent = 'Submission failed. Please check your internet connection and try again, or email us directly at hr@globalacademy.edu';
+    formAlert.classList.add('show');
+  }
+});
+
+function showSuccess() {
+  const ref = 'GA-FAC-' + Math.floor(10000 + Math.random() * 90000);
+  document.getElementById('appRef').textContent = ref;
+  document.getElementById('successDetail').innerHTML = `
+    <div class="sd-row"><i class="fas fa-user"></i><span>Applicant:</span> ${rv('fName')} ${rv('lName')}</div>
+    <div class="sd-row"><i class="fas fa-briefcase"></i><span>Department:</span> ${rv('department')}</div>
+    <div class="sd-row"><i class="fas fa-layer-group"></i><span>Position:</span> ${rv('position')}</div>
+    <div class="sd-row"><i class="fas fa-envelope"></i><span>Confirmation sent to:</span> ${rv('email')}</div>
+    <div class="sd-row"><i class="fas fa-clock"></i><span>Expected response:</span> Within 7 working days</div>
+  `;
+  steps.forEach(s => s.style.display = 'none');
+  document.getElementById('formNav').style.display = 'none';
+  document.querySelector('.form-progress').style.display = 'none';
+  document.getElementById('successScreen').style.display = 'block';
+  document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+btnPrev.addEventListener('click', () => { if (currentStep > 0) goTo(currentStep - 1); });
+
+refreshUI();
+</script>
+</body>
+</html>
