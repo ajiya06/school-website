@@ -240,8 +240,8 @@
     .hero {
       position: relative;
       min-height: 420px;
-      background: linear-gradient(135deg, var(--navy) 0%, #2d3f6e 60%, #3a5080 100%);
-      background-image: url(img1.png);
+      /* background: linear-gradient(135deg, var(--navy) 0%, #2d3f6e 60%, #3a5080 100%); */
+      background-image: url(img/img1.png);
       display: flex;
       align-items: center;
       overflow: hidden;
@@ -940,6 +940,66 @@
         }
       }
     }
+
+    /* ============================================================
+     STICKY NOTICE BOX
+     ============================================================ */
+    .sticky-notice {
+      font-weight: 900;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.2);
+      padding-bottom: 10px;
+      width: 100%;
+    }
+    .pay-fees-box marquee {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+     ADMIN LOGIN BUTTON (Footer)
+     ============================================================ */
+    .admin-login-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+      padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 99px;
+      margin-top: 10px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .admin-login-link:hover {
+      color: var(--gold);
+      border-color: rgba(232,160,32,0.4);
+      background: rgba(232,160,32,0.07);
+    }
+
+    /* ============================================================
+     NOTICE LOADING / EMPTY STATE
+     ============================================================ */
+    .notice-loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      grid-column: 1 / -1;
+    }
+    .notice-loading i {
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+      display: block;
+      color: var(--gold-dark);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
@@ -1129,47 +1189,24 @@
   <section class="notice-section" id="fees">
     <div class="notice-board">
       <h2>Notice Board</h2>
-      <div class="notice-cards">
-        <div class="n-card reveal">
-          <div class="n-card-header">
-            <div class="n-card-icon"><i class="fas fa-school"></i></div>
-            <div>
-              <h4>Primary School</h4>
-              <div class="grade">Grades 1–3</div>
-            </div>
-          </div>
-          <p>Annual sports day scheduled for next month. All students must register by the given deadline.</p>
-          <a href="notice.pdf" target="_blank" class="btn btn-outline-dark" style="font-size:0.82rem;padding:7px 16px;">View Details</a>
-        </div>
-        <div class="n-card reveal">
-          <div class="n-card-header">
-            <div class="n-card-icon"><i class="fas fa-book"></i></div>
-            <div>
-              <h4>Secondary School</h4>
-              <div class="grade">Grades 6–13</div>
-            </div>
-          </div>
-          <p>New academic calendars and admit cards are available in the administration office.</p>
-          <a href="img/notice.pdf" class="btn btn-outline-dark" style="font-size:0.82rem;padding:7px 16px;" target="_blank">View Details</a>
+      <!-- Notice cards — loaded dynamically from Firebase -->
+      <div class="notice-cards" id="noticeCards">
+        <!-- Loading spinner shown until Firebase responds -->
+        <div class="notice-loading" id="noticeLoading">
+          <i class="fas fa-spinner"></i>
+          Loading notices…
         </div>
       </div>
     </div>
 
     <div class="pay-fees-box reveal">
       <div class="sticky-notice">NOTICE</div>
-      <div><marquee behavior="loop" direction="up" scrollamount="2">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero non eos architecto tempore minima, sit
-        obcaecati? Nisi facilis consequuntur recusandae quam id nam dicta, architecto libero accusamus facere minus
-        veritatis repellat quaerat, corex delectus
-        odit mollitia distinctio. Repellat amet adipisci voluptates et cumque deleniti placeat repudiandae asperiores
-        similique voluptate quo aperiam, dolore, pariatur ut?</marquee></div>
-      <!-- <h2>Pay Fees Online</h2>
-    <div class="payment-logos">
-      <div class="pay-logo">VISA</div>
-      <div class="pay-logo">Mastercard</div>
-      <div class="pay-logo">RuPay</div>
-      <div class="pay-logo">UPI</div>
-    </div>
-    <a href="#" class="btn btn-gold" style="width:100%;text-align:center;font-size:1rem;">Pay Now</a> -->
+      <!-- Marquee text loaded from Firebase 'announcements' collection -->
+      <div id="marqueeWrap">
+        <marquee id="noticeMarquee" behavior="loop" direction="up" scrollamount="2" style="font-size:.88rem;color:rgba(255,255,255,.75);line-height:1.8;">
+          Loading announcements…
+        </marquee>
+      </div>
     </div>
   </section>
 
@@ -1267,6 +1304,10 @@
     <div class="footer-bottom">
       &copy; 2024 Global Academy. All rights reserved. <br>
       <a href="https://ajiya06.github.io/ajay-portfolio/" class="ajay">Developed By Ajay Sah</a>
+      <br>
+      <a href="admin-panel.html" class="admin-login-link">
+        <i class="fas fa-lock"></i> Admin Login
+      </a>
     </div>
 
      <!-- <div class="footer-bottom">
@@ -1283,7 +1324,141 @@
   <!-- ============================================================
      JAVASCRIPT SECTION
      ============================================================ -->
-  <script>
+  <script type="module">
+  /* ═══ Firebase — Notice Board CMS ═══ */
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, query, orderBy, limit, getDocs }
+    from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
+    authDomain:        "school-website-cms.firebaseapp.com",
+    projectId:         "school-website-cms",
+    storageBucket:     "school-website-cms.firebasestorage.app",
+    messagingSenderId: "720284453351",
+    appId:             "1:720284453351:web:05e609eac5747f9aaf9542"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  /* ── Dummy notices — sirf tab dikhenge jab Firebase empty ho ── */
+  const dummyNotices = [
+    {
+      title: 'Annual Sports Day',
+      grade: 'Grades 1–5',
+      body:  'Annual sports day next month. All students must register before the deadline.',
+      date:  'June 15, 2025',
+      icon:  'fas fa-school'
+    },
+    {
+      title: 'Exam Schedule Released',
+      grade: 'Grades 6–10',
+      body:  'Mid-term exam timetable is available at the administration office.',
+      date:  'June 10, 2025',
+      icon:  'fas fa-book'
+    },
+    {
+      title: 'Parent-Teacher Meeting',
+      grade: 'All Grades',
+      body:  'PTM scheduled this Saturday from 10 AM to 1 PM. Attendance is mandatory.',
+      date:  'June 8, 2025',
+      icon:  'fas fa-bullhorn'
+    },
+    {
+      title: 'Holiday Notice',
+      grade: 'All Grades',
+      body:  'School will remain closed on June 20 on account of the state holiday.',
+      date:  'June 5, 2025',
+      icon:  'fas fa-calendar-alt'
+    }
+  ];
+
+  /* ── Render helper — works for both Firebase docs & dummy objects ── */
+  function renderNoticeCards(notices, container) {
+    const icons = ['fas fa-school','fas fa-book','fas fa-bullhorn','fas fa-calendar-alt'];
+    container.innerHTML = notices.map((n, i) => {
+      const icon    = n.icon || icons[i % icons.length];
+      const dateStr = n.date
+        ? `<span style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:4px;margin-top:4px">
+             <i class="fas fa-calendar" style="color:var(--gold-dark)"></i> ${n.date}
+           </span>`
+        : '';
+      const pdfBtn = n.pdfUrl
+        ? `<a href="${n.pdfUrl}" target="_blank" rel="noopener" class="btn btn-outline-dark" style="font-size:.82rem;padding:7px 16px;margin-top:8px;">View Details</a>`
+        : '';
+      return `
+        <div class="n-card reveal visible">
+          <div class="n-card-header">
+            <div class="n-card-icon"><i class="${icon}"></i></div>
+            <div>
+              <h4>${n.title || 'Notice'}</h4>
+              <div class="grade">${n.grade || 'All Grades'}</div>
+            </div>
+          </div>
+          <p>${n.body || ''}</p>
+          ${dateStr}
+          ${pdfBtn}
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Load Notices from Firestore ── */
+  function loadNotices() {
+    const container = document.getElementById('noticeCards');
+    if (!container) return;
+
+    // Pehle dummy notices dikhao
+    renderNoticeCards(dummyNotices, container);
+
+    try {
+      onSnapshot(
+        query(collection(db, 'notices'), orderBy('timestamp', 'desc'), limit(4)),
+        (snap) => {
+          if (snap.empty) return; // Dummy notices rehne do jab tak Firebase empty hai
+
+          // Firebase se real data aaya — dummy replace karo
+          const realNotices = snap.docs.map(docSnap => docSnap.data());
+          renderNoticeCards(realNotices, container);
+        },
+        (err) => {
+          console.error('Notice load error:', err);
+          // Error pe bhi dummy dikte rahenge — already rendered hai
+        }
+      );
+    } catch(e) {
+      console.error('Firebase notice error:', e);
+      // Dummy already rendered hai, kuch nahi karna
+    }
+  }
+
+  /* ── Load Marquee Announcement from Firestore ── */
+  async function loadMarquee() {
+    try {
+      const snap = await getDocs(
+        query(collection(db, 'announcements'), orderBy('timestamp', 'desc'), limit(1))
+      );
+      const marqueeEl = document.getElementById('noticeMarquee');
+      if (!marqueeEl) return;
+
+      if (!snap.empty) {
+        const data = snap.docs[0].data();
+        marqueeEl.textContent = data.text || data.message || data.body || '';
+      } else {
+        // Fallback — hide the marquee box if nothing in DB
+        const wrap = document.getElementById('marqueeWrap');
+        if (wrap) wrap.style.display = 'none';
+      }
+    } catch(e) {
+      console.error('Marquee load error:', e);
+      const wrap = document.getElementById('marqueeWrap');
+      if (wrap) wrap.style.display = 'none';
+    }
+  }
+
+  loadNotices();
+  loadMarquee();
+  
     /* ---- Mobile Menu Toggle ---- */
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');

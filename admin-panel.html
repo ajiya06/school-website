@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel – Global Academy CMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- ============================================================
+     CSS SECTION
+     ============================================================ -->
+<style>
+/* ── Tokens ─────────────────────────────────────────────── */
+:root{
+  --navy:      #1a2340;
+  --navy-mid:  #253060;
+  --navy-lt:   #2d3f6e;
+  --navy-dark: #111827;
+  --gold:      #e8a020;
+  --gold-dk:   #c8870a;
+  --gold-pl:   #fef3e2;
+  --sidebar-w: 260px;
+  --topbar-h:  64px;
+  --white:     #ffffff;
+  --off:       #f4f5f9;
+  --border:    #e5e7eb;
+  --text:      #1e2535;
+  --muted:     #64748b;
+  --green:     #16a34a;
+  --green-pl:  #dcfce7;
+  --red:       #dc2626;
+  --red-pl:    #fee2e2;
+  --yellow:    #d97706;
+  --yellow-pl: #fef3c7;
+  --blue:      #2563eb;
+  --blue-pl:   #dbeafe;
+  --sh-sm:     0 2px 8px rgba(0,0,0,.07);
+  --sh-md:     0 8px 28px rgba(0,0,0,.12);
+  --sh-lg:     0 20px 60px rgba(0,0,0,.18);
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--off);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+button{font-family:'DM Sans',sans-serif;cursor:pointer}
+input,select,textarea{font-family:'DM Sans',sans-serif}
+
+/* ── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* ╔══════════════════════════════════════════════════════╗
+   ║              LOGIN PAGE                              ║
+   ╚══════════════════════════════════════════════════════╝ */
+#loginPage{
+  min-height:100vh;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:20px;
+}
+#loginPage::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 80% at 50% -20%,rgba(232,160,32,.15) 0%,transparent 60%);
+}
+.login-dots{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:30px 30px;pointer-events:none;
+}
+/* big decorative G */
+.login-deco{
+  position:absolute;right:-60px;bottom:-80px;
+  font-family:'Playfair Display',serif;
+  font-size:28rem;font-weight:700;
+  color:rgba(255,255,255,.025);line-height:1;
+  user-select:none;pointer-events:none;
+}
+.login-card{
+  position:relative;z-index:2;
+  background:var(--white);border-radius:20px;
+  width:100%;max-width:420px;
+  box-shadow:var(--sh-lg);overflow:hidden;
+}
+.login-card-top{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-lt) 100%);
+  padding:32px 32px 28px;text-align:center;
+}
+.login-logo{
+  width:56px;height:56px;background:var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;box-shadow:0 6px 20px rgba(232,160,32,.4);
+}
+.login-logo i{font-size:1.4rem;color:var(--navy)}
+.login-card-top h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:4px}
+.login-card-top p{font-size:.8rem;color:rgba(255,255,255,.5)}
+.login-card-body{padding:28px 32px 32px}
+.login-group{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.login-group label{font-size:.78rem;font-weight:600;color:var(--navy)}
+.login-input-wrap{position:relative}
+.login-input-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none}
+.login-input{
+  width:100%;padding:11px 13px 11px 38px;
+  border:1.5px solid var(--border);border-radius:8px;
+  font-size:.9rem;color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.login-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,160,32,.1)}
+.login-input.error{border-color:var(--red)}
+.pass-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;font-size:.85rem}
+.login-error{
+  background:var(--red-pl);border:1px solid rgba(220,38,38,.2);
+  border-radius:7px;padding:10px 14px;
+  font-size:.82rem;color:var(--red);
+  display:none;align-items:flex-start;gap:8px;margin-bottom:14px;line-height:1.6;
+}
+.login-error.show{display:flex}
+.login-btn{
+  width:100%;padding:13px;background:var(--gold);color:var(--navy);
+  border:none;border-radius:8px;font-weight:700;font-size:.95rem;
+  transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.login-btn:hover{background:var(--gold-dk);transform:translateY(-1px)}
+.login-btn:disabled{opacity:.65;transform:none;cursor:not-allowed}
+.login-hint{text-align:center;font-size:.75rem;color:var(--muted);margin-top:16px}
+.login-hint span{color:var(--navy);font-weight:600}
+
+/* ╔══════════════════════════════════════════════════════╗
+   ║              ADMIN PANEL LAYOUT                      ║
+   ╚══════════════════════════════════════════════════════╝ */
+#adminPanel{display:none}
+
+/* ── SIDEBAR ────────────────────────────────────────────── */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  width:var(--sidebar-w);
+  background:var(--navy);
+  display:flex;flex-direction:column;
+  z-index:200;
+  transition:transform .3s;
+  overflow-y:auto;
+}
+.sidebar-brand{
+  padding:20px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:12px;
+}
+.sb-logo{
+  width:38px;height:38px;background:var(--gold);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sb-logo i{font-size:1rem;color:var(--navy)}
+.sb-brand-text h2{font-family:'Playfair Display',serif;font-size:1rem;color:var(--white);line-height:1.2}
+.sb-brand-text span{font-size:.68rem;color:rgba(255,255,255,.4);font-weight:500}
+
+.sidebar-nav{padding:16px 12px;flex:1}
+.nav-section-label{
+  font-size:.62rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:rgba(255,255,255,.3);
+  padding:0 8px;margin:16px 0 8px;
+}
+.nav-section-label:first-child{margin-top:0}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:9px;
+  color:rgba(255,255,255,.58);font-size:.88rem;font-weight:500;
+  cursor:pointer;transition:all .2s;
+  margin-bottom:2px;position:relative;
+  border:none;background:transparent;width:100%;text-align:left;
+}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(232,160,32,.15);color:var(--gold)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--gold);border-radius:0 3px 3px 0}
+.nav-item i{width:16px;text-align:center;font-size:.9rem;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--gold);color:var(--navy);font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:99px;min-width:20px;text-align:center}
+.nav-badge.red{background:var(--red);color:var(--white)}
+.nav-badge.green{background:var(--green);color:var(--white)}
+
+.sidebar-footer{
+  padding:16px;border-top:1px solid rgba(255,255,255,.08);
+}
+.admin-profile{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:9px;
+  background:rgba(255,255,255,.05);
+}
+.admin-avatar{
+  width:34px;height:34px;background:var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:700;color:var(--navy);flex-shrink:0;
+}
+.admin-info h4{font-size:.82rem;font-weight:600;color:var(--white)}
+.admin-info span{font-size:.7rem;color:rgba(255,255,255,.4)}
+.logout-btn{
+  margin-left:auto;width:28px;height:28px;
+  background:rgba(255,255,255,.08);border:none;border-radius:7px;
+  color:rgba(255,255,255,.5);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;
+  transition:all .2s;flex-shrink:0;
+}
+.logout-btn:hover{background:rgba(220,38,38,.2);color:var(--red)}
+
+/* sidebar overlay for mobile */
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.5);z-index:199;
+}
+.sidebar-overlay.show{display:block}
+
+/* ── TOPBAR ─────────────────────────────────────────────── */
+.topbar{
+  position:fixed;left:var(--sidebar-w);right:0;top:0;
+  height:var(--topbar-h);
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;z-index:100;
+  box-shadow:0 1px 12px rgba(0,0,0,.06);
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.menu-toggle{
+  display:none;width:36px;height:36px;
+  background:var(--off);border:none;border-radius:8px;
+  align-items:center;justify-content:center;color:var(--navy);
+  cursor:pointer;font-size:.9rem;
+}
+.topbar-title h2{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--navy)}
+.topbar-title p{font-size:.75rem;color:var(--muted);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{
+  width:38px;height:38px;background:var(--off);border:1px solid var(--border);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:.9rem;cursor:pointer;transition:all .2s;position:relative;
+}
+.topbar-btn:hover{background:var(--gold-pl);border-color:var(--gold);color:var(--gold-dk)}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:8px;height:8px;background:var(--red);border-radius:50%;
+  border:1.5px solid var(--white);
+}
+.topbar-date{font-size:.78rem;color:var(--muted);padding:7px 14px;background:var(--off);border-radius:8px;border:1px solid var(--border)}
+
+/* ── MAIN CONTENT ───────────────────────────────────────── */
+.main-content{
+  margin-left:var(--sidebar-w);
+  margin-top:var(--topbar-h);
+  padding:28px;
+  min-height:calc(100vh - var(--topbar-h));
+}
+.page{display:none}
+.page.active{display:block}
+
+/* ── CARDS ──────────────────────────────────────────────── */
+.card{
+  background:var(--white);border-radius:14px;
+  box-shadow:var(--sh-sm);border:1px solid var(--border);
+  overflow:hidden;
+}
+.card-header{
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.card-header h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy)}
+.card-header p{font-size:.78rem;color:var(--muted);margin-top:2px}
+.card-body{padding:22px}
+
+/* ── STAT CARDS ─────────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
+.stat-card{
+  background:var(--white);border-radius:14px;
+  padding:22px;box-shadow:var(--sh-sm);
+  border:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;
+  transition:transform .25s,box-shadow .25s;
+}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.stat-icon{
+  width:52px;height:52px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;flex-shrink:0;
+}
+.stat-icon.blue{background:var(--blue-pl);color:var(--blue)}
+.stat-icon.green{background:var(--green-pl);color:var(--green)}
+.stat-icon.gold{background:var(--gold-pl);color:var(--gold-dk)}
+.stat-icon.red{background:var(--red-pl);color:var(--red)}
+.stat-icon.navy{background:rgba(26,35,64,.1);color:var(--navy)}
+.stat-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--navy);line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:.78rem;color:var(--muted);font-weight:500}
+.stat-change{font-size:.72rem;font-weight:600;margin-top:4px}
+.stat-change.up{color:var(--green)}.stat-change.down{color:var(--red)}
+
+/* ── TABLE ──────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead tr{background:var(--off)}
+th{padding:11px 14px;text-align:left;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;border-bottom:1px solid var(--border)}
+td{padding:13px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--off)}
+.td-name{font-weight:600;color:var(--navy)}
+.td-sub{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+/* ── BADGES ─────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:.72rem;font-weight:700;white-space:nowrap}
+.badge-pending{background:var(--yellow-pl);color:var(--yellow)}
+.badge-approved,.badge-confirmed,.badge-hired{background:var(--green-pl);color:var(--green)}
+.badge-rejected,.badge-cancelled{background:var(--red-pl);color:var(--red)}
+.badge-reviewed,.badge-shortlisted{background:var(--blue-pl);color:var(--blue)}
+.badge-completed{background:rgba(26,35,64,.1);color:var(--navy)}
+
+/* ── ACTION BUTTONS ─────────────────────────────────────── */
+.action-btns{display:flex;gap:6px;align-items:center}
+.act-btn{
+  padding:5px 10px;border-radius:6px;font-size:.72rem;font-weight:600;
+  border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;
+}
+.act-view{background:var(--blue-pl);color:var(--blue)}.act-view:hover{background:var(--blue);color:var(--white)}
+.act-edit{background:var(--gold-pl);color:var(--gold-dk)}.act-edit:hover{background:var(--gold);color:var(--navy)}
+.act-del{background:var(--red-pl);color:var(--red)}.act-del:hover{background:var(--red);color:var(--white)}
+.act-approve{background:var(--green-pl);color:var(--green)}.act-approve:hover{background:var(--green);color:var(--white)}
+
+/* ── FILTER BAR ─────────────────────────────────────────── */
+.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.filter-select{
+  padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:.82rem;color:var(--text);outline:none;background:var(--white);
+  font-family:'DM Sans',sans-serif;cursor:pointer;
+}
+.filter-select:focus{border-color:var(--gold)}
+.search-box{
+  position:relative;flex:1;min-width:200px;
+}
+.search-box i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem}
+.search-input{
+  width:100%;padding:8px 12px 8px 32px;
+  border:1.5px solid var(--border);border-radius:8px;
+  font-size:.82rem;outline:none;font-family:'DM Sans',sans-serif;
+  transition:border-color .2s;
+}
+.search-input:focus{border-color:var(--gold)}
+.btn-sm{
+  padding:8px 16px;border-radius:7px;font-size:.82rem;font-weight:600;
+  border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;
+}
+.btn-gold-sm{background:var(--gold);color:var(--navy)}.btn-gold-sm:hover{background:var(--gold-dk)}
+.btn-navy-sm{background:var(--navy);color:var(--white)}.btn-navy-sm:hover{background:var(--navy-lt)}
+.btn-ghost-sm{background:var(--white);border:1.5px solid var(--border);color:var(--text)}.btn-ghost-sm:hover{border-color:var(--gold);color:var(--gold-dk)}
+
+/* ── MODAL ──────────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--white);border-radius:16px;
+  width:100%;max-width:580px;
+  box-shadow:var(--sh-lg);
+  animation:modalIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  max-height:90vh;overflow-y:auto;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--white);z-index:1;
+}
+.modal-header h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--navy)}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;background:var(--off);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:.85rem;transition:all .2s;
+}
+.modal-close:hover{background:var(--red-pl);color:var(--red)}
+.modal-body{padding:24px}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:10px;
+  position:sticky;bottom:0;background:var(--white);
+}
+
+/* form inside modal */
+.mform-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.mform-row.full{grid-template-columns:1fr}
+.mform-group{display:flex;flex-direction:column;gap:5px}
+.mform-group label{font-size:.76rem;font-weight:600;color:var(--navy)}
+.mform-control{
+  padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;
+  font-size:.86rem;font-family:'DM Sans',sans-serif;color:var(--text);
+  outline:none;transition:border-color .2s;
+}
+.mform-control:focus{border-color:var(--gold)}
+textarea.mform-control{resize:vertical;min-height:80px}
+
+/* detail view in modal */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-item .di-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:3px}
+.detail-item .di-val{font-size:.9rem;font-weight:600;color:var(--navy)}
+.detail-item.full{grid-column:1/-1}
+.detail-divider{height:1px;background:var(--border);margin:16px 0;grid-column:1/-1}
+
+/* ── DASHBOARD SPECIFIC ─────────────────────────────────── */
+.dash-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:18px}
+.activity-list{display:flex;flex-direction:column;gap:0}
+.activity-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:13px 0;border-bottom:1px solid var(--border);
+}
+.activity-item:last-child{border-bottom:none}
+.act-dot{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;flex-shrink:0;margin-top:1px;
+}
+.act-dot.blue{background:var(--blue-pl);color:var(--blue)}
+.act-dot.green{background:var(--green-pl);color:var(--green)}
+.act-dot.gold{background:var(--gold-pl);color:var(--gold-dk)}
+.act-dot.red{background:var(--red-pl);color:var(--red)}
+.act-title{font-size:.88rem;font-weight:600;color:var(--navy);margin-bottom:3px}
+.act-sub{font-size:.76rem;color:var(--muted)}
+.act-time{font-size:.7rem;color:var(--muted);margin-left:auto;flex-shrink:0;padding-top:3px}
+
+/* quick actions */
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qa-btn{
+  padding:14px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--white);cursor:pointer;
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+  transition:all .2s;text-align:left;
+}
+.qa-btn:hover{border-color:var(--gold);background:var(--gold-pl)}
+.qa-btn i{font-size:1.1rem;color:var(--gold-dk)}
+.qa-btn span{font-size:.8rem;font-weight:600;color:var(--navy)}
+
+/* ── NOTICE / EVENTS BOARD ──────────────────────────────── */
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
+.board-card{
+  background:var(--white);border-radius:12px;padding:18px;
+  border:1px solid var(--border);box-shadow:var(--sh-sm);
+  transition:border-color .25s,transform .25s;
+  display:flex;flex-direction:column;gap:10px;
+}
+.board-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.bc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.bc-title{font-weight:700;font-size:.92rem;color:var(--navy)}
+.bc-body{font-size:.82rem;color:var(--muted);line-height:1.6}
+.bc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.bc-date{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+.bc-actions{display:flex;gap:6px}
+
+/* ── FACULTY GRID ───────────────────────────────────────── */
+.faculty-grid-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:16px}
+.fac-admin-card{
+  background:var(--white);border-radius:12px;overflow:hidden;
+  border:1px solid var(--border);box-shadow:var(--sh-sm);
+  transition:border-color .25s,transform .25s;
+}
+.fac-admin-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.fac-img{height:140px;overflow:hidden;background:var(--off);position:relative}
+.fac-img img{width:100%;height:100%;object-fit:cover;object-position:top}
+.fac-dept-badge{
+  position:absolute;top:8px;left:8px;
+  background:rgba(26,35,64,.85);color:var(--gold);
+  font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:99px;
+}
+.fac-body{padding:14px}
+.fac-name{font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:3px}
+.fac-role{font-size:.75rem;color:var(--muted);margin-bottom:10px}
+.fac-footer{display:flex;gap:6px}
+
+/* ── EMPTY STATE ────────────────────────────────────────── */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state i{font-size:2.5rem;margin-bottom:12px;opacity:.3;display:block}
+.empty-state p{font-size:.9rem}
+
+/* ── TOAST ──────────────────────────────────────────────── */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{
+  background:var(--navy);color:var(--white);
+  padding:12px 18px;border-radius:10px;
+  font-size:.84rem;font-weight:500;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:var(--sh-md);
+  animation:toastIn .3s both;min-width:240px;
+}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.toast.warning{background:var(--yellow)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+
+/* ── CONFIRM DIALOG ─────────────────────────────────────── */
+.confirm-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.confirm-overlay.show{display:flex}
+.confirm-box{
+  background:var(--white);border-radius:14px;padding:28px;
+  max-width:360px;width:100%;text-align:center;
+  box-shadow:var(--sh-lg);
+  animation:modalIn .25s both;
+}
+.confirm-icon{width:56px;height:56px;background:var(--red-pl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem;color:var(--red)}
+.confirm-box h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--navy);margin-bottom:8px}
+.confirm-box p{font-size:.85rem;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.confirm-btns{display:flex;gap:10px;justify-content:center}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1100px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .dash-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .topbar{left:0}
+  .main-content{margin-left:0}
+  .menu-toggle{display:flex}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .mform-row{grid-template-columns:1fr}
+  .detail-grid{grid-template-columns:1fr}
+  .topbar-date{display:none}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr}
+  .main-content{padding:16px}
+  .quick-actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HTML SECTION
+     ============================================================ -->
+
+<!-- ╔══════════════════════════════════╗
+     ║         LOGIN PAGE              ║
+     ╚══════════════════════════════════╝ -->
+<div id="loginPage">
+  <div class="login-dots"></div>
+  <div class="login-deco">G</div>
+  <div class="login-card">
+    <div class="login-card-top">
+      <div class="login-logo"><i class="fas fa-graduation-cap"></i></div>
+      <h1>Global Academy</h1>
+      <p>Admin Panel — Secure Login</p>
+    </div>
+    <div class="login-card-body">
+      <div class="login-error" id="loginError">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="loginErrMsg">Invalid email or password.</span>
+      </div>
+      <div class="login-group">
+        <label>Email Address</label>
+        <div class="login-input-wrap">
+          <i class="fas fa-envelope"></i>
+          <input class="login-input" id="loginEmail" type="email" placeholder="admin@globalacademy.edu" autocomplete="email"/>
+        </div>
+      </div>
+      <div class="login-group">
+        <label>Password</label>
+        <div class="login-input-wrap">
+          <i class="fas fa-lock"></i>
+          <input class="login-input" id="loginPass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
+          <span class="pass-toggle" id="passToggle"><i class="fas fa-eye" id="passIcon"></i></span>
+        </div>
+      </div>
+      <button class="login-btn" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> Login to Admin Panel
+      </button>
+      <div class="login-hint">
+        Use your registered Firebase email &amp; password.<br/>
+        <span style="color:#e8a020;font-weight:600">⚠️ GitHub Pages ya Live Server se open karo</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════╗
+     ║         ADMIN PANEL             ║
+     ╚══════════════════════════════════╝ -->
+<div id="adminPanel">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sb-logo"><i class="fas fa-graduation-cap"></i></div>
+      <div class="sb-brand-text">
+        <h2>Global Academy</h2>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" data-page="dashboard">
+        <i class="fas fa-th-large"></i> Dashboard
+        <span class="nav-badge" id="nb-dashboard">3</span>
+      </button>
+
+      <div class="nav-section-label">Form Submissions</div>
+      <button class="nav-item" data-page="admissions">
+        <i class="fas fa-file-alt"></i> Admissions
+        <span class="nav-badge red" id="nb-admissions">5</span>
+      </button>
+      <button class="nav-item" data-page="tours">
+        <i class="fas fa-school"></i> Campus Tours
+        <span class="nav-badge" id="nb-tours">3</span>
+      </button>
+      <button class="nav-item" data-page="faculty-apps">
+        <i class="fas fa-user-tie"></i> Faculty Applications
+        <span class="nav-badge" id="nb-fac-apps">2</span>
+      </button>
+
+      <div class="nav-section-label">Content Management</div>
+      <button class="nav-item" data-page="notices">
+        <i class="fas fa-bullhorn"></i> Notice Board
+      </button>
+      <button class="nav-item" data-page="events">
+        <i class="fas fa-calendar-alt"></i> Events
+      </button>
+      <button class="nav-item" data-page="faculty-mgmt">
+        <i class="fas fa-chalkboard-teacher"></i> Faculty Members
+      </button>
+      <button class="nav-item" data-page="results">
+        <i class="fas fa-trophy"></i> Results
+      </button>
+      <button class="nav-item" data-page="alumni">
+        <i class="fas fa-user-graduate"></i> Alumni
+      </button>
+
+      <div class="nav-section-label">System</div>
+      <button class="nav-item" data-page="settings">
+        <i class="fas fa-cog"></i> Settings
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-profile">
+        <div class="admin-avatar">A</div>
+        <div class="admin-info">
+          <h4>Admin</h4>
+          <span>admin@globalacademy.edu</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <div class="topbar-title">
+        <h2 id="topbarTitle">Dashboard</h2>
+        <p id="topbarSub">Welcome back, Admin</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbarDate"></div>
+      <button class="topbar-btn" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="topbar-btn" onclick="window.open('global-academy.html','_blank')" title="View Website">
+        <i class="fas fa-external-link-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ══ DASHBOARD PAGE ══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+          <div><div class="stat-val" id="sc-admissions">5</div><div class="stat-lbl">Total Admissions</div><div class="stat-change up"><i class="fas fa-arrow-up"></i> 2 new today</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-school"></i></div>
+          <div><div class="stat-val" id="sc-tours">3</div><div class="stat-lbl">Tour Bookings</div><div class="stat-change up"><i class="fas fa-arrow-up"></i> 1 new today</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><i class="fas fa-user-tie"></i></div>
+          <div><div class="stat-val" id="sc-facapps">2</div><div class="stat-lbl">Faculty Applications</div><div class="stat-change up"><i class="fas fa-arrow-up"></i> 1 new</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon navy"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div><div class="stat-val" id="sc-faculty">13</div><div class="stat-lbl">Faculty Members</div><div class="stat-change"><i class="fas fa-minus"></i> No change</div></div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="card-header">
+            <div><h3>Recent Activity</h3><p>Latest submissions & updates</p></div>
+          </div>
+          <div class="card-body">
+            <div class="activity-list" id="activityList"></div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+          <div class="card-header"><div><h3>Quick Actions</h3><p>Common tasks</p></div></div>
+          <div class="card-body">
+            <div class="quick-actions">
+              <button class="qa-btn" onclick="switchPage('notices');openAddModal('notice')"><i class="fas fa-plus-circle"></i><span>Add Notice</span></button>
+              <button class="qa-btn" onclick="switchPage('events');openAddModal('event')"><i class="fas fa-calendar-plus"></i><span>Add Event</span></button>
+              <button class="qa-btn" onclick="switchPage('faculty-mgmt');openAddModal('faculty')"><i class="fas fa-user-plus"></i><span>Add Faculty</span></button>
+              <button class="qa-btn" onclick="switchPage('admissions')"><i class="fas fa-inbox"></i><span>View Admissions</span></button>
+              <button class="qa-btn" onclick="switchPage('tours')"><i class="fas fa-eye"></i><span>View Tour Bookings</span></button>
+              <button class="qa-btn" onclick="switchPage('results')"><i class="fas fa-trophy"></i><span>Manage Results</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ADMISSIONS PAGE ══ -->
+    <div class="page" id="page-admissions">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Admission Enquiries</h3><p>All submitted admission forms</p></div>
+          <button class="btn-sm btn-ghost-sm" onclick="exportCSV('admissions')"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="search-box"><i class="fas fa-search"></i><input class="search-input" placeholder="Search by name, email…" oninput="filterTable('admissions',this.value)"/></div>
+            <select class="filter-select" onchange="filterByStatus('admissions',this.value)">
+              <option value="">All Status</option>
+              <option>pending</option><option>reviewed</option><option>approved</option><option>rejected</option>
+            </select>
+            <select class="filter-select" onchange="filterByGrade('admissions',this.value)">
+              <option value="">All Grades</option>
+              <option>Grade 1-5</option><option>Grade 6-8</option><option>Grade 9-10</option><option>Grade 11-12</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table id="admissionsTable">
+              <thead><tr><th>#</th><th>Student Name</th><th>Parent</th><th>Grade</th><th>Mobile</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="admissionsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CAMPUS TOURS PAGE ══ -->
+    <div class="page" id="page-tours">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Campus Tour Bookings</h3><p>All scheduled visits</p></div>
+          <button class="btn-sm btn-ghost-sm" onclick="exportCSV('tours')"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="search-box"><i class="fas fa-search"></i><input class="search-input" placeholder="Search by name, date…" oninput="filterTable('tours',this.value)"/></div>
+            <select class="filter-select" onchange="filterByStatus('tours',this.value)">
+              <option value="">All Status</option>
+              <option>pending</option><option>confirmed</option><option>completed</option><option>cancelled</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table id="toursTable">
+              <thead><tr><th>#</th><th>Parent Name</th><th>Child</th><th>Tour Date</th><th>Time</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="toursTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FACULTY APPLICATIONS PAGE ══ -->
+    <div class="page" id="page-faculty-apps">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Faculty Applications</h3><p>All job applications received</p></div>
+          <button class="btn-sm btn-ghost-sm" onclick="exportCSV('faculty-apps')"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="search-box"><i class="fas fa-search"></i><input class="search-input" placeholder="Search by name, department…" oninput="filterTable('faculty-apps',this.value)"/></div>
+            <select class="filter-select" onchange="filterByStatus('faculty-apps',this.value)">
+              <option value="">All Status</option>
+              <option>pending</option><option>reviewed</option><option>shortlisted</option><option>rejected</option><option>hired</option>
+            </select>
+            <select class="filter-select">
+              <option value="">All Departments</option>
+              <option>Science</option><option>Mathematics</option><option>English</option><option>Hindi</option><option>Commerce</option><option>Computer Science</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table id="facAppsTable">
+              <thead><tr><th>#</th><th>Applicant</th><th>Department</th><th>Experience</th><th>Position</th><th>Resume</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="facAppsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NOTICE BOARD PAGE ══ -->
+    <div class="page" id="page-notices">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Notice Board</h3><p>Manage all school notices</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('notice')"><i class="fas fa-plus"></i> Add Notice</button>
+        </div>
+        <div class="card-body">
+          <div class="board-grid" id="noticeGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EVENTS PAGE ══ -->
+    <div class="page" id="page-events">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Events Manager</h3><p>Add, edit and delete school events</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('event')"><i class="fas fa-plus"></i> Add Event</button>
+        </div>
+        <div class="card-body">
+          <div class="board-grid" id="eventsGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FACULTY MANAGEMENT PAGE ══ -->
+    <div class="page" id="page-faculty-mgmt">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Faculty Members</h3><p>Add, edit and remove faculty</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('faculty')"><i class="fas fa-plus"></i> Add Faculty</button>
+        </div>
+        <div class="card-body">
+          <div class="faculty-grid-admin" id="facultyGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RESULTS PAGE ══ -->
+    <div class="page" id="page-results">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Results Manager</h3><p>Manage exam results and toppers</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('result')"><i class="fas fa-plus"></i> Add Result</button>
+        </div>
+        <div class="card-body">
+          <div class="board-grid" id="resultsGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ALUMNI PAGE ══ -->
+    <div class="page" id="page-alumni">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Alumni Manager</h3><p>Manage alumni profiles and stories</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('alumni')"><i class="fas fa-plus"></i> Add Alumni</button>
+        </div>
+        <div class="card-body">
+          <div class="faculty-grid-admin" id="alumniGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS PAGE ══ -->
+    <div class="page" id="page-settings">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <!-- Change Password -->
+        <div class="card">
+          <div class="card-header"><div><h3>Change Password</h3><p>Update your admin password</p></div></div>
+          <div class="card-body">
+            <div class="mform-row full"><div class="mform-group"><label>Current Password</label><input class="mform-control" type="password" placeholder="Current password"/></div></div>
+            <div class="mform-row full"><div class="mform-group"><label>New Password</label><input class="mform-control" type="password" placeholder="New password" id="newPass"/></div></div>
+            <div class="mform-row full"><div class="mform-group"><label>Confirm New Password</label><input class="mform-control" type="password" placeholder="Confirm password" id="confirmPass"/></div></div>
+            <button class="btn-sm btn-gold-sm" style="margin-top:8px" onclick="changePassword()"><i class="fas fa-lock"></i> Update Password</button>
+          </div>
+        </div>
+        <!-- School Info -->
+        <div class="card">
+          <div class="card-header"><div><h3>School Information</h3><p>Update contact details</p></div></div>
+          <div class="card-body">
+            <div class="mform-row full"><div class="mform-group"><label>School Name</label><input class="mform-control" value="Global Academy" id="schoolName"/></div></div>
+            <div class="mform-row full"><div class="mform-group"><label>Phone Number</label><input class="mform-control" value="+07.08722, 43710" id="schoolPhone"/></div></div>
+            <div class="mform-row full"><div class="mform-group"><label>Email Address</label><input class="mform-control" value="info@globalacademy.edu" id="schoolEmail"/></div></div>
+            <div class="mform-row full"><div class="mform-group"><label>Address</label><textarea class="mform-control" rows="2" id="schoolAddress">Global Academy, Main Road, City – 110001</textarea></div></div>
+            <button class="btn-sm btn-gold-sm" style="margin-top:8px" onclick="saveSettings()"><i class="fas fa-save"></i> Save Changes</button>
+          </div>
+        </div>
+        <!-- Admin Credentials display -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-header"><div><h3>Current Login Credentials</h3><p>Share with school owner securely</p></div></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div style="background:var(--off);border-radius:10px;padding:16px;border:1px solid var(--border)">
+                <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px">ADMIN EMAIL</div>
+                <div style="font-weight:600;color:var(--navy)" id="dispEmail">admin@globalacademy.edu</div>
+              </div>
+              <div style="background:var(--off);border-radius:10px;padding:16px;border:1px solid var(--border)">
+                <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px">PASSWORD</div>
+                <div style="font-weight:600;color:var(--navy)" id="dispPass">admin@123</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Modal</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM DIALOG ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+    <h3>Delete this item?</h3>
+    <p>This action cannot be undone. The item will be permanently removed.</p>
+    <div class="confirm-btns">
+      <button class="btn-sm btn-ghost-sm" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-sm" style="background:var(--red);color:var(--white)" id="confirmDeleteBtn">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ============================================================
+     JAVASCRIPT SECTION
+     ============================================================ -->
+<script type="module">
+/* ════ Firebase Imports ════ */
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc,
+         updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+/* ════ Firebase Init ════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
+  authDomain: "school-website-cms.firebaseapp.com",
+  projectId: "school-website-cms",
+  storageBucket: "school-website-cms.firebasestorage.app",
+  messagingSenderId: "720284453351",
+  appId: "1:720284453351:web:05e609eac5747f9aaf9542",
+  measurementId: "G-HT4LSRM993"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* ════ Auth State — Auto login/logout ════ */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById('loginPage').style.display  = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.querySelector('.admin-info h4').textContent   = 'Admin';
+    document.querySelector('.admin-info span').textContent = user.email;
+    document.querySelector('.admin-avatar').textContent    = user.email.charAt(0).toUpperCase();
+    initPanel();
+  } else {
+    document.getElementById('loginPage').style.display  = 'flex';
+    document.getElementById('adminPanel').style.display = 'none';
+  }
+});
+
+/* ════════════════════════════════════════════════════════════
+   LOCAL DATA CACHE — Firestore se populate hoga
+   ════════════════════════════════════════════════════════════ */
+let DB = {
+  admissions: [], tours: [], facApps: [],
+  notices: [], events: [], faculty: [],
+  results: [], alumni: []
+};
+
+let nextIds = { admissions:6, tours:4, facApps:3, notices:4, events:4, faculty:5, results:2, alumni:3 };
+let pendingDeleteFn = null;
+let currentPageId = 'dashboard';
+
+/* ════ PASSWORD TOGGLE ════ */
+document.getElementById('passToggle').addEventListener('click', () => {
+  const inp = document.getElementById('loginPass');
+  const ico = document.getElementById('passIcon');
+  if (inp.type === 'password') { inp.type = 'text'; ico.className = 'fas fa-eye-slash'; }
+  else { inp.type = 'password'; ico.className = 'fas fa-eye'; }
+});
+
+/* ════ LOGIN — Firebase Auth ════ */
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('loginPass').addEventListener('keydown',  e => { if(e.key==='Enter') doLogin(); });
+
+async function doLogin() {
+  const email  = document.getElementById('loginEmail').value.trim();
+  const pass   = document.getElementById('loginPass').value;
+  const errBox = document.getElementById('loginError');
+  const btn    = document.getElementById('loginBtn');
+
+  if (!email || !pass) {
+    document.getElementById('loginErrMsg').textContent = 'Please enter both email and password.';
+    errBox.classList.add('show'); return;
+  }
+
+  errBox.classList.remove('show');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Logging in…';
+
+  // ── Check if running on file:// (local file, no server) ──
+  const isLocalFile = window.location.protocol === 'file:';
+
+  if (isLocalFile) {
+    // Local file mode — Firebase Auth needs HTTPS
+    // Show helpful message
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
+    errBox.classList.add('show');
+    document.getElementById('loginErrMsg').innerHTML =
+      '⚠️ File:// se Firebase kaam nahi karta.<br>' +
+      'VS Code mein <b>Live Server</b> se open karo ya GitHub Pages use karo.';
+    return;
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    showToast('Welcome back! 👋', 'success');
+  } catch (err) {
+    console.error('Firebase Auth Error:', err.code, err.message);
+    errBox.classList.add('show');
+
+    const msg = {
+      'auth/user-not-found':     'Yeh email Firebase mein registered nahi hai.',
+      'auth/wrong-password':     'Password galat hai. Dobara try karo.',
+      'auth/invalid-email':      'Valid email address daalo.',
+      'auth/too-many-requests':  'Bahut zyada attempts. Kuch der baad try karo.',
+      'auth/invalid-credential': 'Email ya password galat hai.',
+      'auth/network-request-failed': 'Internet connection check karo.',
+      'auth/operation-not-allowed':  'Email/Password login enabled nahi hai Firebase mein.',
+      'auth/unauthorized-domain':    'Yeh domain Firebase mein authorized nahi hai. GitHub Pages use karo.',
+    };
+
+    document.getElementById('loginErrMsg').textContent =
+      msg[err.code] || `Error: ${err.code} — ${err.message}`;
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
+  }
+}
+
+/* ════ LOGOUT — Firebase Auth ════ */
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try {
+    await signOut(auth);
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPass').value  = '';
+    document.getElementById('loginError').classList.remove('show');
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
+    showToast('Logged out successfully', 'default');
+  } catch(e) { showToast('Logout failed', 'error'); }
+});
+
+/* ════ INIT PANEL ════ */
+function initPanel() {
+  updateTopbarDate();
+  setInterval(updateTopbarDate, 60000);
+  renderAllPages();
+  renderActivityFeed();
+  loadFirestoreData(); // Load real data from Firebase
+}
+
+/* ════ LOAD FIRESTORE DATA ════ */
+async function loadFirestoreData() {
+  // Load Notices
+  const noticesSnap = await getDocs(collection(db, 'notices'));
+  if (!noticesSnap.empty) {
+    DB.notices = noticesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderNotices();
+  }
+  // Load Events
+  const eventsSnap = await getDocs(collection(db, 'events'));
+  if (!eventsSnap.empty) {
+    DB.events = eventsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderEvents();
+  }
+  // Load Faculty
+  const facultySnap = await getDocs(collection(db, 'faculty'));
+  if (!facultySnap.empty) {
+    DB.faculty = facultySnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderFaculty();
+    updateBadges();
+  }
+  // Load Results
+  const resultsSnap = await getDocs(collection(db, 'results'));
+  if (!resultsSnap.empty) {
+    DB.results = resultsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderResults();
+  }
+  // Load Alumni
+  const alumniSnap = await getDocs(collection(db, 'alumni'));
+  if (!alumniSnap.empty) {
+    DB.alumni = alumniSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAlumni();
+  }
+  // Real-time listener for form submissions
+  listenToSubmissions();
+}
+
+/* ════ REAL-TIME LISTENERS ════ */
+function listenToSubmissions() {
+  // Admissions — real-time
+  onSnapshot(query(collection(db, 'admissions'), orderBy('timestamp', 'desc')), snap => {
+    DB.admissions = snap.docs.map(d => ({ id: d.id, ...d.data(),
+      date: d.data().timestamp?.toDate().toISOString().split('T')[0] || 'N/A' }));
+    renderAdmissions();
+    updateBadges();
+    // Show toast for new entry
+    snap.docChanges().forEach(change => {
+      if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
+        showToast('New admission form received!', 'success');
+        // Browser notification
+        if (Notification.permission === 'granted') {
+          new Notification('New Admission — Global Academy', {
+            body: change.doc.data().studentName || change.doc.data()['Student Name'] || 'New submission'
+          });
+        }
+      }
+    });
+  });
+
+  // Campus Tours — real-time
+  onSnapshot(query(collection(db, 'campus_tours'), orderBy('timestamp', 'desc')), snap => {
+    DB.tours = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderTours();
+    updateBadges();
+    snap.docChanges().forEach(change => {
+      if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
+        showToast('New campus tour booking!', 'success');
+      }
+    });
+  });
+
+  // Faculty Applications — real-time
+  onSnapshot(query(collection(db, 'faculty_apps'), orderBy('timestamp', 'desc')), snap => {
+    DB.facApps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderFacApps();
+    updateBadges();
+    snap.docChanges().forEach(change => {
+      if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
+        showToast('New faculty application received!', 'success');
+      }
+    });
+  });
+}
+
+/* ════ REQUEST BROWSER NOTIFICATION PERMISSION ════ */
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+function updateTopbarDate() {
+  const now = new Date();
+  document.getElementById('topbarDate').textContent =
+    now.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+}
+
+/* ════ NAVIGATION ════ */
+const pageTitles = {
+  dashboard:'Dashboard','admissions':'Admission Enquiries','tours':'Campus Tour Bookings',
+  'faculty-apps':'Faculty Applications','notices':'Notice Board','events':'Events Manager',
+  'faculty-mgmt':'Faculty Members','results':'Results Manager','alumni':'Alumni Manager',
+  settings:'Settings'
+};
+const pageSubs = {
+  dashboard:'Welcome back, Admin','admissions':'View & manage all admission form submissions',
+  'tours':'All scheduled campus visit bookings','faculty-apps':'Review job applications from teachers',
+  'notices':'Add, edit and delete notices','events':'Manage school events',
+  'faculty-mgmt':'Add, edit and remove faculty members','results':'Upload and manage exam results',
+  'alumni':'Manage alumni profiles','settings':'Account and school settings'
+};
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const page = item.dataset.page;
+    switchPage(page);
+    // close sidebar on mobile
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  });
+});
+
+function switchPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + pageId)?.classList.add('active');
+  document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
+  document.getElementById('topbarTitle').textContent = pageTitles[pageId] || pageId;
+  document.getElementById('topbarSub').textContent   = pageSubs[pageId]   || '';
+  currentPageId = pageId;
+}
+
+/* ════ MOBILE SIDEBAR ════ */
+document.getElementById('menuToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+});
+document.getElementById('sidebarOverlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+});
+
+/* ════ RENDER FUNCTIONS ════ */
+
+function renderAllPages() {
+  renderAdmissions();
+  renderTours();
+  renderFacApps();
+  renderNotices();
+  renderEvents();
+  renderFaculty();
+  renderResults();
+  renderAlumni();
+  updateBadges();
+}
+
+function badgeHtml(status) {
+  const cls = {
+    pending:'badge-pending', reviewed:'badge-reviewed', approved:'badge-approved',
+    rejected:'badge-rejected', confirmed:'badge-confirmed', completed:'badge-completed',
+    cancelled:'badge-cancelled', shortlisted:'badge-shortlisted', hired:'badge-hired'
+  };
+  return `<span class="badge ${cls[status]||'badge-pending'}">${capitalize(status)}</span>`;
+}
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+/* Admissions Table */
+function renderAdmissions(data) {
+  const rows = data || DB.admissions;
+  const tbody = document.getElementById('admissionsTbody');
+  tbody.innerHTML = rows.length ? rows.map((r,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><div class="td-name">${r.studentName}</div></td>
+      <td><div>${r.parentName}</div><div class="td-sub">${r.mobile}</div></td>
+      <td>${r.grade}</td>
+      <td>${r.mobile}</td>
+      <td>${r.date}</td>
+      <td>${badgeHtml(r.status)}</td>
+      <td><div class="action-btns">
+        <button class="act-btn act-view" onclick="viewAdmission(${r.id})"><i class="fas fa-eye"></i></button>
+        <button class="act-btn act-approve" onclick="changeStatus('admissions',${r.id})"><i class="fas fa-check"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('admissions',${r.id})"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i><p>No admissions yet</p></div></td></tr>`;
+}
+
+/* Tours Table */
+function renderTours(data) {
+  const rows = data || DB.tours;
+  const tbody = document.getElementById('toursTbody');
+  tbody.innerHTML = rows.length ? rows.map((r,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><div class="td-name">${r.parentName}</div><div class="td-sub">${r.mobile}</div></td>
+      <td>${r.childName}</td>
+      <td>${r.tourDate}</td>
+      <td>${r.tourTime}</td>
+      <td>${r.mobile}</td>
+      <td>${badgeHtml(r.status)}</td>
+      <td><div class="action-btns">
+        <button class="act-btn act-view" onclick="viewTour(${r.id})"><i class="fas fa-eye"></i></button>
+        <button class="act-btn act-approve" onclick="changeStatus('tours',${r.id})"><i class="fas fa-check"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('tours',${r.id})"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-calendar-times"></i><p>No tour bookings yet</p></div></td></tr>`;
+}
+
+/* Faculty Apps Table */
+function renderFacApps(data) {
+  const rows = data || DB.facApps;
+  const tbody = document.getElementById('facAppsTbody');
+  tbody.innerHTML = rows.length ? rows.map((r,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><div class="td-name">${r.name}</div><div class="td-sub">${r.email}</div></td>
+      <td>${r.department}</td>
+      <td>${r.experience}</td>
+      <td>${r.position}</td>
+      <td><a href="${r.resumeLink}" target="_blank" style="color:var(--blue);font-size:.78rem;font-weight:600"><i class="fas fa-external-link-alt"></i> View</a></td>
+      <td>${badgeHtml(r.status)}</td>
+      <td><div class="action-btns">
+        <button class="act-btn act-view" onclick="viewFacApp(${r.id})"><i class="fas fa-eye"></i></button>
+        <button class="act-btn act-approve" onclick="changeStatus('facApps',${r.id})"><i class="fas fa-check"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('facApps',${r.id})"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-user-slash"></i><p>No applications yet</p></div></td></tr>`;
+}
+
+/* Notices Grid */
+function renderNotices() {
+  const grid = document.getElementById('noticeGrid');
+  grid.innerHTML = DB.notices.length ? DB.notices.map(n => `
+    <div class="board-card">
+      <div class="bc-header">
+        <div class="bc-title">${n.title}</div>
+        <span class="badge badge-reviewed">${n.grade}</span>
+      </div>
+      <div class="bc-body">${n.body}</div>
+      <div class="bc-footer">
+        <div class="bc-date"><i class="fas fa-calendar"></i> ${n.date}</div>
+        <div class="bc-actions">
+          <button class="act-btn act-edit" onclick="openEditModal('notice',${n.id})"><i class="fas fa-pen"></i></button>
+          <button class="act-btn act-del" onclick="confirmDelete('notices',${n.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-bullhorn"></i><p>No notices yet. Add one!</p></div>`;
+}
+
+/* Events Grid */
+function renderEvents() {
+  const grid = document.getElementById('eventsGrid');
+  const typeColors = { Academic:'badge-reviewed', Cultural:'badge-approved', Sports:'badge-shortlisted', Holiday:'badge-pending' };
+  grid.innerHTML = DB.events.length ? DB.events.map(e => `
+    <div class="board-card">
+      <div class="bc-header">
+        <div class="bc-title">${e.title}</div>
+        <span class="badge ${typeColors[e.type]||'badge-pending'}">${e.type}</span>
+      </div>
+      <div class="bc-body">${e.description}</div>
+      <div class="bc-footer">
+        <div class="bc-date"><i class="fas fa-calendar"></i> ${e.date}</div>
+        <div class="bc-actions">
+          <button class="act-btn act-edit" onclick="openEditModal('event',${e.id})"><i class="fas fa-pen"></i></button>
+          <button class="act-btn act-del" onclick="confirmDelete('events',${e.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-calendar-times"></i><p>No events yet. Add one!</p></div>`;
+}
+
+/* Faculty Grid */
+function renderFaculty() {
+  const grid = document.getElementById('facultyGrid');
+  grid.innerHTML = DB.faculty.length ? DB.faculty.map(f => `
+    <div class="fac-admin-card">
+      <div class="fac-img">
+        <img src="${f.img}" alt="${f.name}" onerror="this.src='https://via.placeholder.com/200x140?text=Photo'"/>
+        <div class="fac-dept-badge">${f.dept}</div>
+      </div>
+      <div class="fac-body">
+        <div class="fac-name">${f.name}</div>
+        <div class="fac-role">${f.role} · ${f.exp}</div>
+        <div class="fac-footer">
+          <button class="act-btn act-edit" onclick="openEditModal('faculty',${f.id})"><i class="fas fa-pen"></i> Edit</button>
+          <button class="act-btn act-del" onclick="confirmDelete('faculty',${f.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-users-slash"></i><p>No faculty added yet</p></div>`;
+}
+
+/* Results */
+function renderResults() {
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = DB.results.length ? DB.results.map(r => `
+    <div class="board-card">
+      <div class="bc-header">
+        <div class="bc-title">${r.title}</div>
+        <span class="badge badge-approved">${r.passRate} Pass</span>
+      </div>
+      <div class="bc-body"><strong>Toppers:</strong> ${r.toppers}<br/><span style="font-size:.75rem;color:var(--muted)">${r.description}</span></div>
+      <div class="bc-footer">
+        <div class="bc-date"><i class="fas fa-calendar"></i> Year ${r.year}</div>
+        <div class="bc-actions">
+          <button class="act-btn act-edit" onclick="openEditModal('result',${r.id})"><i class="fas fa-pen"></i></button>
+          <button class="act-btn act-del" onclick="confirmDelete('results',${r.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-trophy"></i><p>No results added yet</p></div>`;
+}
+
+/* Alumni */
+function renderAlumni() {
+  const grid = document.getElementById('alumniGrid');
+  grid.innerHTML = DB.alumni.length ? DB.alumni.map(a => `
+    <div class="fac-admin-card">
+      <div class="fac-img">
+        <img src="${a.img}" alt="${a.name}" onerror="this.src='https://via.placeholder.com/200x140?text=Photo'"/>
+        <div class="fac-dept-badge">Batch ${a.batch}</div>
+      </div>
+      <div class="fac-body">
+        <div class="fac-name">${a.name}</div>
+        <div class="fac-role">${a.profession}</div>
+        <div class="fac-footer">
+          <button class="act-btn act-edit" onclick="openEditModal('alumni',${a.id})"><i class="fas fa-pen"></i> Edit</button>
+          <button class="act-btn act-del" onclick="confirmDelete('alumni',${a.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-user-graduate"></i><p>No alumni added yet</p></div>`;
+}
+
+/* Activity Feed */
+function renderActivityFeed() {
+  const items = [
+    { icon:'fas fa-file-alt', color:'blue', title:'New Admission — Aryan Sharma', sub:'Grade 6-8 · Pending review', time:'2 min ago' },
+    { icon:'fas fa-school', color:'green', title:'Campus Tour Booked — Sunita Mehta', sub:'Mon 21 Jul · 9:00 AM', time:'1 hr ago' },
+    { icon:'fas fa-user-tie', color:'gold', title:'Faculty Application — Dr. Pooja Verma', sub:'Mathematics · Shortlisted', time:'3 hrs ago' },
+    { icon:'fas fa-bullhorn', color:'blue', title:'Notice Added — Annual Sports Day', sub:'For All Grades', time:'Yesterday' },
+    { icon:'fas fa-calendar', color:'gold', title:'Event Updated — Science Fair', sub:'Date: 10 Feb 2026', time:'Yesterday' },
+  ];
+  document.getElementById('activityList').innerHTML = items.map(i => `
+    <div class="activity-item">
+      <div class="act-dot ${i.color}"><i class="${i.icon}"></i></div>
+      <div><div class="act-title">${i.title}</div><div class="act-sub">${i.sub}</div></div>
+      <div class="act-time">${i.time}</div>
+    </div>`).join('');
+}
+
+/* Update Badges */
+function updateBadges() {
+  const pending = (arr) => arr.filter(i => i.status === 'pending').length;
+  document.getElementById('nb-admissions').textContent = pending(DB.admissions);
+  document.getElementById('nb-tours').textContent      = pending(DB.tours);
+  document.getElementById('nb-fac-apps').textContent   = pending(DB.facApps);
+  document.getElementById('nb-dashboard').textContent  = pending(DB.admissions) + pending(DB.tours);
+  document.getElementById('sc-admissions').textContent = DB.admissions.length;
+  document.getElementById('sc-tours').textContent      = DB.tours.length;
+  document.getElementById('sc-facapps').textContent    = DB.facApps.length;
+  document.getElementById('sc-faculty').textContent    = DB.faculty.length;
+}
+
+/* ════ STATUS CHANGE ════ */
+const statusCycles = {
+  admissions: ['pending','reviewed','approved','rejected'],
+  tours:      ['pending','confirmed','completed','cancelled'],
+  facApps:    ['pending','reviewed','shortlisted','rejected','hired'],
+};
+async function changeStatus(type, id) {
+  const arr = type === 'facApps' ? DB.facApps : DB[type];
+  const item = arr.find(i => i.id === id);
+  if (!item) return;
+  const cycle = statusCycles[type] || ['pending','approved','rejected'];
+  const idx   = cycle.indexOf(item.status);
+  item.status = cycle[(idx + 1) % cycle.length];
+  // Update in Firestore
+  const collMap = { admissions:'admissions', tours:'campus_tours', facApps:'faculty_apps' };
+  try {
+    if (typeof id === 'string' && collMap[type]) {
+      await updateDoc(doc(db, collMap[type], id), { status: item.status });
+    }
+  } catch(e) { /* local only for dummy data */ }
+  renderAllPages();
+  showToast(`Status updated to "${capitalize(item.status)}"`, 'success');
+}
+
+/* ════ VIEW MODALS ════ */
+function viewAdmission(id) {
+  const r = DB.admissions.find(i => i.id === id);
+  if (!r) return;
+  showDetailModal('Admission Details', `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="di-label">Student Name</div><div class="di-val">${r.studentName}</div></div>
+      <div class="detail-item"><div class="di-label">Grade</div><div class="di-val">${r.grade}</div></div>
+      <div class="detail-item"><div class="di-label">Parent Name</div><div class="di-val">${r.parentName}</div></div>
+      <div class="detail-item"><div class="di-label">Mobile</div><div class="di-val">${r.mobile}</div></div>
+      <div class="detail-item"><div class="di-label">Email</div><div class="di-val">${r.email}</div></div>
+      <div class="detail-item"><div class="di-label">Date</div><div class="di-val">${r.date}</div></div>
+      <div class="detail-item"><div class="di-label">Status</div><div class="di-val">${badgeHtml(r.status)}</div></div>
+    </div>`, id, 'admissions');
+}
+
+function viewTour(id) {
+  const r = DB.tours.find(i => i.id === id);
+  if (!r) return;
+  showDetailModal('Tour Booking Details', `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="di-label">Parent Name</div><div class="di-val">${r.parentName}</div></div>
+      <div class="detail-item"><div class="di-label">Child Name</div><div class="di-val">${r.childName}</div></div>
+      <div class="detail-item"><div class="di-label">Tour Date</div><div class="di-val">${r.tourDate}</div></div>
+      <div class="detail-item"><div class="di-label">Tour Time</div><div class="di-val">${r.tourTime}</div></div>
+      <div class="detail-item"><div class="di-label">Mobile</div><div class="di-val">${r.mobile}</div></div>
+      <div class="detail-item"><div class="di-label">Grade</div><div class="di-val">${r.grade}</div></div>
+      <div class="detail-item"><div class="di-label">Visitors</div><div class="di-val">${r.visitors}</div></div>
+      <div class="detail-item"><div class="di-label">Status</div><div class="di-val">${badgeHtml(r.status)}</div></div>
+    </div>`, id, 'tours');
+}
+
+function viewFacApp(id) {
+  const r = DB.facApps.find(i => i.id === id);
+  if (!r) return;
+  showDetailModal('Faculty Application Details', `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="di-label">Name</div><div class="di-val">${r.name}</div></div>
+      <div class="detail-item"><div class="di-label">Department</div><div class="di-val">${r.department}</div></div>
+      <div class="detail-item"><div class="di-label">Email</div><div class="di-val">${r.email}</div></div>
+      <div class="detail-item"><div class="di-label">Mobile</div><div class="di-val">${r.mobile}</div></div>
+      <div class="detail-item"><div class="di-label">Experience</div><div class="di-val">${r.experience}</div></div>
+      <div class="detail-item"><div class="di-label">Position</div><div class="di-val">${r.position}</div></div>
+      <div class="detail-item full"><div class="di-label">Resume Link</div><div class="di-val"><a href="${r.resumeLink}" target="_blank" style="color:var(--blue)">${r.resumeLink}</a></div></div>
+      <div class="detail-item"><div class="di-label">Status</div><div class="di-val">${badgeHtml(r.status)}</div></div>
+    </div>`, id, 'facApps');
+}
+
+function showDetailModal(title, html, id, type) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn-sm btn-ghost-sm" onclick="closeModal()">Close</button>
+    <button class="btn-sm btn-gold-sm" onclick="changeStatus('${type}',${id});closeModal()"><i class="fas fa-sync-alt"></i> Update Status</button>
+    <button class="btn-sm" style="background:var(--red-pl);color:var(--red)" onclick="closeModal();confirmDelete('${type}',${id})"><i class="fas fa-trash"></i> Delete</button>`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+/* ════ ADD MODALS ════ */
+const addForms = {
+  notice: {
+    title: 'Add New Notice',
+    fields: `
+      <div class="mform-row full"><div class="mform-group"><label>Notice Title</label><input class="mform-control" id="af-title" placeholder="e.g. Annual Sports Day"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Notice Content</label><textarea class="mform-control" id="af-body" rows="3" placeholder="Notice details…"></textarea></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Applicable For</label><select class="mform-control" id="af-grade"><option>All Grades</option><option>Grades 1-5</option><option>Grades 6-8</option><option>Grades 9-10</option><option>Grades 11-12</option></select></div>
+      <div class="mform-group"><label>Type</label><select class="mform-control" id="af-type"><option>Academic</option><option>Sports</option><option>Cultural</option><option>Holiday</option><option>General</option></select></div></div>`,
+    save: async () => {
+      const item = { title: val('af-title'), body: val('af-body'), grade: val('af-grade'), type: val('af-type'), date: new Date().toISOString().split('T')[0], timestamp: serverTimestamp() };
+      if (!item.title || !item.body) { showToast('Please fill all fields', 'error'); return; }
+      try {
+        const docRef = await addDoc(collection(db, 'notices'), item);
+        DB.notices.push({ id: docRef.id, ...item });
+        renderNotices(); closeModal(); showToast('Notice added successfully!', 'success');
+      } catch(e) { showToast('Error saving notice: ' + e.message, 'error'); }
+    }
+  },
+  event: {
+    title: 'Add New Event',
+    fields: `
+      <div class="mform-row full"><div class="mform-group"><label>Event Title</label><input class="mform-control" id="af-title" placeholder="e.g. Science Fair 2026"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Date</label><input class="mform-control" id="af-date" type="date"/></div>
+      <div class="mform-group"><label>Type</label><select class="mform-control" id="af-type"><option>Academic</option><option>Cultural</option><option>Sports</option><option>Community</option><option>Holiday</option></select></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="af-desc" rows="3" placeholder="Event description…"></textarea></div></div>`,
+    save: async () => {
+      const item = { title: val('af-title'), date: val('af-date'), type: val('af-type'), description: val('af-desc'), timestamp: serverTimestamp() };
+      if (!item.title || !item.date) { showToast('Please fill all fields', 'error'); return; }
+      try {
+        const docRef = await addDoc(collection(db, 'events'), item);
+        DB.events.push({ id: docRef.id, ...item });
+        renderEvents(); closeModal(); showToast('Event added successfully!', 'success');
+      } catch(e) { showToast('Error saving event: ' + e.message, 'error'); }
+    }
+  },
+  faculty: {
+    title: 'Add Faculty Member',
+    fields: `
+      <div class="mform-row"><div class="mform-group"><label>Full Name</label><input class="mform-control" id="af-name" placeholder="Dr. Anjali Mehta"/></div>
+      <div class="mform-group"><label>Role / Designation</label><input class="mform-control" id="af-role" placeholder="Head of Science"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Department</label><select class="mform-control" id="af-dept"><option>Science</option><option>Mathematics</option><option>Languages</option><option>Humanities</option><option>Commerce</option><option>Computer Science</option><option>Sports</option><option>Arts</option></select></div>
+      <div class="mform-group"><label>Experience</label><input class="mform-control" id="af-exp" placeholder="e.g. 10 Years"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Photo URL</label><input class="mform-control" id="af-img" placeholder="https://… (Unsplash or direct link)"/></div></div>`,
+    save: async () => {
+      const item = { name: val('af-name'), role: val('af-role'), dept: val('af-dept'), exp: val('af-exp'), img: val('af-img') || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80', timestamp: serverTimestamp() };
+      if (!item.name || !item.role) { showToast('Please fill all required fields', 'error'); return; }
+      try {
+        const docRef = await addDoc(collection(db, 'faculty'), item);
+        DB.faculty.push({ id: docRef.id, ...item });
+        renderFaculty(); updateBadges(); closeModal(); showToast('Faculty member added!', 'success');
+      } catch(e) { showToast('Error saving faculty: ' + e.message, 'error'); }
+    }
+  },
+  result: {
+    title: 'Add Result',
+    fields: `
+      <div class="mform-row full"><div class="mform-group"><label>Result Title</label><input class="mform-control" id="af-title" placeholder="e.g. Grade 10 Board Results 2026"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Grade</label><select class="mform-control" id="af-grade"><option>Grade 1-5</option><option>Grade 6-8</option><option>Grade 9-10</option><option>Grade 11-12</option></select></div>
+      <div class="mform-group"><label>Pass Rate</label><input class="mform-control" id="af-pass" placeholder="e.g. 97%"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Academic Year</label><input class="mform-control" id="af-year" placeholder="2026"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Toppers</label><input class="mform-control" id="af-toppers" placeholder="Name (score%), Name (score%)…"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="af-desc" rows="2" placeholder="Brief summary…"></textarea></div></div>`,
+    save: async () => {
+      const item = { title: val('af-title'), grade: val('af-grade'), passRate: val('af-pass'), year: val('af-year'), toppers: val('af-toppers'), description: val('af-desc'), timestamp: serverTimestamp() };
+      if (!item.title) { showToast('Please enter a title', 'error'); return; }
+      try {
+        const docRef = await addDoc(collection(db, 'results'), item);
+        DB.results.push({ id: docRef.id, ...item });
+        renderResults(); closeModal(); showToast('Result added!', 'success');
+      } catch(e) { showToast('Error saving result: ' + e.message, 'error'); }
+    }
+  },
+  alumni: {
+    title: 'Add Alumni',
+    fields: `
+      <div class="mform-row"><div class="mform-group"><label>Full Name</label><input class="mform-control" id="af-name" placeholder="Rahul Khanna"/></div>
+      <div class="mform-group"><label>Batch Year</label><input class="mform-control" id="af-batch" placeholder="e.g. 2018"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Current Profession</label><input class="mform-control" id="af-prof" placeholder="e.g. Software Engineer @ Google"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Photo URL</label><input class="mform-control" id="af-img" placeholder="https://…"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Quote / Message</label><textarea class="mform-control" id="af-msg" rows="2" placeholder="What Global Academy means to them…"></textarea></div></div>`,
+    save: async () => {
+      const item = { name: val('af-name'), batch: val('af-batch'), profession: val('af-prof'), img: val('af-img') || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80', message: val('af-msg'), timestamp: serverTimestamp() };
+      if (!item.name) { showToast('Please enter a name', 'error'); return; }
+      try {
+        const docRef = await addDoc(collection(db, 'alumni'), item);
+        DB.alumni.push({ id: docRef.id, ...item });
+        renderAlumni(); closeModal(); showToast('Alumni added!', 'success');
+      } catch(e) { showToast('Error saving alumni: ' + e.message, 'error'); }
+    }
+  }
+};
+
+function val(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+function openAddModal(type) {
+  const cfg = addForms[type];
+  if (!cfg) return;
+  document.getElementById('modalTitle').textContent = cfg.title;
+  document.getElementById('modalBody').innerHTML = cfg.fields;
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn-sm btn-ghost-sm" onclick="closeModal()">Cancel</button>
+    <button class="btn-sm btn-gold-sm" onclick="addForms['${type}'].save()"><i class="fas fa-save"></i> Save</button>`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+/* ════ EDIT MODALS ════ */
+function openEditModal(type, id) {
+  const dataMap = { notice: DB.notices, event: DB.events, faculty: DB.faculty, result: DB.results, alumni: DB.alumni };
+  const arr  = dataMap[type];
+  const item = arr?.find(i => i.id === id);
+  if (!item) return;
+
+  const fields = {
+    notice: `
+      <div class="mform-row full"><div class="mform-group"><label>Title</label><input class="mform-control" id="ef-title" value="${item.title}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Content</label><textarea class="mform-control" id="ef-body" rows="3">${item.body}</textarea></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Applicable For</label><input class="mform-control" id="ef-grade" value="${item.grade}"/></div>
+      <div class="mform-group"><label>Type</label><input class="mform-control" id="ef-type" value="${item.type||''}"/></div></div>`,
+    event: `
+      <div class="mform-row full"><div class="mform-group"><label>Title</label><input class="mform-control" id="ef-title" value="${item.title}"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Date</label><input class="mform-control" id="ef-date" type="date" value="${item.date}"/></div>
+      <div class="mform-group"><label>Type</label><input class="mform-control" id="ef-type" value="${item.type}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="ef-desc" rows="3">${item.description}</textarea></div></div>`,
+    faculty: `
+      <div class="mform-row"><div class="mform-group"><label>Name</label><input class="mform-control" id="ef-name" value="${item.name}"/></div>
+      <div class="mform-group"><label>Role</label><input class="mform-control" id="ef-role" value="${item.role}"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Department</label><input class="mform-control" id="ef-dept" value="${item.dept}"/></div>
+      <div class="mform-group"><label>Experience</label><input class="mform-control" id="ef-exp" value="${item.exp}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Photo URL</label><input class="mform-control" id="ef-img" value="${item.img}"/></div></div>`,
+    result: `
+      <div class="mform-row full"><div class="mform-group"><label>Title</label><input class="mform-control" id="ef-title" value="${item.title}"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Grade</label><input class="mform-control" id="ef-grade" value="${item.grade}"/></div>
+      <div class="mform-group"><label>Pass Rate</label><input class="mform-control" id="ef-pass" value="${item.passRate}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Toppers</label><input class="mform-control" id="ef-toppers" value="${item.toppers}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="ef-desc" rows="2">${item.description}</textarea></div></div>`,
+    alumni: `
+      <div class="mform-row"><div class="mform-group"><label>Name</label><input class="mform-control" id="ef-name" value="${item.name}"/></div>
+      <div class="mform-group"><label>Batch</label><input class="mform-control" id="ef-batch" value="${item.batch}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Profession</label><input class="mform-control" id="ef-prof" value="${item.profession}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Photo URL</label><input class="mform-control" id="ef-img" value="${item.img}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Message</label><textarea class="mform-control" id="ef-msg" rows="2">${item.message}</textarea></div></div>`
+  };
+
+  document.getElementById('modalTitle').textContent = `Edit ${capitalize(type)}`;
+  document.getElementById('modalBody').innerHTML = fields[type] || '';
+  document.getElementById('modalFooter').innerHTML = `
+    <button class="btn-sm btn-ghost-sm" onclick="closeModal()">Cancel</button>
+    <button class="btn-sm btn-gold-sm" onclick="saveEdit('${type}',${id})"><i class="fas fa-save"></i> Save Changes</button>`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+async function saveEdit(type, id) {
+  const dataMap = { notice: DB.notices, event: DB.events, faculty: DB.faculty, result: DB.results, alumni: DB.alumni };
+  const collMap = { notice:'notices', event:'events', faculty:'faculty', result:'results', alumni:'alumni' };
+  const arr  = dataMap[type];
+  const item = arr?.find(i => i.id === id);
+  if (!item) return;
+
+  const updatedData = {
+    notice:  { title:val('ef-title'), body:val('ef-body'), grade:val('ef-grade'), type:val('ef-type') },
+    event:   { title:val('ef-title'), date:val('ef-date'), type:val('ef-type'), description:val('ef-desc') },
+    faculty: { name:val('ef-name'), role:val('ef-role'), dept:val('ef-dept'), exp:val('ef-exp'), img:val('ef-img') },
+    result:  { title:val('ef-title'), grade:val('ef-grade'), passRate:val('ef-pass'), toppers:val('ef-toppers'), description:val('ef-desc') },
+    alumni:  { name:val('ef-name'), batch:val('ef-batch'), profession:val('ef-prof'), img:val('ef-img'), message:val('ef-msg') },
+  };
+
+  try {
+    // Update in Firestore
+    await updateDoc(doc(db, collMap[type], id), updatedData[type]);
+    // Update local cache
+    Object.assign(item, updatedData[type]);
+    const renderMap = { notice:renderNotices, event:renderEvents, faculty:renderFaculty, result:renderResults, alumni:renderAlumni };
+    renderMap[type]?.();
+    closeModal();
+    showToast(`${capitalize(type)} updated successfully!`, 'success');
+  } catch(e) {
+    // Firestore ID might be numeric (dummy data) — just update locally
+    Object.assign(item, updatedData[type]);
+    const renderMap = { notice:renderNotices, event:renderEvents, faculty:renderFaculty, result:renderResults, alumni:renderAlumni };
+    renderMap[type]?.();
+    closeModal();
+    showToast(`${capitalize(type)} updated!`, 'success');
+  }
+}
+
+/* ════ DELETE ════ */
+function confirmDelete(type, id) {
+  pendingDeleteFn = () => deleteItem(type, id);
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+  if (pendingDeleteFn) { pendingDeleteFn(); pendingDeleteFn = null; }
+  closeConfirm();
+});
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('show'); }
+
+async function deleteItem(type, id) {
+  const collMap = {
+    admissions:'admissions', tours:'campus_tours', facApps:'faculty_apps',
+    notices:'notices', events:'events', faculty:'faculty', results:'results', alumni:'alumni'
+  };
+  const localMap = {
+    admissions:()=>{ DB.admissions=DB.admissions.filter(i=>i.id!==id); renderAdmissions(); },
+    tours:()=>{ DB.tours=DB.tours.filter(i=>i.id!==id); renderTours(); },
+    facApps:()=>{ DB.facApps=DB.facApps.filter(i=>i.id!==id); renderFacApps(); },
+    notices:()=>{ DB.notices=DB.notices.filter(i=>i.id!==id); renderNotices(); },
+    events:()=>{ DB.events=DB.events.filter(i=>i.id!==id); renderEvents(); },
+    faculty:()=>{ DB.faculty=DB.faculty.filter(i=>i.id!==id); renderFaculty(); },
+    results:()=>{ DB.results=DB.results.filter(i=>i.id!==id); renderResults(); },
+    alumni:()=>{ DB.alumni=DB.alumni.filter(i=>i.id!==id); renderAlumni(); },
+  };
+  try {
+    if (typeof id === 'string') {
+      await deleteDoc(doc(db, collMap[type], id));
+    }
+  } catch(e) { /* numeric dummy ID — only local delete */ }
+  localMap[type]?.();
+  updateBadges();
+  showToast('Deleted successfully', 'success');
+}
+
+/* ════ SEARCH & FILTER ════ */
+function filterTable(type, query) {
+  const q = query.toLowerCase();
+  const maps = {
+    'admissions': { data: DB.admissions, render: renderAdmissions, fields: ['studentName','parentName','mobile','email','grade'] },
+    'tours':      { data: DB.tours,      render: renderTours,      fields: ['parentName','childName','tourDate','mobile'] },
+    'faculty-apps':{ data: DB.facApps,   render: renderFacApps,    fields: ['name','department','email','position'] },
+  };
+  const cfg = maps[type];
+  if (!cfg) return;
+  const filtered = cfg.data.filter(row => cfg.fields.some(f => row[f]?.toLowerCase().includes(q)));
+  cfg.render(filtered);
+}
+
+function filterByStatus(type, status) {
+  const maps = {
+    'admissions': { data: DB.admissions, render: renderAdmissions },
+    'tours':      { data: DB.tours,      render: renderTours      },
+    'faculty-apps':{ data: DB.facApps,   render: renderFacApps    },
+  };
+  const cfg = maps[type];
+  if (!cfg) return;
+  cfg.render(status ? cfg.data.filter(r => r.status === status) : cfg.data);
+}
+
+function filterByGrade(type, grade) {
+  if (type === 'admissions') renderAdmissions(grade ? DB.admissions.filter(r => r.grade === grade) : DB.admissions);
+}
+
+/* ════ EXPORT CSV ════ */
+function exportCSV(type) {
+  const dataMap = { admissions: DB.admissions, tours: DB.tours, 'faculty-apps': DB.facApps };
+  const data = dataMap[type];
+  if (!data || !data.length) { showToast('No data to export', 'error'); return; }
+  const keys = Object.keys(data[0]);
+  const csv  = [keys.join(','), ...data.map(r => keys.map(k => `"${r[k]||''}"`).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = `${type}-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast('CSV exported successfully!', 'success');
+}
+
+/* ════ SETTINGS ════ */
+function changePassword() {
+  const np = document.getElementById('newPass').value;
+  const cp = document.getElementById('confirmPass').value;
+  if (!np || !cp) { showToast('Please fill both fields', 'error'); return; }
+  if (np !== cp)  { showToast('Passwords do not match!', 'error'); return; }
+  if (np.length < 6){ showToast('Password must be at least 6 characters', 'error'); return; }
+  ADMIN_CREDENTIALS.password = np;
+  document.getElementById('dispPass').textContent = np;
+  document.getElementById('newPass').value = '';
+  document.getElementById('confirmPass').value = '';
+  showToast('Password updated successfully!', 'success');
+}
+function saveSettings() {
+  document.getElementById('dispEmail').textContent = document.getElementById('schoolEmail').value;
+  showToast('Settings saved successfully!', 'success');
+}
+
+/* ════ MODAL HELPERS ════ */
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target === document.getElementById('modalOverlay')) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); closeConfirm(); } });
+
+/* ════ TOAST ════ */
+function showToast(msg, type = 'default') {
+  const wrap = document.getElementById('toastWrap');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icon = { success:'fas fa-check-circle', error:'fas fa-times-circle', warning:'fas fa-exclamation-triangle', default:'fas fa-info-circle' };
+  toast.innerHTML = `<i class="${icon[type]||icon.default}"></i> ${msg}`;
+  wrap.appendChild(toast);
+  setTimeout(() => { toast.style.animation = 'toastOut .3s both'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Events – Global Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- ============================================================
+     CSS SECTION
+     ============================================================ -->
+<style>
+/* ── Tokens ─────────────────────────────────────────────── */
+:root{
+  --navy:     #1a2340;
+  --navy-mid: #253060;
+  --navy-lt:  #2d3f6e;
+  --gold:     #e8a020;
+  --gold-dk:  #c8870a;
+  --gold-pl:  #fef3e2;
+  --white:    #ffffff;
+  --cream:    #faf8f4;
+  --off:      #f4f5f9;
+  --border:   #e5e7eb;
+  --text:     #1e2535;
+  --muted:    #64748b;
+  --r:        12px;
+  --sh-sm:    0 2px 12px rgba(0,0,0,.07);
+  --sh-md:    0 10px 36px rgba(0,0,0,.12);
+  --sh-lg:    0 24px 64px rgba(0,0,0,.17);
+
+  /* event type colors */
+  --academic-bg: #dbeafe; --academic-c: #1d4ed8;
+  --cultural-bg: #fef3e2; --cultural-c: #c8870a;
+  --sports-bg:   #dcfce7; --sports-c:   #16a34a;
+  --community-bg:#fce7f3; --community-c:#be185d;
+  --holiday-bg:  #ede9fe; --holiday-c:  #7c3aed;
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);line-height:1.65;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+
+/* ── Utility ────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 24px;border-radius:7px;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .25s;border:2px solid transparent;font-family:'DM Sans',sans-serif}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold-dk);transform:translateY(-1px)}
+.btn-navy{background:var(--navy);color:var(--white)}.btn-navy:hover{background:var(--navy-lt)}
+.btn-outline{background:transparent;border-color:var(--white);color:var(--white)}.btn-outline:hover{background:rgba(255,255,255,.12)}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}.btn-ghost:hover{border-color:var(--gold);color:var(--gold-dk)}
+.btn-lg{padding:13px 32px;font-size:1rem}
+
+.sec-tag{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pl);color:var(--gold-dk);font-size:.72rem;font-weight:700;padding:5px 13px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.3rem);color:var(--navy);line-height:1.18;margin-bottom:10px}
+.sec-sub{color:var(--muted);font-size:.94rem;line-height:1.75}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.reveal.left{transform:translateX(-26px)}.reveal.right{transform:translateX(26px)}
+.reveal.in{opacity:1;transform:translate(0)}
+
+/* ── NAVBAR ─────────────────────────────────────────────── */
+.navbar{position:sticky;top:0;z-index:1000;background:var(--white);box-shadow:0 1px 20px rgba(0,0,0,.08);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:64px;transition:box-shadow .3s}
+.navbar-brand{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--navy)}
+.logo-icon{width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem}
+.navbar-links{display:flex;gap:26px;align-items:center}
+.navbar-links a{font-size:.88rem;font-weight:500;color:var(--text);transition:color .2s}
+.navbar-links a:hover,.navbar-links a.active{color:var(--gold-dk)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:24px;height:2px;background:var(--navy);border-radius:2px;transition:.3s}
+.mobile-menu{display:none;flex-direction:column;background:var(--white);box-shadow:0 8px 20px rgba(0,0,0,.1);padding:16px 5%;gap:14px;position:absolute;top:64px;left:0;right:0;z-index:999}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-weight:500;color:var(--text);font-size:1rem}
+
+/* ── HERO ───────────────────────────────────────────────── */
+.events-hero{
+  position:relative;background:var(--navy);
+  padding:80px 5% 70px;overflow:hidden;
+  text-align:center;
+}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.hero-glow{position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(232,160,32,.15) 0%,transparent 70%);pointer-events:none}
+.events-hero::after{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,transparent,var(--gold),transparent)}
+.hero-breadcrumb{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:18px;background:rgba(255,255,255,.07);padding:5px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.1)}
+.hero-breadcrumb a{color:var(--gold)}
+.events-hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4.5vw,3.4rem);color:var(--white);line-height:1.12;margin-bottom:16px;animation:hUp .7s both}
+.events-hero h1 em{color:var(--gold);font-style:italic}
+.events-hero p{color:rgba(255,255,255,.55);font-size:.98rem;max-width:480px;margin:0 auto 32px;line-height:1.8;animation:hUp .9s both}
+
+/* hero counters row */
+.hero-counts{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;animation:hUp 1.05s both}
+.hc-item{text-align:center}
+.hc-val{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold);line-height:1}
+.hc-lbl{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:4px}
+.hc-item+.hc-item{border-left:1px solid rgba(255,255,255,.1);padding-left:48px}
+
+@keyframes hUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── FILTER BAR ─────────────────────────────────────────── */
+.filter-bar{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0 5%;
+  position:sticky;top:64px;z-index:900;
+  box-shadow:var(--sh-sm);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;min-height:58px;
+}
+.filter-tabs{display:flex;gap:4px;flex-wrap:wrap;padding:10px 0}
+.f-tab{
+  padding:7px 18px;border-radius:99px;
+  font-size:.82rem;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--border);background:transparent;
+  color:var(--muted);transition:all .22s;font-family:'DM Sans',sans-serif;
+}
+.f-tab:hover{border-color:var(--gold);color:var(--gold-dk)}
+.f-tab.active{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.view-toggle{display:flex;gap:6px}
+.v-btn{
+  width:36px;height:36px;border-radius:8px;
+  border:1.5px solid var(--border);background:transparent;
+  color:var(--muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;transition:all .2s;
+}
+.v-btn.active{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.search-wrap{position:relative}
+.search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem;pointer-events:none}
+.search-input{padding:8px 14px 8px 32px;border:1.5px solid var(--border);border-radius:99px;font-size:.82rem;font-family:'DM Sans',sans-serif;outline:none;width:200px;transition:border-color .2s}
+.search-input:focus{border-color:var(--gold)}
+
+/* ── UPCOMING FEATURED ──────────────────────────────────── */
+.featured-section{padding:60px 5% 0;background:var(--cream)}
+.featured-card{
+  background:var(--navy);border-radius:20px;
+  overflow:hidden;display:grid;grid-template-columns:1fr 1.2fr;
+  box-shadow:var(--sh-lg);margin-bottom:48px;
+}
+.fc-img{position:relative;overflow:hidden;min-height:280px}
+.fc-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.7);transition:transform .5s}
+.featured-card:hover .fc-img img{transform:scale(1.04)}
+.fc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,35,64,.7) 0%,transparent 60%)}
+.fc-badge{
+  position:absolute;top:20px;left:20px;z-index:2;
+  background:var(--gold);color:var(--navy);
+  font-size:.72rem;font-weight:700;padding:5px 14px;
+  border-radius:99px;letter-spacing:.4px;text-transform:uppercase;
+}
+.fc-content{padding:40px 36px;display:flex;flex-direction:column;justify-content:center;gap:14px;position:relative;z-index:2}
+.fc-eyebrow{font-size:.72rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.fc-eyebrow::before{content:'';width:20px;height:2px;background:var(--gold);border-radius:2px}
+.fc-content h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,2.5vw,2rem);color:var(--white);line-height:1.2}
+.fc-content p{color:rgba(255,255,255,.58);font-size:.9rem;line-height:1.7}
+.fc-meta{display:flex;flex-wrap:wrap;gap:16px}
+.fc-meta-item{display:flex;align-items:center;gap:8px;font-size:.82rem;color:rgba(255,255,255,.65)}
+.fc-meta-item i{color:var(--gold);font-size:.8rem}
+.fc-actions{display:flex;gap:10px;margin-top:6px}
+
+/* ── EVENTS GRID VIEW ───────────────────────────────────── */
+.events-section{padding:48px 5% 80px;background:var(--cream)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.section-header h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy)}
+.section-header p{font-size:.82rem;color:var(--muted);margin-top:3px}
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+/* event card */
+.ev-card{
+  background:var(--white);border-radius:14px;
+  overflow:hidden;box-shadow:var(--sh-sm);
+  border:1px solid var(--border);
+  transition:transform .3s,box-shadow .3s,border-color .3s;
+  cursor:pointer;
+  opacity:0;transform:translateY(20px);
+}
+.ev-card.show{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease,box-shadow .3s,border-color .3s}
+.ev-card:hover{transform:translateY(-5px) !important;box-shadow:var(--sh-md);border-color:var(--gold)}
+.ev-card-img{height:170px;overflow:hidden;position:relative;background:var(--navy)}
+.ev-card-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.82);transition:transform .5s}
+.ev-card:hover .ev-card-img img{transform:scale(1.07)}
+.ev-type-badge{
+  position:absolute;top:12px;left:12px;
+  font-size:.68rem;font-weight:700;padding:4px 10px;
+  border-radius:99px;letter-spacing:.3px;text-transform:uppercase;
+  backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.2);
+}
+.ev-date-badge{
+  position:absolute;top:12px;right:12px;
+  background:var(--white);border-radius:10px;
+  padding:8px 12px;text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+.ev-date-badge .day{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--navy);line-height:1}
+.ev-date-badge .month{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.ev-card-body{padding:18px 20px}
+.ev-card-body h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy);margin-bottom:6px;line-height:1.3}
+.ev-card-body p{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.ev-card-meta{display:flex;flex-wrap:wrap;gap:12px}
+.ev-meta-item{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--muted)}
+.ev-meta-item i{color:var(--gold-dk);font-size:.72rem}
+.ev-card-footer{
+  padding:12px 20px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ev-card-footer .learn-more{font-size:.78rem;font-weight:600;color:var(--gold-dk);display:flex;align-items:center;gap:5px;transition:gap .2s}
+.ev-card:hover .ev-card-footer .learn-more{gap:9px}
+
+/* ── LIST VIEW ──────────────────────────────────────────── */
+.events-list{display:flex;flex-direction:column;gap:14px}
+.ev-list-item{
+  background:var(--white);border-radius:12px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;gap:20px;
+  padding:18px 22px;box-shadow:var(--sh-sm);
+  cursor:pointer;transition:border-color .25s,transform .25s;
+  opacity:0;transform:translateX(-20px);
+}
+.ev-list-item.show{opacity:1;transform:translateX(0);transition:opacity .5s ease,transform .5s ease,border-color .25s}
+.ev-list-item:hover{border-color:var(--gold);transform:translateX(4px) !important}
+.ev-list-date{
+  width:56px;height:56px;border-radius:12px;
+  background:var(--navy);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ev-list-date .day{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--gold);line-height:1}
+.ev-list-date .mon{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px}
+.ev-list-info{flex:1}
+.ev-list-info h4{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:4px}
+.ev-list-info p{font-size:.8rem;color:var(--muted)}
+.ev-list-meta{display:flex;gap:14px;margin-top:5px}
+.ev-list-meta span{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+.ev-list-meta span i{color:var(--gold-dk);font-size:.7rem}
+.ev-list-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+
+/* ── MONTH DIVIDER ──────────────────────────────────────── */
+.month-divider{
+  display:flex;align-items:center;gap:14px;
+  margin:32px 0 20px;
+}
+.month-divider span{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;color:var(--navy);
+  white-space:nowrap;
+}
+.month-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── TYPE BADGE COLORS ──────────────────────────────────── */
+.badge-academic{background:var(--academic-bg);color:var(--academic-c)}
+.badge-cultural{background:var(--cultural-bg);color:var(--cultural-c)}
+.badge-sports{background:var(--sports-bg);color:var(--sports-c)}
+.badge-community{background:var(--community-bg);color:var(--community-c)}
+.badge-holiday{background:var(--holiday-bg);color:var(--holiday-c)}
+
+/* ── NO RESULTS ─────────────────────────────────────────── */
+.no-results{text-align:center;padding:64px 20px;display:none}
+.no-results i{font-size:3rem;color:var(--border);margin-bottom:16px;display:block}
+.no-results h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--navy);margin-bottom:8px}
+.no-results p{color:var(--muted);font-size:.9rem}
+
+/* ── PAST EVENTS ────────────────────────────────────────── */
+.past-section{padding:70px 5%;background:var(--white)}
+.past-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:2rem}
+.past-card{
+  background:var(--off);border-radius:12px;padding:20px;
+  border:1px solid var(--border);
+  transition:border-color .25s,transform .25s;
+}
+.past-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.past-card .pc-date{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.past-card .pc-date i{color:var(--gold-dk)}
+.past-card h4{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--navy);margin-bottom:6px}
+.past-card p{font-size:.78rem;color:var(--muted);line-height:1.55}
+.past-year-tag{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--gold-pl);color:var(--gold-dk);display:inline-block;margin-top:10px}
+
+/* ── EVENT MODAL ────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(10,14,28,.72);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--white);border-radius:20px;
+  max-width:600px;width:100%;
+  overflow:hidden;
+  box-shadow:var(--sh-lg);
+  animation:mIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  max-height:92vh;overflow-y:auto;
+}
+@keyframes mIn{from{opacity:0;transform:scale(.9) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-img{height:220px;overflow:hidden;position:relative;background:var(--navy)}
+.modal-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.75)}
+.modal-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(26,35,64,.85) 0%,transparent 55%)}
+.modal-img-content{position:absolute;bottom:20px;left:24px;right:24px;z-index:2}
+.modal-img-content h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--white);margin-bottom:6px}
+.modal-close{
+  position:absolute;top:14px;right:14px;z-index:3;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.18);border:none;
+  color:var(--white);font-size:.9rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);transition:background .2s;
+}
+.modal-close:hover{background:rgba(255,255,255,.32)}
+.modal-body{padding:26px 28px 30px}
+.modal-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.mm-item{display:flex;align-items:center;gap:10px}
+.mm-icon{width:36px;height:36px;background:var(--gold-pl);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--gold-dk);font-size:.88rem;flex-shrink:0}
+.mm-item .k{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+.mm-item .v{font-size:.9rem;font-weight:600;color:var(--navy)}
+.modal-desc h4{font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.modal-desc p{font-size:.88rem;color:var(--muted);line-height:1.75}
+.modal-footer{padding:16px 28px 24px;display:flex;gap:10px}
+
+/* ── CTA ────────────────────────────────────────────────── */
+.cta-section{background:var(--gold);padding:60px 5%;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.cta-section h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,2.5vw,2rem);color:var(--navy)}
+.cta-section p{color:rgba(26,35,64,.65);font-size:.92rem;margin-top:6px;max-width:420px}
+.cta-btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ── LOADING STATE ──────────────────────────────────────── */
+.loading-state{text-align:center;padding:64px 20px}
+.loading-state .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{color:var(--muted);font-size:.9rem}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:36px}
+.footer-brand h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--white);margin-bottom:10px}
+.footer-brand p{font-size:.88rem;line-height:1.75}
+.footer-col h4{color:var(--white);font-weight:600;margin-bottom:14px;font-size:.92rem}
+.footer-col ul li{margin-bottom:9px}
+.footer-col ul li a{font-size:.88rem;color:rgba(255,255,255,.58);transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;font-size:.82rem;color:rgba(255,255,255,.32)}
+.whatsapp-fab{position:fixed;bottom:24px;right:24px;z-index:999;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;box-shadow:0 4px 16px rgba(37,211,102,.4);transition:transform .25s}
+.whatsapp-fab:hover{transform:scale(1.1)}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1060px){
+  .navbar-links,.navbar-actions .btn-gold{display:none}.hamburger{display:flex}
+  .featured-card{grid-template-columns:1fr}.fc-img{min-height:200px}
+  .events-grid{grid-template-columns:1fr 1fr}
+  .past-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:640px){
+  .events-grid{grid-template-columns:1fr}
+  .past-grid{grid-template-columns:1fr}
+  .hc-item+.hc-item{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.1);padding-top:14px}
+  .hero-counts{flex-direction:column;gap:14px}
+  .modal-meta-grid{grid-template-columns:1fr}
+  .filter-bar{flex-direction:column;align-items:flex-start;padding:12px 5%}
+  .footer-top{grid-template-columns:1fr}
+  .cta-section{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HTML SECTION
+     ============================================================ -->
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="global-academy.html" class="navbar-brand">
+    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+    Global Academy
+  </a>
+  <ul class="navbar-links">
+    <li><a href="global-academy.html">Home</a></li>
+    <li><a href="about.html">About Us</a></li>
+    <li><a href="admissions.html">Admissions</a></li>
+    <li><a href="global-academy.html#programs">Academics</a></li>
+    <li><a href="faculty.html">Faculty</a></li>
+    <li><a href="campus-life.html">Campus Life</a></li>
+    <li><a href="events.html" class="active">Events</a></li>
+    <li><a href="global-academy.html#contact">Contact Us</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <a href="global-academy.html#fees" class="btn btn-gold"><i class="fas fa-credit-card"></i> Pay Fees</a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="global-academy.html">Home</a>
+  <a href="about.html">About Us</a>
+  <a href="admissions.html">Admissions</a>
+  <a href="faculty.html">Faculty</a>
+  <a href="campus-life.html">Campus Life</a>
+  <a href="events.html">Events</a>
+  <a href="global-academy.html#contact">Contact</a>
+  <a href="global-academy.html#fees" class="btn btn-gold" style="text-align:center">Pay Fees</a>
+</div>
+
+<!-- ═══ HERO ══════════════════════════════════════════════ -->
+<section class="events-hero">
+  <div class="hero-dots"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-breadcrumb"><a href="global-academy.html">Home</a><i class="fas fa-chevron-right" style="font-size:.6rem"></i><span>Events</span></div>
+  <h1>School <em>Events</em> &amp;<br>Celebrations</h1>
+  <p>From annual days to science fairs — a full calendar of moments that make school life extraordinary.</p>
+  <div class="hero-counts">
+    <div class="hc-item"><div class="hc-val" data-target="8">0</div><div class="hc-lbl">Annual Events</div></div>
+    <div class="hc-item"><div class="hc-val" data-target="1000">0</div><div class="hc-lbl">Students Participate</div></div>
+    <div class="hc-item"><div class="hc-val" data-target="20">0</div><div class="hc-lbl">Years of Celebrations</div></div>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <div class="filter-tabs" id="filterTabs">
+    <button class="f-tab active" data-type="all">All Events</button>
+    <button class="f-tab" data-type="academic">Academic</button>
+    <button class="f-tab" data-type="cultural">Cultural</button>
+    <button class="f-tab" data-type="sports">Sports</button>
+    <button class="f-tab" data-type="community">Community</button>
+    <button class="f-tab" data-type="holiday">Holiday</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;padding:10px 0">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search events…"/>
+    </div>
+    <div class="view-toggle">
+      <button class="v-btn active" id="gridViewBtn" title="Grid View"><i class="fas fa-th"></i></button>
+      <button class="v-btn" id="listViewBtn" title="List View"><i class="fas fa-list"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FEATURED UPCOMING ════════════════════════════════ -->
+<section class="featured-section" id="featuredSection">
+  <div class="featured-card reveal" id="featuredCard">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- ═══ EVENTS SECTION ═══════════════════════════════════ -->
+<section class="events-section">
+  <div class="section-header reveal">
+    <div>
+      <h2 id="sectionTitle">Upcoming Events</h2>
+      <p id="sectionSub">All scheduled events for this academic year</p>
+    </div>
+    <span id="eventCount" style="font-size:.82rem;color:var(--muted)"></span>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" id="loadingState">
+    <div class="spinner"></div>
+    <p>Loading events…</p>
+  </div>
+
+  <!-- Grid View -->
+  <div class="events-grid" id="eventsGrid" style="display:none"></div>
+
+  <!-- List View -->
+  <div class="events-list" id="eventsList" style="display:none"></div>
+
+  <!-- No Results -->
+  <div class="no-results" id="noResults">
+    <i class="fas fa-calendar-times"></i>
+    <h3>No Events Found</h3>
+    <p>Try a different filter or search term.</p>
+  </div>
+</section>
+
+<!-- ═══ PAST EVENTS ═══════════════════════════════════════ -->
+<section class="past-section" id="pastSection">
+  <div style="text-align:center;margin-bottom:0" class="reveal">
+    <div class="sec-tag"><i class="fas fa-history"></i> Past Events</div>
+    <h2 class="sec-title">Memories We've Made</h2>
+    <p class="sec-sub" style="max-width:460px;margin:0 auto">A glimpse at the celebrations and milestones from previous years.</p>
+  </div>
+  <div class="past-grid" id="pastGrid">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- ═══ CTA ════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div>
+    <h2>Want to be Part of Our Events?</h2>
+    <p>Join Global Academy and experience a school year full of celebrations, competitions, and unforgettable moments.</p>
+  </div>
+  <div class="cta-btns">
+    <a href="admissions.html" class="btn btn-navy btn-lg"><i class="fas fa-pen"></i> Apply for Admission</a>
+    <a href="campus-tour.html" class="btn btn-ghost" style="border-color:var(--navy);color:var(--navy)"><i class="fas fa-school"></i> Book a Tour</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand"><h3>Global Academy</h3><p>Empowering minds and building future leaders through quality education, discipline, and innovation since 2005.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="global-academy.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="admissions.html">Admissions</a></li><li><a href="faculty.html">Faculty</a></li></ul></div>
+    <div class="footer-col"><h4>Events</h4><ul><li><a href="#" onclick="filterByType('academic')">Academic</a></li><li><a href="#" onclick="filterByType('cultural')">Cultural</a></li><li><a href="#" onclick="filterByType('sports')">Sports</a></li><li><a href="#" onclick="filterByType('community')">Community</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">info@globalacademy.edu</a></li><li><a href="#">+07.08722, 43710</a></li><li><a href="global-academy.html#fees">Pay Fees Online</a></li><li><a href="global-academy.html#contact">Find Us</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Global Academy. All rights reserved.</div>
+</footer>
+
+<!-- EVENT DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-img" id="modalImg">
+      <img id="mImg" src="" alt=""/>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      <div class="modal-img-content">
+        <h2 id="mTitle"></h2>
+        <span class="ev-type-badge" id="mTypeBadge"></span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta-grid" id="mMetaGrid"></div>
+      <div class="modal-desc">
+        <h4>About This Event</h4>
+        <p id="mDesc"></p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+      <a href="admissions.html" class="btn btn-gold"><i class="fas fa-pen"></i> Apply Now</a>
+    </div>
+  </div>
+</div>
+
+<a href="https://wa.me/0708722437" class="whatsapp-fab"><i class="fab fa-whatsapp"></i></a>
+
+<!-- ============================================================
+     JAVASCRIPT SECTION
+     ============================================================ -->
+<script type="module">
+/* ═══ Firebase Imports ═══ */
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+/* ═══ Firebase Init ═══ */
+const firebaseConfig = {
+  apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPLi",
+  authDomain:        "school-website-cms.firebaseapp.com",
+  projectId:         "school-website-cms",
+  storageBucket:     "school-website-cms.firebasestorage.app",
+  messagingSenderId: "720284453351",
+  appId:             "1:720284453351:web:05e609eac5747f9aaf9542",
+  measurementId:     "G-HT4LSRM993"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+/* ═══ Default/Fallback Event Data ═══
+   Jab Firebase mein koi data nahi hoga tab yeh dikhega
+   Admin panel se events add karo — yeh replace ho jayega
+   ══════════════════════════════════════════════════════ */
+const DEFAULT_EVENTS = [
+  { id:'d1', title:'Republic Day Parade', date:'2026-01-26', type:'cultural', description:'School-wide assembly, cultural programmes, and a student march past on the campus grounds. Every house presents a cultural performance followed by the Principal\'s address.', venue:'School Ground', time:'8:00 AM', audience:'All Students', img:'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=700&q=80' },
+  { id:'d2', title:'Science & Innovation Fair', date:'2026-02-10', type:'academic', description:'Students from Grades 6–12 present original science and technology projects to a panel of external judges and industry experts. Best projects win trophies and cash prizes.', venue:'School Auditorium', time:'10:00 AM', audience:'Grades 6-12', img:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=700&q=80' },
+  { id:'d3', title:'Literary Festival', date:'2026-03-08', type:'academic', description:'Essay writing, poetry slam, public speaking, creative writing and debate competitions across all grades. External authors are invited as guest speakers.', venue:'School Hall', time:'9:00 AM', audience:'All Grades', img:'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=700&q=80' },
+  { id:'d4', title:'Annual Sports Day', date:'2026-04-15', type:'sports', description:'A full-day athletics carnival featuring races, relays, field events, and the grand house championship finals. Parents are invited to cheer for their children.', venue:'Sports Complex', time:'7:30 AM', audience:'All Students', img:'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=700&q=80' },
+  { id:'d5', title:'Independence Day', date:'2026-08-15', type:'cultural', description:'Flag hoisting ceremony, patriotic cultural performances, and the annual Principal\'s address. Students present tableaux depicting India\'s freedom struggle.', venue:'School Ground', time:'8:00 AM', audience:'All Students', img:'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=700&q=80' },
+  { id:'d6', title:'Diwali Mela', date:'2026-10-20', type:'cultural', description:'Student-run food and craft stalls, folk dance performances, rangoli competitions and the grand lantern lighting ceremony. One of the most awaited events of the year.', venue:'School Premises', time:'4:00 PM', audience:'All + Parents', img:'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=700&q=80' },
+  { id:'d7', title:'Annual Day Celebration', date:'2026-11-22', type:'cultural', description:'The biggest event of the year — awards night, drama performances, classical dance, music concerts and prize distribution. Attended by over 2,000 guests every year.', venue:'Auditorium', time:'5:00 PM', audience:'All + Parents', img:'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=700&q=80' },
+  { id:'d8', title:'Community Outreach Day', date:'2026-01-05', type:'community', description:'Students spend a full day in community service — rural tutoring, neighbourhood clean-up drives, donation campaigns and plantation drives in nearby villages.', venue:'Off Campus', time:'8:00 AM', audience:'Grades 6-12', img:'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=700&q=80' },
+  { id:'d9', title:'Teachers Day Celebration', date:'2026-09-05', type:'cultural', description:'Students take over teaching duties for the day while faculty are felicitated. Special performances, gratitude messages and a surprise celebration for all teachers.', venue:'School Hall', time:'9:00 AM', audience:'All Students', img:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=700&q=80' },
+  { id:'d10', title:'Inter-School Sports Meet', date:'2026-12-05', type:'sports', description:'Annual inter-school athletics and team sports competition. Schools from across the district participate in football, basketball, badminton, and track events.', venue:'Sports Complex', time:'8:00 AM', audience:'Selected Students', img:'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=700&q=80' },
+];
+
+const PAST_EVENTS = [
+  { title:'Annual Day 2025', date:'Nov 2025', type:'cultural', desc:'A spectacular evening of performances, awards and memories.' },
+  { title:'Sports Day 2025', date:'Apr 2025', type:'sports', desc:'House Agni won the overall championship trophy for the second consecutive year.' },
+  { title:'Science Fair 2025', date:'Feb 2025', type:'academic', desc:'16 student projects presented — 3 won district-level recognition.' },
+  { title:'Diwali Mela 2024', date:'Oct 2024', type:'cultural', desc:'Record attendance with 800+ families visiting the celebration.' },
+  { title:'Literary Fest 2025', date:'Mar 2025', type:'academic', desc:'12 students represented school at state-level competitions.' },
+  { title:'Republic Day 2025', date:'Jan 2025', type:'cultural', desc:'Grade 10 students presented a powerful tableau on national unity.' },
+  { title:'Community Drive 2024', date:'Jan 2024', type:'community', desc:'200+ students planted 500 trees in nearby villages.' },
+  { title:'Inter-School Meet 2024', date:'Dec 2024', type:'sports', desc:'Global Academy won gold in Football and Silver in Athletics.' },
+];
+
+/* ═══ State ═══ */
+let allEvents     = [];
+let currentFilter = 'all';
+let currentView   = 'grid';
+let currentSearch = '';
+
+/* ═══ Type Config ═══ */
+const typeConfig = {
+  academic:  { label:'Academic',  icon:'fas fa-book',         cls:'badge-academic' },
+  cultural:  { label:'Cultural',  icon:'fas fa-music',        cls:'badge-cultural' },
+  sports:    { label:'Sports',    icon:'fas fa-running',      cls:'badge-sports'   },
+  community: { label:'Community', icon:'fas fa-hands-helping',cls:'badge-community'},
+  holiday:   { label:'Holiday',   icon:'fas fa-flag',         cls:'badge-holiday'  },
+};
+const eventImages = {
+  academic:  'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=700&q=80',
+  cultural:  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=700&q=80',
+  sports:    'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=700&q=80',
+  community: 'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=700&q=80',
+  holiday:   'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=700&q=80',
+};
+
+/* ═══ Load Events from Firebase ═══ */
+function loadEvents() {
+  try {
+    onSnapshot(collection(db, 'events'), (snap) => {
+      if (!snap.empty) {
+        allEvents = snap.docs.map(d => ({
+          id: d.id,
+          title:       d.data().title       || '',
+          date:        d.data().date        || '',
+          type:        (d.data().type || 'cultural').toLowerCase(),
+          description: d.data().description || '',
+          venue:       d.data().venue       || 'School Premises',
+          time:        d.data().time        || 'TBA',
+          audience:    d.data().audience    || 'All Students',
+          img:         d.data().img         || eventImages[(d.data().type||'cultural').toLowerCase()] || eventImages.cultural,
+        }));
+      } else {
+        // No Firebase data — use defaults
+        allEvents = DEFAULT_EVENTS;
+      }
+      renderAll();
+    });
+  } catch(e) {
+    // Firebase error — use defaults
+    allEvents = DEFAULT_EVENTS;
+    renderAll();
+  }
+}
+
+/* ═══ Render All ═══ */
+function renderAll() {
+  document.getElementById('loadingState').style.display = 'none';
+  renderFeatured();
+  renderEvents();
+  renderPast();
+  updateCounts();
+}
+
+/* ═══ Get Filtered Events ═══ */
+function getFiltered() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  return allEvents.filter(e => {
+    const typeMatch   = currentFilter === 'all' || e.type === currentFilter;
+    const searchMatch = !currentSearch || e.title.toLowerCase().includes(currentSearch) || e.description.toLowerCase().includes(currentSearch);
+    const upcoming    = new Date(e.date) >= today;
+    return typeMatch && searchMatch && upcoming;
+  }).sort((a,b) => new Date(a.date) - new Date(b.date));
+}
+
+/* ═══ Featured Event ═══ */
+function renderFeatured() {
+  const today    = new Date(); today.setHours(0,0,0,0);
+  const upcoming = allEvents.filter(e => new Date(e.date) >= today).sort((a,b) => new Date(a.date) - new Date(b.date));
+  const ev       = upcoming[0];
+  const section  = document.getElementById('featuredSection');
+  if (!ev) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  const cfg = typeConfig[ev.type] || typeConfig.cultural;
+  const d   = new Date(ev.date);
+  document.getElementById('featuredCard').innerHTML = `
+    <div class="fc-img">
+      <img src="${ev.img || eventImages[ev.type] || eventImages.cultural}" alt="${ev.title}"/>
+      <div class="fc-badge">⭐ Next Up</div>
+    </div>
+    <div class="fc-content">
+      <div class="fc-eyebrow">${cfg.label} Event</div>
+      <h2>${ev.title}</h2>
+      <p>${ev.description}</p>
+      <div class="fc-meta">
+        <div class="fc-meta-item"><i class="fas fa-calendar-alt"></i> ${d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+        <div class="fc-meta-item"><i class="fas fa-clock"></i> ${ev.time || 'TBA'}</div>
+        <div class="fc-meta-item"><i class="fas fa-map-marker-alt"></i> ${ev.venue || 'School Premises'}</div>
+        <div class="fc-meta-item"><i class="fas fa-users"></i> ${ev.audience || 'All Students'}</div>
+      </div>
+      <div class="fc-actions">
+        <button class="btn btn-gold" onclick="openModal('${ev.id}')"><i class="fas fa-info-circle"></i> View Details</button>
+        <a href="admissions.html" class="btn btn-outline"><i class="fas fa-pen"></i> Apply Now</a>
+      </div>
+    </div>`;
+  document.getElementById('featuredCard').classList.add('in');
+}
+
+/* ═══ Render Events ═══ */
+function renderEvents() {
+  const filtered = getFiltered();
+  const grid     = document.getElementById('eventsGrid');
+  const list     = document.getElementById('eventsList');
+  const noRes    = document.getElementById('noResults');
+
+  if (!filtered.length) {
+    grid.style.display = 'none'; list.style.display = 'none'; noRes.style.display = 'block'; return;
+  }
+  noRes.style.display = 'none';
+
+  if (currentView === 'grid') {
+    grid.style.display = 'grid'; list.style.display = 'none';
+    grid.innerHTML = filtered.map((e,i) => buildCard(e,i)).join('');
+  } else {
+    grid.style.display = 'none'; list.style.display = 'flex';
+    // Group by month
+    const byMonth = {};
+    filtered.forEach(e => {
+      const key = new Date(e.date).toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+      if (!byMonth[key]) byMonth[key] = [];
+      byMonth[key].push(e);
+    });
+    list.innerHTML = Object.entries(byMonth).map(([month, evs]) =>
+      `<div class="month-divider"><span>📅 ${month}</span></div>` +
+      evs.map((e,i) => buildListItem(e,i)).join('')
+    ).join('');
+  }
+
+  // Animate cards in
+  setTimeout(() => {
+    document.querySelectorAll('.ev-card, .ev-list-item').forEach((el, i) => {
+      setTimeout(() => el.classList.add('show'), i * 80);
+    });
+  }, 50);
+
+  document.getElementById('eventCount').textContent = `${filtered.length} event${filtered.length !== 1 ? 's' : ''} found`;
+}
+
+/* ═══ Build Card ═══ */
+function buildCard(e, i) {
+  const cfg  = typeConfig[e.type] || typeConfig.cultural;
+  const d    = new Date(e.date);
+  const day  = d.getDate();
+  const mon  = d.toLocaleDateString('en-IN',{month:'short'}).toUpperCase();
+  const img  = e.img || eventImages[e.type] || eventImages.cultural;
+  return `
+  <div class="ev-card" onclick="openModal('${e.id}')">
+    <div class="ev-card-img">
+      <img src="${img}" alt="${e.title}" loading="lazy"/>
+      <div class="ev-type-badge ${cfg.cls}"><i class="${cfg.icon}"></i> ${cfg.label}</div>
+      <div class="ev-date-badge"><div class="day">${day}</div><div class="month">${mon}</div></div>
+    </div>
+    <div class="ev-card-body">
+      <h3>${e.title}</h3>
+      <p>${e.description.length > 90 ? e.description.slice(0,90)+'…' : e.description}</p>
+      <div class="ev-card-meta">
+        <div class="ev-meta-item"><i class="fas fa-clock"></i> ${e.time || 'TBA'}</div>
+        <div class="ev-meta-item"><i class="fas fa-map-marker-alt"></i> ${e.venue || 'School'}</div>
+      </div>
+    </div>
+    <div class="ev-card-footer">
+      <div class="ev-meta-item"><i class="fas fa-users"></i> ${e.audience || 'All Students'}</div>
+      <div class="learn-more"><span>View Details</span><i class="fas fa-arrow-right"></i></div>
+    </div>
+  </div>`;
+}
+
+/* ═══ Build List Item ═══ */
+function buildListItem(e, i) {
+  const cfg = typeConfig[e.type] || typeConfig.cultural;
+  const d   = new Date(e.date);
+  return `
+  <div class="ev-list-item" onclick="openModal('${e.id}')">
+    <div class="ev-list-date">
+      <div class="day">${d.getDate()}</div>
+      <div class="mon">${d.toLocaleDateString('en-IN',{month:'short'}).toUpperCase()}</div>
+    </div>
+    <div class="ev-list-info">
+      <h4>${e.title}</h4>
+      <p>${e.description.length > 80 ? e.description.slice(0,80)+'…' : e.description}</p>
+      <div class="ev-list-meta">
+        <span><i class="fas fa-clock"></i> ${e.time || 'TBA'}</span>
+        <span><i class="fas fa-map-marker-alt"></i> ${e.venue || 'School'}</span>
+        <span><i class="fas fa-users"></i> ${e.audience || 'All'}</span>
+      </div>
+    </div>
+    <div class="ev-list-right">
+      <span class="ev-type-badge ${cfg.cls}" style="position:relative;top:auto;left:auto"><i class="${cfg.icon}"></i> ${cfg.label}</span>
+      <span style="font-size:.78rem;color:var(--gold-dk);font-weight:600">View →</span>
+    </div>
+  </div>`;
+}
+
+/* ═══ Render Past Events ═══ */
+function renderPast() {
+  const grid = document.getElementById('pastGrid');
+  const typeCols = {academic:'var(--academic-c)',cultural:'var(--cultural-c)',sports:'var(--sports-c)',community:'var(--community-c)',holiday:'var(--holiday-c)'};
+  grid.innerHTML = PAST_EVENTS.map(e => `
+    <div class="past-card reveal">
+      <div class="pc-date"><i class="fas fa-calendar"></i> ${e.date}</div>
+      <h4>${e.title}</h4>
+      <p>${e.desc}</p>
+      <span class="past-year-tag">${e.type.charAt(0).toUpperCase()+e.type.slice(1)}</span>
+    </div>`).join('');
+  // Trigger reveals
+  setTimeout(() => {
+    document.querySelectorAll('.past-card').forEach((el,i) => {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          setTimeout(() => entry.target.classList.add('in'), i*80);
+          obs.unobserve(entry.target);
+        });
+      },{threshold:.1});
+      obs.observe(el);
+    });
+  },100);
+}
+
+/* ═══ Update Hero Counts ═══ */
+function updateCounts() {
+  const today    = new Date(); today.setHours(0,0,0,0);
+  const upcoming = allEvents.filter(e => new Date(e.date) >= today).length;
+  // animate
+  const vals = document.querySelectorAll('.hc-val[data-target]');
+  vals.forEach(el => {
+    const target = parseInt(el.dataset.target);
+    let cur = 0;
+    const step = Math.max(1, Math.ceil(target / (1400/16)));
+    const sfx  = target >= 1000 ? '+' : (el.closest('.hc-item').querySelector('.hc-lbl').textContent.includes('Year') ? '+' : '');
+    const t = setInterval(() => {
+      cur = Math.min(cur + step, target);
+      el.textContent = cur + sfx;
+      if (cur >= target) clearInterval(t);
+    }, 16);
+  });
+}
+
+/* ═══ Open Modal ═══ */
+window.openModal = function(id) {
+  const e = allEvents.find(ev => ev.id === id || ev.id === String(id));
+  if (!e) return;
+  const cfg = typeConfig[e.type] || typeConfig.cultural;
+  const d   = new Date(e.date);
+  document.getElementById('mImg').src          = e.img || eventImages[e.type] || eventImages.cultural;
+  document.getElementById('mTitle').textContent = e.title;
+  document.getElementById('mTypeBadge').className = `ev-type-badge ${cfg.cls}`;
+  document.getElementById('mTypeBadge').innerHTML = `<i class="${cfg.icon}"></i> ${cfg.label}`;
+  document.getElementById('mDesc').textContent   = e.description;
+  document.getElementById('mMetaGrid').innerHTML = `
+    <div class="mm-item"><div class="mm-icon"><i class="fas fa-calendar-alt"></i></div><div><div class="k">Date</div><div class="v">${d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div></div>
+    <div class="mm-item"><div class="mm-icon"><i class="fas fa-clock"></i></div><div><div class="k">Time</div><div class="v">${e.time || 'TBA'}</div></div></div>
+    <div class="mm-item"><div class="mm-icon"><i class="fas fa-map-marker-alt"></i></div><div><div class="k">Venue</div><div class="v">${e.venue || 'School Premises'}</div></div></div>
+    <div class="mm-item"><div class="mm-icon"><i class="fas fa-users"></i></div><div><div class="k">For</div><div class="v">${e.audience || 'All Students'}</div></div></div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeModal = function() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+/* ═══ Filter & Search ═══ */
+document.querySelectorAll('.f-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.f-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.type;
+    renderEvents();
+    renderFeatured();
+  });
+});
+
+window.filterByType = function(type) {
+  currentFilter = type;
+  document.querySelectorAll('.f-tab').forEach(t => t.classList.toggle('active', t.dataset.type === type));
+  renderEvents();
+  window.scrollTo({top: document.getElementById('filterBar').offsetTop - 70, behavior:'smooth'});
+};
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentSearch = e.target.value.toLowerCase().trim();
+  renderEvents();
+});
+
+/* ═══ View Toggle ═══ */
+document.getElementById('gridViewBtn').addEventListener('click', () => {
+  currentView = 'grid';
+  document.getElementById('gridViewBtn').classList.add('active');
+  document.getElementById('listViewBtn').classList.remove('active');
+  renderEvents();
+});
+document.getElementById('listViewBtn').addEventListener('click', () => {
+  currentView = 'list';
+  document.getElementById('listViewBtn').classList.add('active');
+  document.getElementById('gridViewBtn').classList.remove('active');
+  renderEvents();
+});
+
+/* ═══ Modal close ═══ */
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+/* ═══ Scroll Reveal ═══ */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+    setTimeout(() => entry.target.classList.add('in'), siblings.indexOf(entry.target) * 100);
+    revObs.unobserve(entry.target);
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+/* ═══ Navbar shadow ═══ */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow =
+    window.scrollY > 40 ? '0 4px 28px rgba(0,0,0,.13)' : '0 1px 20px rgba(0,0,0,.08)';
+}, { passive:true });
+
+/* ═══ Mobile Menu ═══ */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
+  const sp = hamburger.querySelectorAll('span');
+  const o  = mobileMenu.classList.contains('open');
+  sp[0].style.transform = o ? 'rotate(45deg) translate(5px,5px)' : '';
+  sp[1].style.opacity   = o ? '0' : '';
+  sp[2].style.transform = o ? 'rotate(-45deg) translate(5px,-5px)' : '';
+});
+
+/* ═══ INIT ═══ */
+loadEvents();
+</script>
+</body>
+</html>

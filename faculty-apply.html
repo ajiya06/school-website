@@ -1017,19 +1017,75 @@ btnNext.addEventListener('click', async () => {
   btnNext.style.opacity = '.7';
   btnNext.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting…';
 
-  try {
-    const res = await fetch(FORMSPREE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+  /* ── Firebase payload ── */
+  const facData = {
+    name:           payload['Full Name'],
+    email:          payload['Email'],
+    mobile:         payload['Mobile'],
+    city:           payload['City'],
+    gender:         payload['Gender'],
+    dob:            payload['Date of Birth'],
+    linkedin:       payload['LinkedIn'],
+    qualification:  payload['Qualification'],
+    specialisation: payload['Specialisation'],
+    university:     payload['University'],
+    gradYear:       payload['Grad Year'],
+    department:     payload['Department'],
+    gradeLevel:     payload['Grade Level'],
+    position:       payload['Position'],
+    experience:     payload['Experience'],
+    prevSchool:     payload['Previous School'],
+    currentCtc:     payload['Current CTC'],
+    expectedCtc:    payload['Expected CTC'],
+    noticePeriod:   payload['Notice Period'],
+    availability:   payload['Availability'],
+    resumeLink:     payload['Resume Link'],
+    coverLetter:    payload['Cover Letter'],
+    status:         'Pending',
+    submittedAt:    new Date().toISOString(),
+    timestamp:      Date.now()
+  };
 
-    if (res.ok) {
+  try {
+    /* ── Run Firebase save + Formspree email in parallel ── */
+    const [firebaseResult, formspreeResult] = await Promise.allSettled([
+
+      /* 1️⃣  Save to Firestore — faculty_apps collection */
+      (async () => {
+        const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
+        const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
+        const firebaseConfig = {
+          apiKey:            'AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI',
+          authDomain:        'school-website-cms.firebaseapp.com',
+          projectId:         'school-website-cms',
+          storageBucket:     'school-website-cms.firebasestorage.app',
+          messagingSenderId: '720284453351',
+          appId:             '1:720284453351:web:05e609eac5747f9aaf9542'
+        };
+        const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+        return addDoc(collection(db, 'faculty_apps'), facData);
+      })(),
+
+      /* 2️⃣  Send email via Formspree */
+      fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+    ]);
+
+    const firebaseOk  = firebaseResult.status === 'fulfilled';
+    const formspreeOk = formspreeResult.status === 'fulfilled' && formspreeResult.value.ok;
+
+    if (firebaseOk || formspreeOk) {
+      if (!firebaseOk)  console.warn('Firebase save failed:', firebaseResult.reason);
+      if (!formspreeOk) console.warn('Formspree email failed:', formspreeResult.reason);
       showSuccess();
     } else {
-      const data = await res.json();
-      throw new Error(data?.errors?.[0]?.message || 'Submission failed');
+      throw new Error('Both Firebase and Formspree failed');
     }
+
   } catch (err) {
     btnNext.disabled = false;
     btnNext.style.opacity = '1';
