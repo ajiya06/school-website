@@ -300,7 +300,7 @@
   <ul class="navbar-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="index.html#about">About Us</a></li>
-    <li><a href="#" class="active">Admissions</a></li>
+    <li><a href="admission.html" class="active">Admissions</a></li>
     <li><a href="index.html#programs">Academics</a></li>
     <li><a href="faculty.html">Faculty</a></li>
     <li><a href="campus-life.html">Campus Life</a></li>
@@ -1064,8 +1064,8 @@
 
         // 1️⃣  Save to Firestore
         (async () => {
-          const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
-          const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
+          const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+          const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
           const firebaseConfig = {
             apiKey:            'AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI',
             authDomain:        'school-website-cms.firebaseapp.com',

@@ -565,7 +565,7 @@ textarea.mform-control{resize:vertical;min-height:80px}
         <label>Email Address</label>
         <div class="login-input-wrap">
           <i class="fas fa-envelope"></i>
-          <input class="login-input" id="loginEmail" type="email" placeholder="admin@globalacademy.edu" autocomplete="email"/>
+          <input class="login-input" id="loginEmail" type="email" placeholder="ajaykumar8985jg@gmail.com" autocomplete="email"/>
         </div>
       </div>
       <div class="login-group">
@@ -649,7 +649,7 @@ textarea.mform-control{resize:vertical;min-height:80px}
         <div class="admin-avatar">A</div>
         <div class="admin-info">
           <h4>Admin</h4>
-          <span>admin@globalacademy.edu</span>
+          <span>ajaykumar8985jg@gmail.com</span>
         </div>
         <button class="logout-btn" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
       </div>
@@ -909,11 +909,11 @@ textarea.mform-control{resize:vertical;min-height:80px}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
               <div style="background:var(--off);border-radius:10px;padding:16px;border:1px solid var(--border)">
                 <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px">ADMIN EMAIL</div>
-                <div style="font-weight:600;color:var(--navy)" id="dispEmail">admin@globalacademy.edu</div>
+                <div style="font-weight:600;color:var(--navy)" id="dispEmail">ajaykumar8985jg@gmail.com</div>
               </div>
               <div style="background:var(--off);border-radius:10px;padding:16px;border:1px solid var(--border)">
                 <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px">PASSWORD</div>
-                <div style="font-weight:600;color:var(--navy)" id="dispPass">admin@123</div>
+                <div style="font-weight:600;color:var(--navy)" id="dispPass">admin@1234</div>
               </div>
             </div>
           </div>
@@ -956,56 +956,38 @@ textarea.mform-control{resize:vertical;min-height:80px}
      JAVASCRIPT SECTION
      ============================================================ -->
 <script type="module">
-/* ════ Firebase Imports ════ */
+
+/* ════ FIREBASE IMPORTS ════ */
 import { initializeApp }
   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+import { getAuth, signInWithEmailAndPassword, signOut, updatePassword }
   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, doc,
          updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-/* ════ Firebase Init ════ */
+/* ════ FIREBASE INIT ════ */
 const firebaseConfig = {
-  apiKey: "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
-  authDomain: "school-website-cms.firebaseapp.com",
-  projectId: "school-website-cms",
-  storageBucket: "school-website-cms.firebasestorage.app",
+  apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
+  authDomain:        "school-website-cms.firebaseapp.com",
+  projectId:         "school-website-cms",
+  storageBucket:     "school-website-cms.firebasestorage.app",
   messagingSenderId: "720284453351",
-  appId: "1:720284453351:web:05e609eac5747f9aaf9542",
-  measurementId: "G-HT4LSRM993"
+  appId:             "1:720284453351:web:05e609eac5747f9aaf9542",
+  measurementId:     "G-HT4LSRM993"
 };
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-
-/* ════ Auth State — Auto login/logout ════ */
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById('loginPage').style.display  = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
-    document.querySelector('.admin-info h4').textContent   = 'Admin';
-    document.querySelector('.admin-info span').textContent = user.email;
-    document.querySelector('.admin-avatar').textContent    = user.email.charAt(0).toUpperCase();
-    initPanel();
-  } else {
-    document.getElementById('loginPage').style.display  = 'flex';
-    document.getElementById('adminPanel').style.display = 'none';
-  }
-});
-
-/* ════════════════════════════════════════════════════════════
-   LOCAL DATA CACHE — Firestore se populate hoga
-   ════════════════════════════════════════════════════════════ */
+/* ════ LOCAL DATA CACHE ════ */
 let DB = {
   admissions: [], tours: [], facApps: [],
   notices: [], events: [], faculty: [],
   results: [], alumni: []
 };
 
-let nextIds = { admissions:6, tours:4, facApps:3, notices:4, events:4, faculty:5, results:2, alumni:3 };
 let pendingDeleteFn = null;
-let currentPageId = 'dashboard';
+let currentPageId   = 'dashboard';
 
 /* ════ PASSWORD TOGGLE ════ */
 document.getElementById('passToggle').addEventListener('click', () => {
@@ -1025,69 +1007,47 @@ async function doLogin() {
   const pass   = document.getElementById('loginPass').value;
   const errBox = document.getElementById('loginError');
   const btn    = document.getElementById('loginBtn');
-
   if (!email || !pass) {
-    document.getElementById('loginErrMsg').textContent = 'Please enter both email and password.';
+    document.getElementById('loginErrMsg').textContent = 'Please enter your email and password.';
     errBox.classList.add('show'); return;
   }
-
   errBox.classList.remove('show');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Logging in…';
-
-  // ── Check if running on file:// (local file, no server) ──
-  const isLocalFile = window.location.protocol === 'file:';
-
-  if (isLocalFile) {
-    // Local file mode — Firebase Auth needs HTTPS
-    // Show helpful message
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
-    errBox.classList.add('show');
-    document.getElementById('loginErrMsg').innerHTML =
-      '⚠️ File:// se Firebase kaam nahi karta.<br>' +
-      'VS Code mein <b>Live Server</b> se open karo ya GitHub Pages use karo.';
-    return;
-  }
-
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
   try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    showToast('Welcome back! 👋', 'success');
-  } catch (err) {
-    console.error('Firebase Auth Error:', err.code, err.message);
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    const user = cred.user;
+    document.getElementById('loginPage').style.display  = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.querySelector('.admin-info h4').textContent   = user.displayName || 'Admin';
+    document.querySelector('.admin-info span').textContent = user.email;
+    document.querySelector('.admin-avatar').textContent    = (user.displayName || user.email)[0].toUpperCase();
+    initPanel();
+    showToast('Welcome back! You have signed in successfully.', 'success');
+  } catch(e) {
     errBox.classList.add('show');
-
-    const msg = {
-      'auth/user-not-found':     'Yeh email Firebase mein registered nahi hai.',
-      'auth/wrong-password':     'Password galat hai. Dobara try karo.',
-      'auth/invalid-email':      'Valid email address daalo.',
-      'auth/too-many-requests':  'Bahut zyada attempts. Kuch der baad try karo.',
-      'auth/invalid-credential': 'Email ya password galat hai.',
-      'auth/network-request-failed': 'Internet connection check karo.',
-      'auth/operation-not-allowed':  'Email/Password login enabled nahi hai Firebase mein.',
-      'auth/unauthorized-domain':    'Yeh domain Firebase mein authorized nahi hai. GitHub Pages use karo.',
-    };
-
-    document.getElementById('loginErrMsg').textContent =
-      msg[err.code] || `Error: ${err.code} — ${err.message}`;
-
+    const msg = (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found')
+      ? 'Invalid email or password. Please try again.'
+      : e.code === 'auth/too-many-requests'
+      ? 'Too many failed attempts. Please try again later.'
+      : 'Login failed. Please check your connection and try again.';
+    document.getElementById('loginErrMsg').textContent = msg;
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
   }
 }
 
-/* ════ LOGOUT — Firebase Auth ════ */
 document.getElementById('logoutBtn').addEventListener('click', async () => {
-  try {
-    await signOut(auth);
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginPass').value  = '';
-    document.getElementById('loginError').classList.remove('show');
-    const btn = document.getElementById('loginBtn');
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
-    showToast('Logged out successfully', 'default');
-  } catch(e) { showToast('Logout failed', 'error'); }
+  try { await signOut(auth); } catch(e) { /* ignore */ }
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('loginPage').style.display  = 'flex';
+  document.getElementById('loginEmail').value  = '';
+  document.getElementById('loginPass').value   = '';
+  document.getElementById('loginError').classList.remove('show');
+  const lBtn = document.getElementById('loginBtn');
+  lBtn.disabled = false;
+  lBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
+  showToast('You have been logged out successfully.', 'default');
 });
 
 /* ════ INIT PANEL ════ */
@@ -1096,88 +1056,79 @@ function initPanel() {
   setInterval(updateTopbarDate, 60000);
   renderAllPages();
   renderActivityFeed();
-  loadFirestoreData(); // Load real data from Firebase
+  loadFirestoreData(); // Load data from Firestore
 }
 
 /* ════ LOAD FIRESTORE DATA ════ */
 async function loadFirestoreData() {
-  // Load Notices
-  const noticesSnap = await getDocs(collection(db, 'notices'));
-  if (!noticesSnap.empty) {
-    DB.notices = noticesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderNotices();
-  }
-  // Load Events
-  const eventsSnap = await getDocs(collection(db, 'events'));
-  if (!eventsSnap.empty) {
-    DB.events = eventsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderEvents();
-  }
-  // Load Faculty
-  const facultySnap = await getDocs(collection(db, 'faculty'));
-  if (!facultySnap.empty) {
-    DB.faculty = facultySnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderFaculty();
-    updateBadges();
-  }
-  // Load Results
-  const resultsSnap = await getDocs(collection(db, 'results'));
-  if (!resultsSnap.empty) {
-    DB.results = resultsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderResults();
-  }
-  // Load Alumni
-  const alumniSnap = await getDocs(collection(db, 'alumni'));
-  if (!alumniSnap.empty) {
-    DB.alumni = alumniSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderAlumni();
-  }
-  // Real-time listener for form submissions
+  const load = async (col, key, renderFn) => {
+    try {
+      const snap = await getDocs(collection(db, col));
+      DB[key] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFn();
+    } catch(e) { console.warn('Load error [' + col + ']:', e.message); }
+  };
+  await Promise.all([
+    load('notices',  'notices',  renderNotices),
+    load('events',   'events',   renderEvents),
+    load('faculty',  'faculty',  renderFaculty),
+    load('results',  'results',  renderResults),
+    load('alumni',   'alumni',   renderAlumni),
+  ]);
+  updateBadges();
   listenToSubmissions();
 }
 
 /* ════ REAL-TIME LISTENERS ════ */
 function listenToSubmissions() {
-  // Admissions — real-time
-  onSnapshot(query(collection(db, 'admissions'), orderBy('timestamp', 'desc')), snap => {
-    DB.admissions = snap.docs.map(d => ({ id: d.id, ...d.data(),
-      date: d.data().timestamp?.toDate().toISOString().split('T')[0] || 'N/A' }));
+  // Admissions real-time listener (no orderBy: timestamp is a number, avoids index errors)
+  onSnapshot(collection(db, 'admissions'), snap => {
+    DB.admissions = snap.docs
+      .map(d => ({
+        id: d.id, ...d.data(),
+        date: d.data().submittedAt
+          ? d.data().submittedAt.split('T')[0]
+          : (d.data().timestamp ? new Date(d.data().timestamp).toISOString().split('T')[0] : 'N/A')
+      }))
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
     renderAdmissions();
     updateBadges();
-    // Show toast for new entry
     snap.docChanges().forEach(change => {
       if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
-        showToast('New admission form received!', 'success');
-        // Browser notification
+        showToast('New admission form received.', 'success');
         if (Notification.permission === 'granted') {
           new Notification('New Admission — Global Academy', {
-            body: change.doc.data().studentName || change.doc.data()['Student Name'] || 'New submission'
+            body: change.doc.data().studentName || 'New submission received.'
           });
         }
       }
     });
   });
 
-  // Campus Tours — real-time
-  onSnapshot(query(collection(db, 'campus_tours'), orderBy('timestamp', 'desc')), snap => {
-    DB.tours = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  // Campus Tours real-time listener
+  onSnapshot(collection(db, 'campus_tours'), snap => {
+    DB.tours = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
     renderTours();
     updateBadges();
     snap.docChanges().forEach(change => {
       if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
-        showToast('New campus tour booking!', 'success');
+        showToast('New campus tour booking received.', 'success');
       }
     });
   });
 
-  // Faculty Applications — real-time
-  onSnapshot(query(collection(db, 'faculty_apps'), orderBy('timestamp', 'desc')), snap => {
-    DB.facApps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  // Faculty Applications real-time listener
+  onSnapshot(collection(db, 'faculty_apps'), snap => {
+    DB.facApps = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
     renderFacApps();
     updateBadges();
     snap.docChanges().forEach(change => {
       if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
-        showToast('New faculty application received!', 'success');
+        showToast('New faculty application received.', 'success');
       }
     });
   });
@@ -1213,7 +1164,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     const page = item.dataset.page;
     switchPage(page);
-    // close sidebar on mobile
+    // Close sidebar on mobile
     document.getElementById('sidebar').classList.remove('mobile-open');
     document.getElementById('sidebarOverlay').classList.remove('show');
   });
@@ -1277,9 +1228,9 @@ function renderAdmissions(data) {
       <td>${r.date}</td>
       <td>${badgeHtml(r.status)}</td>
       <td><div class="action-btns">
-        <button class="act-btn act-view" onclick="viewAdmission(${r.id})"><i class="fas fa-eye"></i></button>
-        <button class="act-btn act-approve" onclick="changeStatus('admissions',${r.id})"><i class="fas fa-check"></i></button>
-        <button class="act-btn act-del" onclick="confirmDelete('admissions',${r.id})"><i class="fas fa-trash"></i></button>
+        <button class="act-btn act-view" onclick="viewAdmission('${r.id}')"><i class="fas fa-eye"></i></button>
+        <button class="act-btn act-approve" onclick="changeStatus('admissions','${r.id}')"><i class="fas fa-check"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('admissions','${r.id}')"><i class="fas fa-trash"></i></button>
       </div></td>
     </tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i><p>No admissions yet</p></div></td></tr>`;
 }
@@ -1298,9 +1249,9 @@ function renderTours(data) {
       <td>${r.mobile}</td>
       <td>${badgeHtml(r.status)}</td>
       <td><div class="action-btns">
-        <button class="act-btn act-view" onclick="viewTour(${r.id})"><i class="fas fa-eye"></i></button>
-        <button class="act-btn act-approve" onclick="changeStatus('tours',${r.id})"><i class="fas fa-check"></i></button>
-        <button class="act-btn act-del" onclick="confirmDelete('tours',${r.id})"><i class="fas fa-trash"></i></button>
+        <button class="act-btn act-view" onclick="viewTour('${r.id}')"><i class="fas fa-eye"></i></button>
+        <button class="act-btn act-approve" onclick="changeStatus('tours','${r.id}')"><i class="fas fa-check"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('tours','${r.id}')"><i class="fas fa-trash"></i></button>
       </div></td>
     </tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-calendar-times"></i><p>No tour bookings yet</p></div></td></tr>`;
 }
@@ -1319,9 +1270,9 @@ function renderFacApps(data) {
       <td><a href="${r.resumeLink}" target="_blank" style="color:var(--blue);font-size:.78rem;font-weight:600"><i class="fas fa-external-link-alt"></i> View</a></td>
       <td>${badgeHtml(r.status)}</td>
       <td><div class="action-btns">
-        <button class="act-btn act-view" onclick="viewFacApp(${r.id})"><i class="fas fa-eye"></i></button>
-        <button class="act-btn act-approve" onclick="changeStatus('facApps',${r.id})"><i class="fas fa-check"></i></button>
-        <button class="act-btn act-del" onclick="confirmDelete('facApps',${r.id})"><i class="fas fa-trash"></i></button>
+        <button class="act-btn act-view" onclick="viewFacApp('${r.id}')"><i class="fas fa-eye"></i></button>
+        <button class="act-btn act-approve" onclick="changeStatus('facApps','${r.id}')"><i class="fas fa-check"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('facApps','${r.id}')"><i class="fas fa-trash"></i></button>
       </div></td>
     </tr>`).join('') : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-user-slash"></i><p>No applications yet</p></div></td></tr>`;
 }
@@ -1339,8 +1290,8 @@ function renderNotices() {
       <div class="bc-footer">
         <div class="bc-date"><i class="fas fa-calendar"></i> ${n.date}</div>
         <div class="bc-actions">
-          <button class="act-btn act-edit" onclick="openEditModal('notice',${n.id})"><i class="fas fa-pen"></i></button>
-          <button class="act-btn act-del" onclick="confirmDelete('notices',${n.id})"><i class="fas fa-trash"></i></button>
+          <button class="act-btn act-edit" onclick="openEditModal('notice','${n.id}')"><i class="fas fa-pen"></i></button>
+          <button class="act-btn act-del" onclick="confirmDelete('notices','${n.id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-bullhorn"></i><p>No notices yet. Add one!</p></div>`;
@@ -1360,8 +1311,8 @@ function renderEvents() {
       <div class="bc-footer">
         <div class="bc-date"><i class="fas fa-calendar"></i> ${e.date}</div>
         <div class="bc-actions">
-          <button class="act-btn act-edit" onclick="openEditModal('event',${e.id})"><i class="fas fa-pen"></i></button>
-          <button class="act-btn act-del" onclick="confirmDelete('events',${e.id})"><i class="fas fa-trash"></i></button>
+          <button class="act-btn act-edit" onclick="openEditModal('event','${e.id}')"><i class="fas fa-pen"></i></button>
+          <button class="act-btn act-del" onclick="confirmDelete('events','${e.id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-calendar-times"></i><p>No events yet. Add one!</p></div>`;
@@ -1380,8 +1331,8 @@ function renderFaculty() {
         <div class="fac-name">${f.name}</div>
         <div class="fac-role">${f.role} · ${f.exp}</div>
         <div class="fac-footer">
-          <button class="act-btn act-edit" onclick="openEditModal('faculty',${f.id})"><i class="fas fa-pen"></i> Edit</button>
-          <button class="act-btn act-del" onclick="confirmDelete('faculty',${f.id})"><i class="fas fa-trash"></i></button>
+          <button class="act-btn act-edit" onclick="openEditModal('faculty','${f.id}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="act-btn act-del" onclick="confirmDelete('faculty','${f.id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-users-slash"></i><p>No faculty added yet</p></div>`;
@@ -1400,8 +1351,8 @@ function renderResults() {
       <div class="bc-footer">
         <div class="bc-date"><i class="fas fa-calendar"></i> Year ${r.year}</div>
         <div class="bc-actions">
-          <button class="act-btn act-edit" onclick="openEditModal('result',${r.id})"><i class="fas fa-pen"></i></button>
-          <button class="act-btn act-del" onclick="confirmDelete('results',${r.id})"><i class="fas fa-trash"></i></button>
+          <button class="act-btn act-edit" onclick="openEditModal('result','${r.id}')"><i class="fas fa-pen"></i></button>
+          <button class="act-btn act-del" onclick="confirmDelete('results','${r.id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-trophy"></i><p>No results added yet</p></div>`;
@@ -1420,8 +1371,8 @@ function renderAlumni() {
         <div class="fac-name">${a.name}</div>
         <div class="fac-role">${a.profession}</div>
         <div class="fac-footer">
-          <button class="act-btn act-edit" onclick="openEditModal('alumni',${a.id})"><i class="fas fa-pen"></i> Edit</button>
-          <button class="act-btn act-del" onclick="confirmDelete('alumni',${a.id})"><i class="fas fa-trash"></i></button>
+          <button class="act-btn act-edit" onclick="openEditModal('alumni','${a.id}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="act-btn act-del" onclick="confirmDelete('alumni','${a.id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>
     </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-user-graduate"></i><p>No alumni added yet</p></div>`;
@@ -1534,8 +1485,8 @@ function showDetailModal(title, html, id, type) {
   document.getElementById('modalBody').innerHTML = html;
   document.getElementById('modalFooter').innerHTML = `
     <button class="btn-sm btn-ghost-sm" onclick="closeModal()">Close</button>
-    <button class="btn-sm btn-gold-sm" onclick="changeStatus('${type}',${id});closeModal()"><i class="fas fa-sync-alt"></i> Update Status</button>
-    <button class="btn-sm" style="background:var(--red-pl);color:var(--red)" onclick="closeModal();confirmDelete('${type}',${id})"><i class="fas fa-trash"></i> Delete</button>`;
+    <button class="btn-sm btn-gold-sm" onclick="changeStatus('${type}','${id}');closeModal()"><i class="fas fa-sync-alt"></i> Update Status</button>
+    <button class="btn-sm" style="background:var(--red-pl);color:var(--red)" onclick="closeModal();confirmDelete('${type}','${id}')"><i class="fas fa-trash"></i> Delete</button>`;
   document.getElementById('modalOverlay').classList.add('show');
 }
 
@@ -1547,15 +1498,16 @@ const addForms = {
       <div class="mform-row full"><div class="mform-group"><label>Notice Title</label><input class="mform-control" id="af-title" placeholder="e.g. Annual Sports Day"/></div></div>
       <div class="mform-row full"><div class="mform-group"><label>Notice Content</label><textarea class="mform-control" id="af-body" rows="3" placeholder="Notice details…"></textarea></div></div>
       <div class="mform-row"><div class="mform-group"><label>Applicable For</label><select class="mform-control" id="af-grade"><option>All Grades</option><option>Grades 1-5</option><option>Grades 6-8</option><option>Grades 9-10</option><option>Grades 11-12</option></select></div>
-      <div class="mform-group"><label>Type</label><select class="mform-control" id="af-type"><option>Academic</option><option>Sports</option><option>Cultural</option><option>Holiday</option><option>General</option></select></div></div>`,
+      <div class="mform-group"><label>Type</label><select class="mform-control" id="af-type"><option>Academic</option><option>Sports</option><option>Cultural</option><option>Holiday</option><option>General</option></select></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>PDF URL <span style="font-size:.72rem;color:var(--muted)">(optional — paste Google Drive / direct link)</span></label><input class="mform-control" id="af-pdf" placeholder="https://drive.google.com/…"/></div></div>`,
     save: async () => {
-      const item = { title: val('af-title'), body: val('af-body'), grade: val('af-grade'), type: val('af-type'), date: new Date().toISOString().split('T')[0], timestamp: serverTimestamp() };
-      if (!item.title || !item.body) { showToast('Please fill all fields', 'error'); return; }
+      const item = { title: val('af-title'), body: val('af-body'), grade: val('af-grade'), type: val('af-type'), pdfUrl: val('af-pdf'), date: new Date().toISOString().split('T')[0], timestamp: serverTimestamp() };
+      if (!item.title || !item.body) { showToast('Please fill in all required fields.', 'error'); return; }
       try {
         const docRef = await addDoc(collection(db, 'notices'), item);
         DB.notices.push({ id: docRef.id, ...item });
-        renderNotices(); closeModal(); showToast('Notice added successfully!', 'success');
-      } catch(e) { showToast('Error saving notice: ' + e.message, 'error'); }
+        renderNotices(); closeModal(); showToast('Notice added successfully.', 'success');
+      } catch(e) { showToast('Failed to save notice: ' + e.message, 'error'); }
     }
   },
   event: {
@@ -1567,12 +1519,12 @@ const addForms = {
       <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="af-desc" rows="3" placeholder="Event description…"></textarea></div></div>`,
     save: async () => {
       const item = { title: val('af-title'), date: val('af-date'), type: val('af-type'), description: val('af-desc'), timestamp: serverTimestamp() };
-      if (!item.title || !item.date) { showToast('Please fill all fields', 'error'); return; }
+      if (!item.title || !item.date) { showToast('Please fill in all required fields.', 'error'); return; }
       try {
         const docRef = await addDoc(collection(db, 'events'), item);
         DB.events.push({ id: docRef.id, ...item });
-        renderEvents(); closeModal(); showToast('Event added successfully!', 'success');
-      } catch(e) { showToast('Error saving event: ' + e.message, 'error'); }
+        renderEvents(); closeModal(); showToast('Event added successfully.', 'success');
+      } catch(e) { showToast('Failed to save event: ' + e.message, 'error'); }
     }
   },
   faculty: {
@@ -1585,12 +1537,12 @@ const addForms = {
       <div class="mform-row full"><div class="mform-group"><label>Photo URL</label><input class="mform-control" id="af-img" placeholder="https://… (Unsplash or direct link)"/></div></div>`,
     save: async () => {
       const item = { name: val('af-name'), role: val('af-role'), dept: val('af-dept'), exp: val('af-exp'), img: val('af-img') || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80', timestamp: serverTimestamp() };
-      if (!item.name || !item.role) { showToast('Please fill all required fields', 'error'); return; }
+      if (!item.name || !item.role) { showToast('Please fill in all required fields.', 'error'); return; }
       try {
         const docRef = await addDoc(collection(db, 'faculty'), item);
         DB.faculty.push({ id: docRef.id, ...item });
-        renderFaculty(); updateBadges(); closeModal(); showToast('Faculty member added!', 'success');
-      } catch(e) { showToast('Error saving faculty: ' + e.message, 'error'); }
+        renderFaculty(); updateBadges(); closeModal(); showToast('Faculty member added successfully.', 'success');
+      } catch(e) { showToast('Failed to save faculty member: ' + e.message, 'error'); }
     }
   },
   result: {
@@ -1608,8 +1560,8 @@ const addForms = {
       try {
         const docRef = await addDoc(collection(db, 'results'), item);
         DB.results.push({ id: docRef.id, ...item });
-        renderResults(); closeModal(); showToast('Result added!', 'success');
-      } catch(e) { showToast('Error saving result: ' + e.message, 'error'); }
+        renderResults(); closeModal(); showToast('Result added successfully.', 'success');
+      } catch(e) { showToast('Failed to save result: ' + e.message, 'error'); }
     }
   },
   alumni: {
@@ -1626,8 +1578,8 @@ const addForms = {
       try {
         const docRef = await addDoc(collection(db, 'alumni'), item);
         DB.alumni.push({ id: docRef.id, ...item });
-        renderAlumni(); closeModal(); showToast('Alumni added!', 'success');
-      } catch(e) { showToast('Error saving alumni: ' + e.message, 'error'); }
+        renderAlumni(); closeModal(); showToast('Alumni profile added successfully.', 'success');
+      } catch(e) { showToast('Failed to save alumni profile: ' + e.message, 'error'); }
     }
   }
 };
@@ -1641,8 +1593,17 @@ function openAddModal(type) {
   document.getElementById('modalBody').innerHTML = cfg.fields;
   document.getElementById('modalFooter').innerHTML = `
     <button class="btn-sm btn-ghost-sm" onclick="closeModal()">Cancel</button>
-    <button class="btn-sm btn-gold-sm" onclick="addForms['${type}'].save()"><i class="fas fa-save"></i> Save</button>`;
+    <button class="btn-sm btn-gold-sm" id="saveAddBtn" onclick="saveAddModal('${type}')"><i class="fas fa-save"></i> Save</button>`;
   document.getElementById('modalOverlay').classList.add('show');
+}
+
+async function saveAddModal(type) {
+  const cfg = addForms[type];
+  if (!cfg) return;
+  const btn = document.getElementById('saveAddBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...'; }
+  await cfg.save();
+  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Save'; }
 }
 
 /* ════ EDIT MODALS ════ */
@@ -1657,7 +1618,8 @@ function openEditModal(type, id) {
       <div class="mform-row full"><div class="mform-group"><label>Title</label><input class="mform-control" id="ef-title" value="${item.title}"/></div></div>
       <div class="mform-row full"><div class="mform-group"><label>Content</label><textarea class="mform-control" id="ef-body" rows="3">${item.body}</textarea></div></div>
       <div class="mform-row"><div class="mform-group"><label>Applicable For</label><input class="mform-control" id="ef-grade" value="${item.grade}"/></div>
-      <div class="mform-group"><label>Type</label><input class="mform-control" id="ef-type" value="${item.type||''}"/></div></div>`,
+      <div class="mform-group"><label>Type</label><input class="mform-control" id="ef-type" value="${item.type||''}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>PDF URL <span style="font-size:.72rem;color:var(--muted)">(optional)</span></label><input class="mform-control" id="ef-pdf" value="${item.pdfUrl||''}" placeholder="https://drive.google.com/…"/></div></div>`,
     event: `
       <div class="mform-row full"><div class="mform-group"><label>Title</label><input class="mform-control" id="ef-title" value="${item.title}"/></div></div>
       <div class="mform-row"><div class="mform-group"><label>Date</label><input class="mform-control" id="ef-date" type="date" value="${item.date}"/></div>
@@ -1687,7 +1649,7 @@ function openEditModal(type, id) {
   document.getElementById('modalBody').innerHTML = fields[type] || '';
   document.getElementById('modalFooter').innerHTML = `
     <button class="btn-sm btn-ghost-sm" onclick="closeModal()">Cancel</button>
-    <button class="btn-sm btn-gold-sm" onclick="saveEdit('${type}',${id})"><i class="fas fa-save"></i> Save Changes</button>`;
+    <button class="btn-sm btn-gold-sm" onclick="saveEdit('${type}','${id}')"><i class="fas fa-save"></i> Save Changes</button>`;
   document.getElementById('modalOverlay').classList.add('show');
 }
 
@@ -1699,7 +1661,7 @@ async function saveEdit(type, id) {
   if (!item) return;
 
   const updatedData = {
-    notice:  { title:val('ef-title'), body:val('ef-body'), grade:val('ef-grade'), type:val('ef-type') },
+    notice:  { title:val('ef-title'), body:val('ef-body'), grade:val('ef-grade'), type:val('ef-type'), pdfUrl:val('ef-pdf') },
     event:   { title:val('ef-title'), date:val('ef-date'), type:val('ef-type'), description:val('ef-desc') },
     faculty: { name:val('ef-name'), role:val('ef-role'), dept:val('ef-dept'), exp:val('ef-exp'), img:val('ef-img') },
     result:  { title:val('ef-title'), grade:val('ef-grade'), passRate:val('ef-pass'), toppers:val('ef-toppers'), description:val('ef-desc') },
@@ -1714,14 +1676,9 @@ async function saveEdit(type, id) {
     const renderMap = { notice:renderNotices, event:renderEvents, faculty:renderFaculty, result:renderResults, alumni:renderAlumni };
     renderMap[type]?.();
     closeModal();
-    showToast(`${capitalize(type)} updated successfully!`, 'success');
+    showToast(`${capitalize(type)} updated successfully.`, 'success');
   } catch(e) {
-    // Firestore ID might be numeric (dummy data) — just update locally
-    Object.assign(item, updatedData[type]);
-    const renderMap = { notice:renderNotices, event:renderEvents, faculty:renderFaculty, result:renderResults, alumni:renderAlumni };
-    renderMap[type]?.();
-    closeModal();
-    showToast(`${capitalize(type)} updated!`, 'success');
+    showToast('Failed to save changes: ' + e.message, 'error');
   }
 }
 
@@ -1752,13 +1709,11 @@ async function deleteItem(type, id) {
     alumni:()=>{ DB.alumni=DB.alumni.filter(i=>i.id!==id); renderAlumni(); },
   };
   try {
-    if (typeof id === 'string') {
-      await deleteDoc(doc(db, collMap[type], id));
-    }
-  } catch(e) { /* numeric dummy ID — only local delete */ }
+    await deleteDoc(doc(db, collMap[type], id));
+  } catch(e) { showToast('Failed to delete item: ' + e.message, 'error'); return; }
   localMap[type]?.();
   updateBadges();
-  showToast('Deleted successfully', 'success');
+  showToast('Item deleted successfully.', 'success');
 }
 
 /* ════ SEARCH & FILTER ════ */
@@ -1794,32 +1749,36 @@ function filterByGrade(type, grade) {
 function exportCSV(type) {
   const dataMap = { admissions: DB.admissions, tours: DB.tours, 'faculty-apps': DB.facApps };
   const data = dataMap[type];
-  if (!data || !data.length) { showToast('No data to export', 'error'); return; }
+  if (!data || !data.length) { showToast('No data available to export.', 'error'); return; }
   const keys = Object.keys(data[0]);
   const csv  = [keys.join(','), ...data.map(r => keys.map(k => `"${r[k]||''}"`).join(','))].join('\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
   a.download = `${type}-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
-  showToast('CSV exported successfully!', 'success');
+  showToast('CSV exported successfully.', 'success');
 }
 
 /* ════ SETTINGS ════ */
-function changePassword() {
+async function changePassword() {
   const np = document.getElementById('newPass').value;
   const cp = document.getElementById('confirmPass').value;
-  if (!np || !cp) { showToast('Please fill both fields', 'error'); return; }
-  if (np !== cp)  { showToast('Passwords do not match!', 'error'); return; }
-  if (np.length < 6){ showToast('Password must be at least 6 characters', 'error'); return; }
-  ADMIN_CREDENTIALS.password = np;
-  document.getElementById('dispPass').textContent = np;
-  document.getElementById('newPass').value = '';
-  document.getElementById('confirmPass').value = '';
-  showToast('Password updated successfully!', 'success');
+  if (!np || !cp)    { showToast('Please fill in both fields.', 'error'); return; }
+  if (np !== cp)     { showToast('Passwords do not match.', 'error'); return; }
+  if (np.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
+  try {
+    await updatePassword(auth.currentUser, np);
+    document.getElementById('dispPass').textContent = '••••••••';
+    document.getElementById('newPass').value  = '';
+    document.getElementById('confirmPass').value = '';
+    showToast('Password updated successfully.', 'success');
+  } catch(e) {
+    showToast('Failed to update password. Please log out, log in again, then retry.', 'error');
+  }
 }
 function saveSettings() {
   document.getElementById('dispEmail').textContent = document.getElementById('schoolEmail').value;
-  showToast('Settings saved successfully!', 'success');
+  showToast('Settings saved successfully.', 'success');
 }
 
 /* ════ MODAL HELPERS ════ */
@@ -1837,6 +1796,28 @@ function showToast(msg, type = 'default') {
   wrap.appendChild(toast);
   setTimeout(() => { toast.style.animation = 'toastOut .3s both'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
+
+/* ════ EXPOSE FUNCTIONS TO GLOBAL SCOPE (required for type="module") ════ */
+window.doLogin          = doLogin;
+window.openAddModal     = openAddModal;
+window.saveAddModal     = saveAddModal;
+window.openEditModal    = openEditModal;
+window.saveEdit         = saveEdit;
+window.confirmDelete    = confirmDelete;
+window.deleteItem       = deleteItem;
+window.changeStatus     = changeStatus;
+window.viewAdmission    = viewAdmission;
+window.viewTour         = viewTour;
+window.viewFacApp       = viewFacApp;
+window.closeModal       = closeModal;
+window.closeConfirm     = closeConfirm;
+window.filterTable      = filterTable;
+window.filterByStatus   = filterByStatus;
+window.filterByGrade    = filterByGrade;
+window.exportCSV        = exportCSV;
+window.changePassword   = changePassword;
+window.saveSettings     = saveSettings;
+window.switchPage       = switchPage;
 </script>
 </body>
 </html>

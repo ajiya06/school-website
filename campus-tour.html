@@ -478,7 +478,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
   <ul class="navbar-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About Us</a></li>
-    <li><a href="admissions.html">Admissions</a></li>
+    <li><a href="admission.html">Admissions</a></li>
     <li><a href="index.html#programs">Academics</a></li>
     <li><a href="faculty.html">Faculty</a></li>
     <li><a href="campus-life.html">Campus Life</a></li>
@@ -492,7 +492,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
 <div class="mobile-menu" id="mobileMenu">
   <a href="global-academy.html">Home</a>
   <a href="about.html">About Us</a>
-  <a href="admissions.html">Admissions</a>
+  <a href="admission.html">Admissions</a>
   <a href="campus-life.html">Campus Life</a>
   <a href="global-academy.html#contact">Contact</a>
   <a href="global-academy.html#fees" class="btn btn-gold" style="text-align:center">Pay Fees</a>
@@ -801,7 +801,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
         <div class="success-detail" id="successDetail"></div>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
           <a href="global-academy.html" class="btn btn-navy"><i class="fas fa-home"></i> Back to Home</a>
-          <a href="admissions.html" class="btn btn-gold"><i class="fas fa-pen"></i> Apply Now</a>
+          <a href="admission.html" class="btn btn-gold"><i class="fas fa-pen"></i> Apply Now</a>
         </div>
       </div>
 
@@ -1235,8 +1235,8 @@ btnNext.addEventListener('click', async () => {
 
       /* 1️⃣  Save to Firestore — campus_tours collection */
       (async () => {
-        const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
-        const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
+        const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
         const firebaseConfig = {
           apiKey:            'AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI',
           authDomain:        'school-website-cms.firebaseapp.com',
