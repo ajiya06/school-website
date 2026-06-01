@@ -536,6 +536,19 @@ textarea.mform-control{resize:vertical;min-height:80px}
   .main-content{padding:16px}
   .quick-actions{grid-template-columns:1fr}
 }
+/* ── GALLERY ADMIN ── */
+.gallery-admin-card{position:relative;border-radius:10px;overflow:hidden;background:var(--off);border:1px solid var(--border);aspect-ratio:1;display:flex;align-items:center;justify-content:center;}
+.gallery-admin-card img{width:100%;height:100%;object-fit:cover;}
+.gallery-admin-card .gac-grad{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;color:rgba(255,255,255,.5);}
+.gallery-admin-card .gac-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .2s;}
+.gallery-admin-card:hover .gac-overlay{opacity:1;}
+.gallery-admin-card .gac-caption{color:#fff;font-size:.72rem;font-weight:600;text-align:center;padding:0 8px;}
+.gallery-admin-card .gac-del{background:var(--red);color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:.72rem;cursor:pointer;}
+.upload-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.upload-tab{padding:7px 18px;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--muted);background:var(--white);transition:all .2s;}
+.upload-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.upload-progress{height:6px;background:var(--border);border-radius:4px;margin-top:10px;overflow:hidden;display:none;}
+.upload-progress-bar{height:100%;background:var(--gold);border-radius:4px;transition:width .3s;}
 </style>
 </head>
 <body>
@@ -637,6 +650,9 @@ textarea.mform-control{resize:vertical;min-height:80px}
       </button>
       <button class="nav-item" data-page="alumni">
         <i class="fas fa-user-graduate"></i> Alumni
+      </button>
+      <button class="nav-item" data-page="gallery">
+        <i class="fas fa-images"></i> Gallery
       </button>
 
       <div class="nav-section-label">System</div>
@@ -878,6 +894,19 @@ textarea.mform-control{resize:vertical;min-height:80px}
       </div>
     </div>
 
+    <!-- ══ GALLERY PAGE ══ -->
+    <div class="page" id="page-gallery">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Gallery Manager</h3><p>Add and remove photos from the gallery page</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('gallery')"><i class="fas fa-plus"></i> Add Photo</button>
+        </div>
+        <div class="card-body">
+          <div class="gallery-admin-grid" id="galleryAdminGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ══ SETTINGS PAGE ══ -->
     <div class="page" id="page-settings">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
@@ -965,6 +994,8 @@ import { getAuth, signInWithEmailAndPassword, signOut, updatePassword }
 import { getFirestore, collection, addDoc, getDocs, doc,
          updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
 
 /* ════ FIREBASE INIT ════ */
 const firebaseConfig = {
@@ -978,12 +1009,13 @@ const firebaseConfig = {
 };
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db   = getFirestore(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 /* ════ LOCAL DATA CACHE ════ */
 let DB = {
   admissions: [], tours: [], facApps: [],
   notices: [], events: [], faculty: [],
-  results: [], alumni: []
+  results: [], alumni: [], gallery: []
 };
 
 let pendingDeleteFn = null;
@@ -1074,6 +1106,7 @@ async function loadFirestoreData() {
     load('faculty',  'faculty',  renderFaculty),
     load('results',  'results',  renderResults),
     load('alumni',   'alumni',   renderAlumni),
+    load('gallery',  'gallery',  renderGalleryAdmin),
   ]);
   updateBadges();
   listenToSubmissions();
@@ -1361,21 +1394,30 @@ function renderResults() {
 /* Alumni */
 function renderAlumni() {
   const grid = document.getElementById('alumniGrid');
-  grid.innerHTML = DB.alumni.length ? DB.alumni.map(a => `
+  if (!grid) return;
+  const colors = ['#1a2340','#c8870a','#16a34a','#2563eb','#9333ea','#0891b2','#dc2626','#b45309'];
+  const initials = n => n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  grid.innerHTML = DB.alumni.length ? DB.alumni.map((a, i) => {
+    const color = colors[i % colors.length];
+    const hasImg = a.img && a.img !== '';
+    return `
     <div class="fac-admin-card">
-      <div class="fac-img">
-        <img src="${a.img}" alt="${a.name}" onerror="this.src='https://via.placeholder.com/200x140?text=Photo'"/>
-        <div class="fac-dept-badge">Batch ${a.batch}</div>
+      <div class="fac-img" style="background:${color};display:flex;align-items:center;justify-content:center;min-height:130px">
+        ${hasImg
+          ? `<img src="${a.img}" alt="${a.name}" style="width:100%;height:130px;object-fit:cover" onerror="this.style.display='none'">`
+          : `<div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:rgba(255,255,255,.8)">${initials(a.name||'?')}</div>`}
+        <div class="fac-dept-badge" style="position:absolute;top:8px;right:8px">Batch ${a.batch||'—'}</div>
       </div>
       <div class="fac-body">
-        <div class="fac-name">${a.name}</div>
-        <div class="fac-role">${a.profession}</div>
-        <div class="fac-footer">
+        <div class="fac-name">${a.name||'—'}</div>
+        <div class="fac-role" style="font-size:.75rem;color:var(--gold-dk)">${a.profession||'—'}</div>
+        ${a.message ? `<div style="font-size:.72rem;color:var(--muted);font-style:italic;margin-top:6px;line-height:1.5;border-left:2px solid var(--gold);padding-left:6px">"${a.message.slice(0,80)}${a.message.length>80?'…':''}"</div>` : ''}
+        <div class="fac-footer" style="margin-top:10px">
           <button class="act-btn act-edit" onclick="openEditModal('alumni','${a.id}')"><i class="fas fa-pen"></i> Edit</button>
           <button class="act-btn act-del" onclick="confirmDelete('alumni','${a.id}')"><i class="fas fa-trash"></i></button>
         </div>
       </div>
-    </div>`).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-user-graduate"></i><p>No alumni added yet</p></div>`;
+    </div>`}).join('') : `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-user-graduate"></i><p>No alumni added yet. Click "Add Alumni" to get started.</p></div>`;
 }
 
 /* Activity Feed */
@@ -1422,7 +1464,7 @@ async function changeStatus(type, id) {
   const idx   = cycle.indexOf(item.status);
   item.status = cycle[(idx + 1) % cycle.length];
   // Update in Firestore
-  const collMap = { admissions:'admissions', tours:'campus_tours', facApps:'faculty_apps' };
+  const collMap = { admissions:'admissions', tours:'campus_tours', facApps:'faculty_apps', notice:'notices', event:'events', faculty:'faculty', result:'results', alumni:'alumni', gallery:'gallery' };
   try {
     if (typeof id === 'string' && collMap[type]) {
       await updateDoc(doc(db, collMap[type], id), { status: item.status });
@@ -1548,21 +1590,50 @@ const addForms = {
   result: {
     title: 'Add Result',
     fields: `
-      <div class="mform-row full"><div class="mform-group"><label>Result Title</label><input class="mform-control" id="af-title" placeholder="e.g. Grade 10 Board Results 2026"/></div></div>
-      <div class="mform-row"><div class="mform-group"><label>Grade</label><select class="mform-control" id="af-grade"><option>Grade 1-5</option><option>Grade 6-8</option><option>Grade 9-10</option><option>Grade 11-12</option></select></div>
-      <div class="mform-group"><label>Pass Rate</label><input class="mform-control" id="af-pass" placeholder="e.g. 97%"/></div></div>
-      <div class="mform-row"><div class="mform-group"><label>Academic Year</label><input class="mform-control" id="af-year" placeholder="2026"/></div></div>
-      <div class="mform-row full"><div class="mform-group"><label>Toppers</label><input class="mform-control" id="af-toppers" placeholder="Name (score%), Name (score%)…"/></div></div>
-      <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="af-desc" rows="2" placeholder="Brief summary…"></textarea></div></div>`,
+      <div class="mform-row full"><div class="mform-group"><label>Grade Name</label><input class="mform-control" id="af-grade" placeholder="e.g. Grade 10 or Grade 12 Science"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Academic Year</label><input class="mform-control" id="af-year" placeholder="e.g. 2024-25"/></div>
+      <div class="mform-group"><label>Pass Rate (%)</label><input class="mform-control" id="af-pass" placeholder="e.g. 95" type="number" min="0" max="100"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Total Students</label><input class="mform-control" id="af-total" placeholder="e.g. 60" type="number"/></div>
+      <div class="mform-group"><label>Type</label><select class="mform-control" id="af-type"><option value="primary">Primary (Grade 1–5)</option><option value="secondary">Secondary (Grade 6–10)</option><option value="senior">Senior (Grade 11–12)</option></select></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Category (for filter)</label><select class="mform-control" id="af-category"><option value="grade1-5">Grade 1–5</option><option value="grade6-8">Grade 6–8</option><option value="grade9-10">Grade 9–10</option><option value="grade11-12">Grade 11–12</option></select></div>
+      <div class="mform-group"><label>Topper Name</label><input class="mform-control" id="af-topper" placeholder="Student Name"/></div></div>
+      <div class="mform-row"><div class="mform-group"><label>Topper Percentage</label><input class="mform-control" id="af-topperpct" placeholder="e.g. 95.4"/></div>
+      <div class="mform-group"><label>PDF Link <span style="font-size:.7rem;color:var(--muted)">(optional)</span></label><input class="mform-control" id="af-pdflink" placeholder="Google Drive link…"/></div></div>`,
     save: async () => {
-      const item = { title: val('af-title'), grade: val('af-grade'), passRate: val('af-pass'), year: val('af-year'), toppers: val('af-toppers'), description: val('af-desc'), timestamp: serverTimestamp() };
-      if (!item.title) { showToast('Please enter a title', 'error'); return; }
+      const item = {
+        grade: val('af-grade'), year: val('af-year'), passRate: val('af-pass'),
+        totalStudents: val('af-total'), type: val('af-type'), category: val('af-category'),
+        topper: val('af-topper'), topperPercent: val('af-topperpct'),
+        pdfLink: val('af-pdflink'), timestamp: serverTimestamp()
+      };
+      if (!item.grade) { showToast('Please enter a grade name.', 'error'); return; }
       try {
         const docRef = await addDoc(collection(db, 'results'), item);
         DB.results.push({ id: docRef.id, ...item });
         renderResults(); closeModal(); showToast('Result added successfully.', 'success');
       } catch(e) { showToast('Failed to save result: ' + e.message, 'error'); }
     }
+  },
+  gallery: {
+    title: 'Add Gallery Photo',
+    fields: `
+      <div class="upload-tabs">
+        <button class="upload-tab active" data-tab="url" onclick="switchUploadTab(this,'url')"><i class="fas fa-link"></i> Paste Image URL</button>
+        <button class="upload-tab" data-tab="file" onclick="switchUploadTab(this,'file')"><i class="fas fa-upload"></i> Upload File</button>
+      </div>
+      <div id="urlTab">
+        <div class="mform-row full"><div class="mform-group"><label>Image URL <span style="font-size:.72rem;color:var(--muted)">(Google Drive, Unsplash, or any direct image link)</span></label><input class="mform-control" id="gal-url" placeholder="https://drive.google.com/… or https://images.unsplash.com/…"/></div></div>
+      </div>
+      <div id="fileTab" style="display:none">
+        <div class="mform-row full"><div class="mform-group"><label>Select Image File <span style="font-size:.72rem;color:var(--muted)">(JPG, PNG, WebP — max 10MB)</span></label><input class="mform-control" id="gal-file" type="file" accept="image/*"/></div></div>
+        <div class="upload-progress" id="uploadProgWrap"><div class="upload-progress-bar" id="uploadProgBar" style="width:0%"></div></div>
+      </div>
+      <div class="mform-row">
+        <div class="mform-group"><label>Category</label><select class="mform-control" id="gal-cat"><option value="campus">Campus</option><option value="classrooms">Classrooms</option><option value="sports">Sports</option><option value="events">Events</option><option value="arts">Arts & Culture</option><option value="labs">Labs</option></select></div>
+        <div class="mform-group"><label>Size</label><select class="mform-control" id="gal-size"><option value="normal">Normal</option><option value="wide">Wide</option><option value="tall">Tall</option></select></div>
+      </div>
+      <div class="mform-row full"><div class="mform-group"><label>Caption</label><input class="mform-control" id="gal-caption" placeholder="e.g. Annual Day Celebration 2024"/></div></div>`,
+    save: saveGalleryItem
   },
   alumni: {
     title: 'Add Alumni',
@@ -1638,11 +1709,11 @@ function openEditModal(type, id) {
       <div class="mform-row full"><div class="mform-group"><label>Toppers</label><input class="mform-control" id="ef-toppers" value="${item.toppers}"/></div></div>
       <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="ef-desc" rows="2">${item.description}</textarea></div></div>`,
     alumni: `
-      <div class="mform-row"><div class="mform-group"><label>Name</label><input class="mform-control" id="ef-name" value="${item.name}"/></div>
-      <div class="mform-group"><label>Batch</label><input class="mform-control" id="ef-batch" value="${item.batch}"/></div></div>
-      <div class="mform-row full"><div class="mform-group"><label>Profession</label><input class="mform-control" id="ef-prof" value="${item.profession}"/></div></div>
-      <div class="mform-row full"><div class="mform-group"><label>Photo URL</label><input class="mform-control" id="ef-img" value="${item.img}"/></div></div>
-      <div class="mform-row full"><div class="mform-group"><label>Message</label><textarea class="mform-control" id="ef-msg" rows="2">${item.message}</textarea></div></div>`
+      <div class="mform-row"><div class="mform-group"><label>Full Name</label><input class="mform-control" id="ef-name" value="${item.name||''}"/></div>
+      <div class="mform-group"><label>Batch Year</label><input class="mform-control" id="ef-batch" value="${item.batch||''}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Current Profession</label><input class="mform-control" id="ef-prof" value="${item.profession||''}"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Photo URL <span style="font-size:.7rem;color:var(--muted)">(optional)</span></label><input class="mform-control" id="ef-img" value="${item.img||''}" placeholder="https://…"/></div></div>
+      <div class="mform-row full"><div class="mform-group"><label>Quote / Message</label><textarea class="mform-control" id="ef-msg" rows="2" placeholder="What Global Academy means to them…">${item.message||''}</textarea></div></div>`
   };
 
   document.getElementById('modalTitle').textContent = `Edit ${capitalize(type)}`;
@@ -1797,6 +1868,95 @@ function showToast(msg, type = 'default') {
   setTimeout(() => { toast.style.animation = 'toastOut .3s both'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
+/* ════ GALLERY ADMIN RENDER ════ */
+function renderGalleryAdmin() {
+  const grid = document.getElementById('galleryAdminGrid');
+  if (!grid) return;
+  if (!DB.gallery.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><i class="fas fa-images" style="font-size:2rem;display:block;margin-bottom:8px;color:var(--border)"></i>No photos yet. Click "Add Photo" to upload.</div>';
+    return;
+  }
+  const catBgs = {
+    campus:'linear-gradient(135deg,#1a2340,#2d3f6e)', classrooms:'linear-gradient(135deg,#1e3a5f,#2563eb)',
+    sports:'linear-gradient(135deg,#14532d,#16a34a)', events:'linear-gradient(135deg,#7c2d12,#c2410c)',
+    arts:'linear-gradient(135deg,#4a044e,#9333ea)',   labs:'linear-gradient(135deg,#164e63,#0891b2)'
+  };
+  grid.innerHTML = DB.gallery.map(item => {
+    const bg  = catBgs[item.category] || catBgs.campus;
+    const img = item.imageUrl && item.imageUrl !== '#';
+    return `
+      <div class="gallery-admin-card">
+        ${img
+          ? `<img src="${item.imageUrl}" alt="${item.caption||''}"/>`
+          : `<div class="gac-grad" style="background:${bg}"><i class="fas fa-image"></i></div>`}
+        <div class="gac-overlay">
+          <div class="gac-caption">${item.caption||''}</div>
+          <button class="gac-del" onclick="confirmDelete('gallery','${item.id}')"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ════ GALLERY ADD — URL OR FILE UPLOAD ════ */
+async function saveGalleryItem() {
+  const tab    = document.querySelector('.upload-tab.active')?.dataset.tab || 'url';
+  const cat    = document.getElementById('gal-cat')?.value || 'campus';
+  const caption= document.getElementById('gal-caption')?.value?.trim() || '';
+  const size   = document.getElementById('gal-size')?.value || 'normal';
+
+  if (tab === 'url') {
+    const url = document.getElementById('gal-url')?.value?.trim();
+    if (!url) { showToast('Please enter an image URL.', 'error'); return; }
+    const item = { imageUrl: url, caption, category: cat, size, timestamp: serverTimestamp() };
+    try {
+      const docRef = await addDoc(collection(db, 'gallery'), item);
+      DB.gallery.push({ id: docRef.id, ...item });
+      renderGalleryAdmin(); closeModal();
+      showToast('Photo added successfully.', 'success');
+    } catch(e) { showToast('Failed to add photo: ' + e.message, 'error'); }
+
+  } else {
+    // File upload
+    const fileInput = document.getElementById('gal-file');
+    const file = fileInput?.files?.[0];
+    if (!file) { showToast('Please select an image file.', 'error'); return; }
+    if (file.size > 10 * 1024 * 1024) { showToast('File size must be under 10MB.', 'error'); return; }
+
+    const saveBtn = document.getElementById('saveAddBtn');
+    const progWrap = document.getElementById('uploadProgWrap');
+    const progBar  = document.getElementById('uploadProgBar');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Uploading...'; }
+    if (progWrap) progWrap.style.display = 'block';
+
+    try {
+      const storageRef = ref(storage, 'gallery/' + Date.now() + '_' + file.name);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed',
+        snapshot => {
+          const pct = Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100);
+          if (progBar) progBar.style.width = pct + '%';
+        },
+        err => {
+          showToast('Upload failed: ' + err.message, 'error');
+          if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save"></i> Save'; }
+        },
+        async () => {
+          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          const item = { imageUrl: downloadUrl, caption, category: cat, size, timestamp: serverTimestamp() };
+          const docRef = await addDoc(collection(db, 'gallery'), item);
+          DB.gallery.push({ id: docRef.id, ...item });
+          renderGalleryAdmin(); closeModal();
+          showToast('Photo uploaded and added successfully.', 'success');
+        }
+      );
+    } catch(e) {
+      showToast('Upload error: ' + e.message, 'error');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save"></i> Save'; }
+    }
+  }
+}
+
 /* ════ EXPOSE FUNCTIONS TO GLOBAL SCOPE (required for type="module") ════ */
 window.doLogin          = doLogin;
 window.openAddModal     = openAddModal;
@@ -1818,6 +1978,17 @@ window.exportCSV        = exportCSV;
 window.changePassword   = changePassword;
 window.saveSettings     = saveSettings;
 window.switchPage       = switchPage;
+/* ── Switch upload tab ── */
+function switchUploadTab(btn, tab) {
+  document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.dataset.tab = tab;
+  document.getElementById('urlTab').style.display  = tab === 'url'  ? '' : 'none';
+  document.getElementById('fileTab').style.display = tab === 'file' ? '' : 'none';
+}
+window.switchUploadTab = switchUploadTab;
+window.renderGalleryAdmin = renderGalleryAdmin;
+window.saveGalleryItem  = saveGalleryItem;
 </script>
 </body>
 </html>

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Results — Global Academy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════ */
+    :root {
+      --navy:       #1a2340;
+      --navy-dk:    #111827;
+      --navy-lt:    #243058;
+      --gold:       #e8a020;
+      --gold-dk:    #c8870a;
+      --gold-lt:    #fdf3e3;
+      --cream:      #faf8f4;
+      --white:      #ffffff;
+      --muted:      #6b7280;
+      --border:     #e5e7eb;
+      --red:        #dc2626;
+      --green:      #16a34a;
+      --green-lt:   #dcfce7;
+      --radius:     12px;
+      --shadow:     0 4px 24px rgba(0,0,0,.08);
+      --shadow-lg:  0 12px 48px rgba(0,0,0,.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--navy); overflow-x: hidden; }
+    h1,h2,h3,h4 { font-family: 'Playfair Display', serif; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ══ NAVBAR ══════════════════════════════ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 68px;
+      background: rgba(26,35,64,.97); backdrop-filter: blur(12px);
+      box-shadow: 0 1px 20px rgba(0,0,0,.12);
+    }
+    .navbar-brand {
+      display: flex; align-items: center; gap: .6rem;
+      font-family: 'Playfair Display', serif; font-size: 1.25rem;
+      font-weight: 700; color: var(--white);
+    }
+    .logo-icon {
+      width: 36px; height: 36px; background: var(--gold);
+      border-radius: 8px; display: grid; place-items: center;
+      font-size: .95rem; color: var(--navy);
+    }
+    .navbar-links { display: flex; list-style: none; gap: .25rem; }
+    .navbar-links a {
+      font-size: .82rem; font-weight: 500; color: rgba(255,255,255,.8);
+      padding: .45rem .7rem; border-radius: 6px;
+      transition: all .2s;
+    }
+    .navbar-links a:hover, .navbar-links a.active {
+      color: var(--gold); background: rgba(232,160,32,.1);
+    }
+    .navbar-actions { display: flex; align-items: center; gap: .75rem; }
+    .btn { display: inline-flex; align-items: center; gap: .45rem;
+           padding: .55rem 1.2rem; border-radius: 8px;
+           font-size: .82rem; font-weight: 600; cursor: pointer;
+           border: none; transition: all .2s; }
+    .btn-gold { background: var(--gold); color: var(--navy); }
+    .btn-gold:hover { background: var(--gold-dk); transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.35); }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all .3s; }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 68px; left: 0; right: 0; z-index: 999;
+      background: var(--navy-dk); flex-direction: column; padding: 1rem 1.5rem 1.5rem;
+      gap: .5rem; border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: rgba(255,255,255,.85); font-size: .9rem; padding: .6rem .5rem; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* ══ HERO ════════════════════════════════ */
+    .hero {
+      position: relative; padding: 9rem 2rem 5rem; overflow: hidden;
+      background: var(--navy-dk);
+      min-height: 380px; display: flex; align-items: center;
+    }
+    .hero-bg-pattern {
+      position: absolute; inset: 0; opacity: .04;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,.5) 40px, rgba(255,255,255,.5) 41px),
+                        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,.5) 40px, rgba(255,255,255,.5) 41px);
+    }
+    .hero-glow {
+      position: absolute; top: -120px; right: -80px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,160,32,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .breadcrumb { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: rgba(255,255,255,.5); margin-bottom: 1.2rem; }
+    .breadcrumb a { color: rgba(255,255,255,.5); transition: color .2s; }
+    .breadcrumb a:hover { color: var(--gold); }
+    .breadcrumb span { color: var(--gold); }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(232,160,32,.15); border: 1px solid rgba(232,160,32,.3);
+      color: var(--gold); font-size: .75rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; padding: .35rem .9rem; border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900;
+      color: var(--white); line-height: 1.15; margin-bottom: 1rem;
+    }
+    .hero h1 em { color: var(--gold); font-style: italic; }
+    .hero p { font-size: 1rem; color: rgba(255,255,255,.65); max-width: 520px; line-height: 1.7; margin-bottom: 2.5rem; }
+
+    .hero-counters { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .hc-item { text-align: center; }
+    .hc-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 900; color: var(--gold); line-height: 1;
+    }
+    .hc-lbl { font-size: .75rem; color: rgba(255,255,255,.55); margin-top: .3rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+
+    /* ══ FILTER BAR ══════════════════════════ */
+    .filter-bar {
+      position: sticky; top: 68px; z-index: 100;
+      background: var(--white); border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .filter-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-tabs { display: flex; gap: .25rem; padding: .75rem 0; overflow-x: auto; }
+    .ftab {
+      white-space: nowrap; padding: .45rem 1rem; border-radius: 20px;
+      font-size: .8rem; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); color: var(--muted);
+      background: var(--white); transition: all .2s;
+    }
+    .ftab:hover { border-color: var(--gold); color: var(--gold-dk); }
+    .ftab.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .filter-right { display: flex; align-items: center; gap: .75rem; padding: .75rem 0; }
+    .year-select {
+      padding: .45rem .9rem; border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 500;
+      color: var(--navy); background: var(--white); cursor: pointer;
+      outline: none; transition: border-color .2s;
+    }
+    .year-select:focus { border-color: var(--gold); }
+    .results-count { font-size: .78rem; color: var(--muted); font-weight: 500; white-space: nowrap; }
+
+    /* ══ RESULTS GRID ════════════════════════ */
+    .results-section { background: var(--cream); padding: 3rem 2rem; }
+    .results-inner { max-width: 1200px; margin: 0 auto; }
+    .results-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* ── Card ── */
+    .r-card {
+      background: var(--white); border-radius: var(--radius);
+      border: 1px solid var(--border); overflow: hidden;
+      box-shadow: var(--shadow); transition: transform .25s, box-shadow .25s;
+      display: flex; flex-direction: column;
+    }
+    .r-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .r-card.hidden { display: none; }
+
+    .r-card-top {
+      padding: 1.25rem 1.25rem .9rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem;
+    }
+    .r-grade { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+    .r-year { font-size: .72rem; color: var(--muted); font-weight: 500; margin-top: .2rem; display: flex; align-items: center; gap: .3rem; }
+    .r-badge {
+      font-size: .65rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; padding: .28rem .7rem; border-radius: 20px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .badge-primary   { background: #dbeafe; color: #1d4ed8; }
+    .badge-secondary { background: #fef3c7; color: #92400e; }
+    .badge-senior    { background: #f3e8ff; color: #6d28d9; }
+
+    .r-card-body { padding: 1.1rem 1.25rem; flex: 1; }
+
+    /* pass rate */
+    .r-pass-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .4rem; }
+    .r-pass-label { font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .r-pass-val { font-size: 1rem; font-weight: 700; color: var(--green); }
+    .r-bar-track { height: 7px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1rem; }
+    .r-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--green), #4ade80); transition: width 1s ease; }
+
+    .r-meta { display: flex; gap: 1rem; margin-bottom: .9rem; flex-wrap: wrap; }
+    .r-meta-item { font-size: .75rem; color: var(--muted); display: flex; align-items: center; gap: .35rem; }
+    .r-meta-item i { color: var(--gold-dk); font-size: .7rem; }
+
+    .r-topper {
+      background: var(--gold-lt); border: 1px solid rgba(232,160,32,.3);
+      border-radius: 8px; padding: .6rem .85rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .r-topper-icon { font-size: .9rem; color: var(--gold-dk); }
+    .r-topper-name { font-size: .78rem; font-weight: 600; color: var(--navy); }
+    .r-topper-pct { font-size: .72rem; color: var(--gold-dk); font-weight: 700; }
+
+    .r-card-foot { padding: .9rem 1.25rem; border-top: 1px solid var(--border); }
+    .r-pdf-btn {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      width: 100%; padding: .6rem; border-radius: 8px;
+      background: var(--navy); color: var(--white);
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      border: none; transition: background .2s, transform .15s;
+    }
+    .r-pdf-btn:hover { background: var(--navy-lt); transform: translateY(-1px); }
+    .r-pdf-btn.no-pdf { background: var(--border); color: var(--muted); cursor: not-allowed; }
+    .r-pdf-btn.no-pdf:hover { transform: none; }
+
+    /* empty state */
+    .empty-state {
+      grid-column: 1/-1; text-align: center; padding: 5rem 2rem;
+      color: var(--muted);
+    }
+    .empty-state i { font-size: 3rem; color: var(--border); margin-bottom: 1rem; display: block; }
+    .empty-state h3 { font-size: 1.2rem; margin-bottom: .5rem; color: var(--navy); }
+
+    /* ══ ACHIEVEMENTS STRIP ══════════════════ */
+    .achievements {
+      background: linear-gradient(135deg, var(--navy-dk) 0%, var(--navy-lt) 100%);
+      padding: 3.5rem 2rem; position: relative; overflow: hidden;
+    }
+    .achievements::before {
+      content: ''; position: absolute; inset: 0; opacity: .05;
+      background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,.3) 20px, rgba(255,255,255,.3) 21px);
+    }
+    .ach-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .ach-head { text-align: center; margin-bottom: 2.5rem; }
+    .ach-head .sec-tag { display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(232,160,32,.15); border: 1px solid rgba(232,160,32,.3);
+      color: var(--gold); font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; padding: .35rem .9rem; border-radius: 20px; margin-bottom: .8rem; }
+    .ach-head h2 { font-size: 1.9rem; color: var(--white); font-style: italic; }
+    .ach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+    .ach-badge {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius); padding: 1.75rem 1.25rem; text-align: center;
+      transition: transform .25s, background .25s;
+    }
+    .ach-badge:hover { transform: translateY(-4px); background: rgba(255,255,255,.1); }
+    .ach-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dk));
+      display: grid; place-items: center; font-size: 1.3rem; color: var(--navy);
+      margin: 0 auto 1rem;
+    }
+    .ach-val { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 900; color: var(--gold); line-height: 1; }
+    .ach-lbl { font-size: .78rem; color: rgba(255,255,255,.6); margin-top: .35rem; font-weight: 500; }
+
+    /* ══ CTA SECTION ═════════════════════════ */
+    .cta-section { background: var(--cream); padding: 4rem 2rem; }
+    .cta-inner {
+      max-width: 700px; margin: 0 auto; text-align: center;
+      background: var(--white); border-radius: 20px; padding: 3rem 2.5rem;
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+    }
+    .cta-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--gold-lt); border: 2px solid rgba(232,160,32,.3);
+      display: grid; place-items: center; font-size: 1.5rem;
+      color: var(--gold-dk); margin: 0 auto 1.25rem;
+    }
+    .cta-inner h2 { font-size: 1.7rem; color: var(--navy); margin-bottom: .75rem; }
+    .cta-inner p { font-size: .9rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+    .btn-phone { background: var(--navy); color: var(--white); }
+    .btn-phone:hover { background: var(--navy-lt); }
+    .btn-wa { background: #25d366; color: var(--white); }
+    .btn-wa:hover { background: #1ebe5d; }
+
+    /* ══ FOOTER ══════════════════════════════ */
+    footer { background: var(--navy-dk); color: rgba(255,255,255,.75); }
+    .footer-top {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr;
+      gap: 2.5rem; padding: 3.5rem 2rem 2.5rem;
+    }
+    .footer-brand h3 { font-size: 1.4rem; color: var(--white); margin-bottom: .75rem; }
+    .footer-brand p { font-size: .82rem; line-height: 1.7; color: rgba(255,255,255,.55); }
+    .footer-col h4 { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+    .footer-col ul li a { font-size: .82rem; color: rgba(255,255,255,.55); transition: color .2s; }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 1.25rem 2rem; text-align: center;
+      font-size: .75rem; color: rgba(255,255,255,.35);
+      max-width: 1200px; margin: 0 auto;
+    }
+    .footer-bottom a { color: rgba(255,255,255,.4); transition: color .2s; display: inline-block; margin-top: .3rem; }
+    .footer-bottom a:hover { color: var(--gold); }
+    .admin-login-link { color: rgba(255,255,255,.25) !important; font-size: .72rem; }
+
+    /* WhatsApp FAB */
+    .whatsapp-fab {
+      position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 999;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #25d366; color: var(--white);
+      display: grid; place-items: center; font-size: 1.4rem;
+      box-shadow: 0 4px 20px rgba(37,211,102,.4);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .whatsapp-fab:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(37,211,102,.5); }
+
+    /* ══ REVEAL ANIMATION ════════════════════ */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ══ RESPONSIVE ══════════════════════════ */
+    @media (max-width: 1024px) {
+      .results-grid { grid-template-columns: repeat(2, 1fr); }
+      .ach-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .navbar-links, .navbar-actions .btn { display: none; }
+      .hamburger { display: flex; }
+      .results-grid { grid-template-columns: 1fr; }
+      .ach-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr; gap: 1.5rem; padding: 2.5rem 1.5rem 2rem; }
+      .hero-counters { gap: 1.5rem; }
+      .filter-inner { flex-direction: column; align-items: flex-start; gap: 0; }
+      .filter-tabs { padding: .6rem 0; }
+      .filter-right { padding: 0 0 .6rem; }
+      .hero { padding: 7rem 1.5rem 4rem; }
+    }
+    @media (max-width: 480px) {
+      .ach-grid { grid-template-columns: 1fr 1fr; }
+      .cta-inner { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="navbar-brand">
+      <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+      Global Academy
+    </a>
+    <ul class="navbar-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="admission.html">Admissions</a></li>
+      <li><a href="index.html#programs">Academics</a></li>
+      <li><a href="faculty.html">Faculty</a></li>
+      <li><a href="campus-life.html">Campus Life</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="results.html" class="active">Results</a></li>
+      <li><a href="index.html#contact">Contact Us</a></li>
+    </ul>
+    <div class="navbar-actions">
+      <a href="#" class="btn btn-gold"><i class="fas fa-credit-card"></i> Pay Fees</a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="about.html">About Us</a>
+    <a href="admission.html">Admissions</a>
+    <a href="faculty.html">Faculty</a>
+    <a href="campus-life.html">Campus Life</a>
+    <a href="events.html">Events</a>
+    <a href="results.html">Results</a>
+    <a href="index.html#contact">Contact Us</a>
+    <a href="#" class="btn btn-gold" style="text-align:center">Pay Fees</a>
+  </div>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <i class="fas fa-chevron-right" style="font-size:.6rem"></i>
+        <span>Academic Results</span>
+      </div>
+      <div class="eyebrow"><i class="fas fa-chart-line"></i> Academic Excellence</div>
+      <h1>Academic Results<br>&amp; <em>Achievements</em></h1>
+      <p>Celebrating the hard work and dedication of every student at Global Academy. Explore class-wise results and download official mark sheets.</p>
+      <div class="hero-counters" id="heroCounters">
+        <div class="hc-item">
+          <div class="hc-val" data-target="95" data-suffix="%">0%</div>
+          <div class="hc-lbl">Overall Pass Rate</div>
+        </div>
+        <div class="hc-item">
+          <div class="hc-val" data-target="20" data-suffix="+">0+</div>
+          <div class="hc-lbl">Years of Excellence</div>
+        </div>
+        <div class="hc-item">
+          <div class="hc-val" data-target="1000" data-suffix="+">0+</div>
+          <div class="hc-lbl">Students Enrolled</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FILTER BAR ═════════════════════════════════════════ -->
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <div class="filter-tabs" id="filterTabs">
+        <button class="ftab active" data-cat="all">All Classes</button>
+        <button class="ftab" data-cat="grade1-5">Grade 1–5</button>
+        <button class="ftab" data-cat="grade6-8">Grade 6–8</button>
+        <button class="ftab" data-cat="grade9-10">Grade 9–10</button>
+        <button class="ftab" data-cat="grade11-12">Grade 11–12</button>
+      </div>
+      <div class="filter-right">
+        <select class="year-select" id="yearSelect">
+          <option value="all">All Years</option>
+          <option value="2024-25" selected>2024–25</option>
+          <option value="2023-24">2023–24</option>
+          <option value="2022-23">2022–23</option>
+        </select>
+        <span class="results-count" id="resultsCount">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RESULTS GRID ════════════════════════════════════════ -->
+  <section class="results-section">
+    <div class="results-inner">
+      <div class="results-grid" id="resultsGrid">
+        <!-- Cards injected by JS -->
+        <div class="empty-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <h3>Loading Results...</h3>
+          <p>Please wait while we fetch the latest results.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ACHIEVEMENTS STRIP ══════════════════════════════════ -->
+  <section class="achievements">
+    <div class="ach-inner">
+      <div class="ach-head reveal">
+        <div class="sec-tag"><i class="fas fa-trophy"></i> Our Achievements</div>
+        <h2>A Legacy of Academic Excellence</h2>
+      </div>
+      <div class="ach-grid">
+        <div class="ach-badge reveal">
+          <div class="ach-icon"><i class="fas fa-medal"></i></div>
+          <div class="ach-val">95%</div>
+          <div class="ach-lbl">Average Pass Rate</div>
+        </div>
+        <div class="ach-badge reveal">
+          <div class="ach-icon"><i class="fas fa-star"></i></div>
+          <div class="ach-val">12+</div>
+          <div class="ach-lbl">District Toppers</div>
+        </div>
+        <div class="ach-badge reveal">
+          <div class="ach-icon"><i class="fas fa-award"></i></div>
+          <div class="ach-val">100%</div>
+          <div class="ach-lbl">Grade 12 Pass (2024)</div>
+        </div>
+        <div class="ach-badge reveal">
+          <div class="ach-icon"><i class="fas fa-graduation-cap"></i></div>
+          <div class="ach-val">20+</div>
+          <div class="ach-lbl">Years of Excellence</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA SECTION ══════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="cta-inner reveal">
+      <div class="cta-icon"><i class="fas fa-search"></i></div>
+      <h2>Can't Find Your Result?</h2>
+      <p>If you are unable to find your class result or need a printed copy of your mark sheet, please contact the school office directly. We are happy to help.</p>
+      <div class="cta-btns">
+        <a href="tel:+07.08722,43710" class="btn btn-phone">
+          <i class="fas fa-phone"></i> Call School Office
+        </a>
+        <a href="https://wa.me/9508219026" target="_blank" class="btn btn-wa">
+          <i class="fab fa-whatsapp"></i> WhatsApp Us
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h3>Global Academy</h3>
+        <p>Empowering minds and building future leaders through quality education, discipline, and innovation since 2005.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="index.html#programs">Academics</a></li>
+          <li><a href="admission.html">Admissions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Useful Links</h4>
+        <ul>
+          <li><a href="campus-tour.html">Book Campus Tour</a></li>
+          <li><a href="faculty-apply.html">Join Our Faculty Team</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="#">Alumni</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">info@globalacademy.edu</a></li>
+          <li><a href="tel:+07.08722,43710">+07.08722, 43710</a></li>
+          <li><a href="#">Pay Fees Online</a></li>
+          <li><a href="index.html#contact">Find Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2024 Global Academy. All rights reserved.<br>
+      <a href="https://ajiya06.github.io/ajay-portfolio/">Developed By Ajay Sah</a><br>
+      <a href="admin-panel.html" class="admin-login-link"><i class="fas fa-lock"></i> Admin Login</a>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <a href="https://wa.me/9508219026" class="whatsapp-fab" target="_blank" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- ============================================================
+       FIREBASE — Results CMS
+  ============================================================ -->
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot }
+      from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
+      authDomain:        "school-website-cms.firebaseapp.com",
+      projectId:         "school-website-cms",
+      storageBucket:     "school-website-cms.firebasestorage.app",
+      messagingSenderId: "720284453351",
+      appId:             "1:720284453351:web:05e609eac5747f9aaf9542"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    /* ── Dummy Results — shown while Firebase empty ── */
+    const dummyResults = [
+      { grade:'Grade 1',           year:'2024-25', passRate:'98', totalStudents:'45', topper:'Aarav Sharma',   topperPercent:'96.4', pdfLink:'#', type:'primary',   category:'grade1-5'   },
+      { grade:'Grade 2',           year:'2024-25', passRate:'97', totalStudents:'48', topper:'Priya Singh',    topperPercent:'95.8', pdfLink:'#', type:'primary',   category:'grade1-5'   },
+      { grade:'Grade 3',           year:'2024-25', passRate:'98', totalStudents:'50', topper:'Rahul Verma',    topperPercent:'97.0', pdfLink:'#', type:'primary',   category:'grade1-5'   },
+      { grade:'Grade 4',           year:'2024-25', passRate:'96', totalStudents:'47', topper:'Sneha Gupta',    topperPercent:'94.5', pdfLink:'#', type:'primary',   category:'grade1-5'   },
+      { grade:'Grade 5',           year:'2024-25', passRate:'97', totalStudents:'52', topper:'Arjun Patel',    topperPercent:'96.1', pdfLink:'#', type:'primary',   category:'grade1-5'   },
+      { grade:'Grade 6',           year:'2024-25', passRate:'95', totalStudents:'55', topper:'Meera Joshi',    topperPercent:'93.8', pdfLink:'#', type:'secondary', category:'grade6-8'   },
+      { grade:'Grade 7',           year:'2024-25', passRate:'94', totalStudents:'53', topper:'Vikram Rao',     topperPercent:'92.5', pdfLink:'#', type:'secondary', category:'grade6-8'   },
+      { grade:'Grade 8',           year:'2024-25', passRate:'96', totalStudents:'58', topper:'Anjali Mehta',   topperPercent:'94.2', pdfLink:'#', type:'secondary', category:'grade6-8'   },
+      { grade:'Grade 9',           year:'2024-25', passRate:'93', totalStudents:'60', topper:'Ravi Kumar',     topperPercent:'91.7', pdfLink:'#', type:'secondary', category:'grade9-10'  },
+      { grade:'Grade 10',          year:'2024-25', passRate:'95', totalStudents:'62', topper:'Pooja Sharma',   topperPercent:'95.3', pdfLink:'#', type:'secondary', category:'grade9-10'  },
+      { grade:'Grade 11 Science',  year:'2024-25', passRate:'92', totalStudents:'40', topper:'Aditya Singh',   topperPercent:'90.4', pdfLink:'#', type:'senior',    category:'grade11-12' },
+      { grade:'Grade 11 Commerce', year:'2024-25', passRate:'94', totalStudents:'38', topper:'Shruti Agarwal', topperPercent:'92.1', pdfLink:'#', type:'senior',    category:'grade11-12' },
+      { grade:'Grade 11 Arts',     year:'2024-25', passRate:'96', totalStudents:'35', topper:'Kavya Nair',     topperPercent:'93.6', pdfLink:'#', type:'senior',    category:'grade11-12' },
+      { grade:'Grade 12 Science',  year:'2024-25', passRate:'100','totalStudents':'42', topper:'Rohit Tiwari', topperPercent:'97.8', pdfLink:'#', type:'senior',    category:'grade11-12' },
+      { grade:'Grade 12 Commerce', year:'2024-25', passRate:'98', totalStudents:'36', topper:'Neha Pandey',    topperPercent:'95.0', pdfLink:'#', type:'senior',    category:'grade11-12' },
+      { grade:'Grade 12 Arts',     year:'2024-25', passRate:'97', totalStudents:'33', topper:'Sunita Yadav',   topperPercent:'94.2', pdfLink:'#', type:'senior',    category:'grade11-12' },
+    ];
+
+    /* ── Render Cards ── */
+    function renderCards(results) {
+      const grid = document.getElementById('resultsGrid');
+      if (!results.length) {
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-folder-open"></i><h3>No Results Found</h3><p>No results match the selected filter. Please try a different category or year.</p></div>`;
+        updateCount(0);
+        return;
+      }
+      grid.innerHTML = results.map(r => {
+        const badgeClass = r.type === 'primary' ? 'badge-primary' : r.type === 'senior' ? 'badge-senior' : 'badge-secondary';
+        const badgeLabel = r.type === 'primary' ? 'Primary' : r.type === 'senior' ? 'Senior' : 'Secondary';
+        const rate = Math.min(100, parseInt(r.passRate) || 0);
+        const pdfDisabled = (!r.pdfLink || r.pdfLink === '#');
+        return `
+          <div class="r-card reveal" data-cat="${r.category || 'all'}" data-year="${r.year || ''}">
+            <div class="r-card-top">
+              <div>
+                <div class="r-grade">${r.grade}</div>
+                <div class="r-year"><i class="fas fa-calendar-alt"></i> Academic Year ${r.year}</div>
+              </div>
+              <span class="r-badge ${badgeClass}">${badgeLabel}</span>
+            </div>
+            <div class="r-card-body">
+              <div class="r-pass-row">
+                <span class="r-pass-label">Pass Rate</span>
+                <span class="r-pass-val">${r.passRate}%</span>
+              </div>
+              <div class="r-bar-track">
+                <div class="r-bar-fill" style="width:${rate}%"></div>
+              </div>
+              <div class="r-meta">
+                <div class="r-meta-item"><i class="fas fa-users"></i> ${r.totalStudents} Students</div>
+                <div class="r-meta-item"><i class="fas fa-check-circle"></i> ${Math.round(parseInt(r.totalStudents) * rate / 100)} Passed</div>
+              </div>
+              <div class="r-topper">
+                <i class="fas fa-crown r-topper-icon"></i>
+                <div>
+                  <div class="r-topper-name">${r.topper}</div>
+                  <div class="r-topper-pct">Class Topper — ${r.topperPercent}%</div>
+                </div>
+              </div>
+            </div>
+            <div class="r-card-foot">
+              ${pdfDisabled
+                ? `<button class="r-pdf-btn no-pdf" disabled><i class="fas fa-file-pdf"></i> PDF Not Available</button>`
+                : `<a href="${r.pdfLink}" target="_blank" rel="noopener" class="r-pdf-btn"><i class="fas fa-download"></i> Download Result PDF</a>`
+              }
+            </div>
+          </div>`;
+      }).join('');
+
+      // trigger reveal observer for new cards
+      document.querySelectorAll('.r-card.reveal:not(.in)').forEach(el => revObs.observe(el));
+      applyFilters();
+    }
+
+    /* ── Filter Logic ── */
+    let activeCat  = 'all';
+    let activeYear = '2024-25';
+
+    function applyFilters() {
+      const cards = document.querySelectorAll('.r-card');
+      let visible = 0;
+      cards.forEach(card => {
+        const catOk  = activeCat  === 'all' || card.dataset.cat  === activeCat;
+        const yearOk = activeYear === 'all' || card.dataset.year === activeYear;
+        const show   = catOk && yearOk;
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      updateCount(visible);
+    }
+
+    function updateCount(n) {
+      const el = document.getElementById('resultsCount');
+      if (el) el.textContent = `${n} result${n !== 1 ? 's' : ''} found`;
+    }
+
+    // Tab clicks
+    document.getElementById('filterTabs').addEventListener('click', e => {
+      const btn = e.target.closest('.ftab');
+      if (!btn) return;
+      document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      applyFilters();
+    });
+
+    // Year dropdown
+    document.getElementById('yearSelect').addEventListener('change', e => {
+      activeYear = e.target.value;
+      applyFilters();
+    });
+
+    /* ── Load from Firebase ── */
+    function loadResults() {
+      // Show dummy first
+      renderCards(dummyResults);
+
+      try {
+        onSnapshot(collection(db, 'results'), snap => {
+          if (snap.empty) return; // Keep dummy
+          const real = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderCards(real);
+        }, err => console.error('Results load error:', err));
+      } catch(e) {
+        console.error('Firebase error:', e);
+        // Dummy already rendered
+      }
+    }
+
+    loadResults();
+  </script>
+
+  <!-- ============================================================
+       JAVASCRIPT SECTION
+  ============================================================ -->
+  <script>
+    /* ── Mobile Menu ── */
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      const sp = hamburger.querySelectorAll('span');
+      const o  = mobileMenu.classList.contains('open');
+      sp[0].style.transform = o ? 'rotate(45deg) translate(5px,5px)' : '';
+      sp[1].style.opacity   = o ? '0' : '';
+      sp[2].style.transform = o ? 'rotate(-45deg) translate(5px,-5px)' : '';
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+      });
+    });
+
+    /* ── Navbar shadow ── */
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').style.boxShadow =
+        window.scrollY > 40 ? '0 4px 28px rgba(0,0,0,.15)' : '0 1px 20px rgba(0,0,0,.08)';
+    }, { passive: true });
+
+    /* ── Scroll Reveal ── */
+    const revObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+        setTimeout(() => entry.target.classList.add('in'), siblings.indexOf(entry.target) * 80);
+        revObs.unobserve(entry.target);
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+    /* ── Hero Counters ── */
+    function countUp(el, target, suffix) {
+      let cur = 0;
+      const step = Math.max(1, Math.ceil(target / (1400 / 16)));
+      const t = setInterval(() => {
+        cur = Math.min(cur + step, target);
+        el.textContent = cur + suffix;
+        if (cur >= target) clearInterval(t);
+      }, 16);
+    }
+    const ctrObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll('[data-target]').forEach(el => {
+          countUp(el, parseInt(el.dataset.target), el.dataset.suffix || '');
+        });
+        ctrObs.disconnect();
+      });
+    }, { threshold: 0.5 });
+    const hc = document.getElementById('heroCounters');
+    if (hc) ctrObs.observe(hc);
+  </script>
+
+</body>
+</html>

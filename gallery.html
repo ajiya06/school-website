@@ -583,189 +583,12 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
 
 <section class="gallery-section">
   <div class="masonry-grid" id="masonryGrid">
-
-    <div class="gallery-item tall reveal" data-cat="campus" data-caption="Main Building Entrance" data-bg="linear-gradient(135deg,#1a2340 0%,#2d3f6e 50%,#3a5080 100%)" data-icon="fa-building">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-building"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-building"></i> Campus</div>
-        <div class="overlay-caption">Main Building Entrance</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
+    <!-- Loaded dynamically from Firebase -->
+    <div id="galleryLoading" style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)">
+      <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--gold-dk);display:block;margin-bottom:12px"></i>
+      Loading gallery...
     </div>
-
-    <div class="gallery-item normal reveal" data-cat="sports" data-caption="Inter-School Football Championship" data-bg="linear-gradient(135deg,#14532d 0%,#16a34a 60%,#4ade80 100%)" data-icon="fa-futbol">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-futbol"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-futbol"></i> Sports</div>
-        <div class="overlay-caption">Inter-School Football Championship</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item wide reveal" data-cat="events" data-caption="Annual Day Celebration 2024" data-bg="linear-gradient(135deg,#7c2d12 0%,#c2410c 55%,#fb923c 100%)" data-icon="fa-star">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-star"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-star"></i> Events</div>
-        <div class="overlay-caption">Annual Day Celebration 2024</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="classrooms" data-caption="Smart Classroom in Action" data-bg="linear-gradient(135deg,#1e3a5f 0%,#2563eb 55%,#60a5fa 100%)" data-icon="fa-chalkboard-teacher">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-chalkboard-teacher"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-chalkboard-teacher"></i> Classrooms</div>
-        <div class="overlay-caption">Smart Classroom in Action</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item tall reveal" data-cat="arts" data-caption="Annual Cultural Dance Performance" data-bg="linear-gradient(135deg,#4a044e 0%,#9333ea 55%,#c084fc 100%)" data-icon="fa-music">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-music"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-music"></i> Arts & Culture</div>
-        <div class="overlay-caption">Annual Cultural Dance Performance</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="labs" data-caption="Science Lab — Chemistry Experiments" data-bg="linear-gradient(135deg,#164e63 0%,#0891b2 55%,#67e8f9 100%)" data-icon="fa-flask">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-flask"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-flask"></i> Labs</div>
-        <div class="overlay-caption">Science Lab — Chemistry Experiments</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item wide reveal" data-cat="campus" data-caption="Library Reading Hall" data-bg="linear-gradient(135deg,#422006 0%,#b45309 55%,#fcd34d 100%)" data-icon="fa-book">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-book"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-book"></i> Campus</div>
-        <div class="overlay-caption">Library Reading Hall</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="sports" data-caption="Basketball Court — Evening Practice" data-bg="linear-gradient(135deg,#7f1d1d 0%,#dc2626 55%,#fca5a5 100%)" data-icon="fa-basketball-ball">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-basketball-ball"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-basketball-ball"></i> Sports</div>
-        <div class="overlay-caption">Basketball Court — Evening Practice</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item tall reveal" data-cat="events" data-caption="Science Fair 2024 — Student Exhibits" data-bg="linear-gradient(135deg,#064e3b 0%,#059669 55%,#6ee7b7 100%)" data-icon="fa-microscope">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-microscope"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-microscope"></i> Events</div>
-        <div class="overlay-caption">Science Fair 2024 — Student Exhibits</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="arts" data-caption="Student Art Exhibition — Fine Arts" data-bg="linear-gradient(135deg,#831843 0%,#db2777 55%,#f9a8d4 100%)" data-icon="fa-palette">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-palette"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-palette"></i> Arts & Culture</div>
-        <div class="overlay-caption">Student Art Exhibition — Fine Arts</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="classrooms" data-caption="Computer Lab — Coding Session" data-bg="linear-gradient(135deg,#1e3a5f 0%,#0f766e 55%,#5eead4 100%)" data-icon="fa-laptop-code">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-laptop-code"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-laptop-code"></i> Classrooms</div>
-        <div class="overlay-caption">Computer Lab — Coding Session</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item wide reveal" data-cat="campus" data-caption="School Auditorium — Morning Assembly" data-bg="linear-gradient(135deg,#1a2340 0%,#44337a 55%,#7c3aed 100%)" data-icon="fa-microphone">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-microphone"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-microphone"></i> Campus</div>
-        <div class="overlay-caption">School Auditorium — Morning Assembly</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="sports" data-caption="Swimming Pool Complex" data-bg="linear-gradient(135deg,#0c4a6e 0%,#0284c7 55%,#7dd3fc 100%)" data-icon="fa-swimmer">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-swimmer"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-swimmer"></i> Sports</div>
-        <div class="overlay-caption">Swimming Pool Complex</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item tall reveal" data-cat="events" data-caption="Graduation Ceremony — Class of 2024" data-bg="linear-gradient(135deg,#3b1a08 0%,#c8870a 55%,#fcd34d 100%)" data-icon="fa-graduation-cap">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-graduation-cap"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-graduation-cap"></i> Events</div>
-        <div class="overlay-caption">Graduation Ceremony — Class of 2024</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="labs" data-caption="Computer Lab — Digital Learning" data-bg="linear-gradient(135deg,#0f2027 0%,#203a43 50%,#2c5364 100%)" data-icon="fa-desktop">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-desktop"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-desktop"></i> Labs</div>
-        <div class="overlay-caption">Computer Lab — Digital Learning</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item wide reveal" data-cat="arts" data-caption="Music Room — Choir Practice" data-bg="linear-gradient(135deg,#2d1b69 0%,#5b21b6 55%,#a78bfa 100%)" data-icon="fa-music">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-music"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-music"></i> Arts & Culture</div>
-        <div class="overlay-caption">Music Room — Choir Practice</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="campus" data-caption="Lush Green Campus Gardens" data-bg="linear-gradient(135deg,#052e16 0%,#15803d 55%,#86efac 100%)" data-icon="fa-leaf">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-leaf"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-leaf"></i> Campus</div>
-        <div class="overlay-caption">Lush Green Campus Gardens</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
-    <div class="gallery-item normal reveal" data-cat="events" data-caption="Sports Day — Athletics Track" data-bg="linear-gradient(135deg,#450a0a 0%,#b91c1c 55%,#fca5a5 100%)" data-icon="fa-running">
-      <div class="gi-bg"></div>
-      <div class="gi-icon-wrap"><i class="fas fa-running"></i></div>
-      <div class="gallery-overlay always">
-        <div class="overlay-cat"><i class="fas fa-running"></i> Events</div>
-        <div class="overlay-caption">Sports Day — Athletics Track</div>
-      </div>
-      <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
-    </div>
-
   </div>
-
   <!-- No results message -->
   <div id="noResults" style="display:none;text-align:center;padding:60px 20px;">
     <i class="fas fa-search" style="font-size:2.5rem;color:var(--border);margin-bottom:16px"></i>
@@ -892,10 +715,10 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
       </ul>
     </div>
   </div>
-  <div class="footer-bottom">&copy; 2025 Global Academy. All rights reserved.</div>
+  <div class="footer-bottom">&copy; 2025 Global Academy. All rights reserved.<br><a href="https://ajiya06.github.io/ajay-portfolio/" style="color:rgba(255,255,255,.4);font-size:.75rem">Developed by Ajay Sah</a><br><a href="admin-panel.html" style="color:rgba(255,255,255,.25);font-size:.72rem"><i class="fas fa-lock"></i> Admin Login</a></div>
 </footer>
 
-<a href="https://wa.me/0708722437" class="whatsapp-fab"><i class="fab fa-whatsapp"></i></a>
+<a href="https://wa.me/9508219026" class="whatsapp-fab"><i class="fab fa-whatsapp"></i></a>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
@@ -910,6 +733,123 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
   <div class="lb-prev" id="lbPrev"><i class="fas fa-chevron-left"></i></div>
   <div class="lb-next" id="lbNext"><i class="fas fa-chevron-right"></i></div>
 </div>
+
+<!-- ============================================================
+     FIREBASE — Gallery CMS
+============================================================ -->
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
+    authDomain:        "school-website-cms.firebaseapp.com",
+    projectId:         "school-website-cms",
+    storageBucket:     "school-website-cms.firebasestorage.app",
+    messagingSenderId: "720284453351",
+    appId:             "1:720284453351:web:05e609eac5747f9aaf9542"
+  };
+  const app     = initializeApp(firebaseConfig);
+  const db      = getFirestore(app);
+  const storage = getStorage(app);
+
+  /* ── Category icon + gradient map ── */
+  const catMap = {
+    campus:     { icon: 'fa-building',           bg: 'linear-gradient(135deg,#1a2340 0%,#2d3f6e 50%,#3a5080 100%)',    label: 'Campus'        },
+    classrooms: { icon: 'fa-chalkboard-teacher', bg: 'linear-gradient(135deg,#1e3a5f 0%,#2563eb 55%,#60a5fa 100%)',    label: 'Classrooms'    },
+    sports:     { icon: 'fa-running',            bg: 'linear-gradient(135deg,#14532d 0%,#16a34a 60%,#4ade80 100%)',    label: 'Sports'        },
+    events:     { icon: 'fa-star',               bg: 'linear-gradient(135deg,#7c2d12 0%,#c2410c 55%,#fb923c 100%)',    label: 'Events'        },
+    arts:       { icon: 'fa-music',              bg: 'linear-gradient(135deg,#4a044e 0%,#9333ea 55%,#c084fc 100%)',    label: 'Arts & Culture'},
+    labs:       { icon: 'fa-flask',              bg: 'linear-gradient(135deg,#164e63 0%,#0891b2 55%,#67e8f9 100%)',    label: 'Labs'          },
+  };
+
+  /* ── Dummy gallery items shown while Firebase empty ── */
+  const dummyItems = [
+    { caption:'Main Building Entrance',          category:'campus',     size:'tall'   },
+    { caption:'Annual Day Celebration 2024',     category:'events',     size:'wide'   },
+    { caption:'Inter-School Football Match',     category:'sports',     size:'normal' },
+    { caption:'Smart Classroom in Action',       category:'classrooms', size:'normal' },
+    { caption:'Annual Cultural Dance',           category:'arts',       size:'tall'   },
+    { caption:'Chemistry Lab Experiments',       category:'labs',       size:'normal' },
+    { caption:'Library Reading Hall',            category:'campus',     size:'wide'   },
+    { caption:'Basketball Court Practice',       category:'sports',     size:'normal' },
+    { caption:'Science Fair 2024',               category:'events',     size:'tall'   },
+    { caption:'Student Art Exhibition',          category:'arts',       size:'normal' },
+    { caption:'Computer Lab Coding Session',     category:'classrooms', size:'normal' },
+    { caption:'School Auditorium Assembly',      category:'campus',     size:'wide'   },
+    { caption:'Swimming Pool Complex',           category:'sports',     size:'normal' },
+    { caption:'Graduation Ceremony 2024',        category:'events',     size:'tall'   },
+    { caption:'Music Room Choir Practice',       category:'arts',       size:'wide'   },
+    { caption:'Lush Green Campus Gardens',       category:'campus',     size:'normal' },
+    { caption:'Physics Lab Experiments',         category:'labs',       size:'normal' },
+    { caption:'Sports Day Athletics Track',      category:'events',     size:'normal' },
+  ];
+
+  /* ── Render a single card ── */
+  function makeCard(item) {
+    const cat    = (item.category || 'campus').toLowerCase();
+    const info   = catMap[cat] || catMap.campus;
+    const size   = item.size   || 'normal';
+    const hasImg = item.imageUrl && item.imageUrl !== '#';
+    const id     = item.id || '';
+
+    return `
+      <div class="gallery-item ${size} reveal"
+           data-cat="${cat}"
+           data-caption="${item.caption || ''}"
+           data-img="${hasImg ? item.imageUrl : ''}"
+           data-bg="${info.bg}"
+           data-icon="${info.icon}"
+           data-id="${id}">
+        <div class="gi-bg" ${hasImg ? `style="background:url('${item.imageUrl}') center/cover no-repeat"` : `style="background:${info.bg}"`}></div>
+        ${!hasImg ? `<div class="gi-icon-wrap"><i class="fas ${info.icon}"></i></div>` : ''}
+        <div class="gallery-overlay always">
+          <div class="overlay-cat"><i class="fas ${info.icon}"></i> ${info.label}</div>
+          <div class="overlay-caption">${item.caption || ''}</div>
+        </div>
+        <div class="overlay-zoom"><i class="fas fa-expand"></i></div>
+      </div>`;
+  }
+
+  /* ── Render all cards ── */
+  let allItems = [];
+
+  function renderGallery(items) {
+    allItems = items;
+    const grid = document.getElementById('masonryGrid');
+    grid.innerHTML = items.map(makeCard).join('');
+    // re-attach click handlers
+    grid.querySelectorAll('.gallery-item').forEach(el => {
+      el.addEventListener('click', () => openLightbox(el));
+    });
+    // re-run reveal observer
+    grid.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+    // re-apply bg gradients
+    grid.querySelectorAll('.gallery-item[data-bg]').forEach(item => {
+      const bg = item.querySelector('.gi-bg');
+      if (bg && !item.dataset.img) bg.style.background = item.dataset.bg;
+    });
+    if (window.applyFilters) window.applyFilters();
+  }
+
+  /* ── Load from Firebase ── */
+  function loadGallery() {
+    renderGallery(dummyItems); // show dummy first
+    try {
+      onSnapshot(collection(db, 'gallery'), snap => {
+        if (snap.empty) return; // keep dummy
+        const real = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderGallery(real);
+      }, err => console.error('Gallery load error:', err));
+    } catch(e) { console.error('Firebase gallery error:', e); }
+  }
+
+  loadGallery();
+</script>
 
 <!-- ============================================================
      JAVASCRIPT SECTION
@@ -946,6 +886,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
       revObs.unobserve(entry.target);
     });
   }, { threshold: 0.08 });
+  window.revObs = revObs;
+  window.applyFilters = applyFilters;
   document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
 
   /* ── Stats Counter ── */
@@ -972,15 +914,16 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
 
   /* ── Filter Tabs ── */
   const filterBtns = document.querySelectorAll('.filter-btn');
-  const items = document.querySelectorAll('.gallery-item');
+  let items = document.querySelectorAll('.gallery-item');
   let activeFilter = 'all';
 
   function applyFilters() {
+    items = document.querySelectorAll('.gallery-item'); // re-query after dynamic render
     const search = document.getElementById('searchInput').value.toLowerCase();
     let visible = 0;
     items.forEach(item => {
-      const cat     = item.dataset.cat;
-      const caption = item.dataset.caption.toLowerCase();
+      const cat     = item.dataset.cat || '';
+      const caption = (item.dataset.caption || '').toLowerCase();
       const matchCat    = activeFilter === 'all' || cat === activeFilter;
       const matchSearch = caption.includes(search) || cat.includes(search);
       const show = matchCat && matchSearch;
@@ -1010,6 +953,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
   let currentIdx = 0;
 
   function openLightbox(item) {
+    items = document.querySelectorAll('.gallery-item');
     visibleItems = [...items].filter(i => i.style.display !== 'none');
     currentIdx = visibleItems.indexOf(item);
     showLb(currentIdx);
@@ -1018,21 +962,30 @@ footer{background:var(--navy);color:rgba(255,255,255,.75);padding:40px 5% 24px;d
   }
 
   function showLb(idx) {
-    const item = visibleItems[idx];
-    const bg   = item.dataset.bg;
-    // Show gradient preview in lightbox
-    lbImg.style.display = 'none';
-    let lbGrad = document.getElementById('lbGrad');
+    const item    = visibleItems[idx];
+    const bg      = item.dataset.bg;
+    const imgUrl  = item.dataset.img;
+    let lbGrad    = document.getElementById('lbGrad');
     if (!lbGrad) {
       lbGrad = document.createElement('div');
       lbGrad.id = 'lbGrad';
       lbGrad.style.cssText = 'width:100%;height:420px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(255,255,255,.3);';
       lbImg.parentElement.insertBefore(lbGrad, lbImg);
     }
-    const iconClass = item.querySelector('.gi-icon-wrap i').className;
-    lbGrad.style.background = bg;
-    lbGrad.innerHTML = `<i class="${iconClass}"></i>`;
-    lbCaption.textContent = item.dataset.caption;
+    if (imgUrl) {
+      // Real image — show it
+      lbImg.src = imgUrl;
+      lbImg.style.display = 'block';
+      lbGrad.style.display = 'none';
+    } else {
+      // Gradient fallback
+      lbImg.style.display = 'none';
+      lbGrad.style.display = 'flex';
+      const iconWrap = item.querySelector('.gi-icon-wrap i');
+      lbGrad.style.background = bg;
+      lbGrad.innerHTML = iconWrap ? `<i class="${iconWrap.className}"></i>` : '';
+    }
+    lbCaption.textContent = item.dataset.caption || '';
     lbCat.innerHTML = item.querySelector('.overlay-cat').innerHTML;
   }
 
