@@ -375,11 +375,13 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
   <ul class="navbar-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About Us</a></li>
-    <li><a href="admissions.html">Admissions</a></li>
+    <li><a href="admission.html">Admissions</a></li>
     <li><a href="index.html#programs">Academics</a></li>
     <li><a href="faculty.html">Faculty</a></li>
     <li><a href="campus-life.html">Campus Life</a></li>
     <li><a href="events.html" class="active">Events</a></li>
+    <li><a href="results.html">Results</a></li>
+    <li><a href="alumni.html">Alumni</a></li>
     <li><a href="index.html#contact">Contact Us</a></li>
   </ul>
   <div class="navbar-actions">
@@ -390,10 +392,12 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Home</a>
   <a href="about.html">About Us</a>
-  <a href="admissions.html">Admissions</a>
+  <a href="admission.html">Admissions</a>
   <a href="faculty.html">Faculty</a>
   <a href="campus-life.html">Campus Life</a>
   <a href="events.html">Events</a>
+  <a href="results.html">Results</a>
+  <a href="alumni.html">Alumni</a>
   <a href="index.html#contact">Contact</a>
   <a href="index.html#fees" class="btn btn-gold" style="text-align:center">Pay Fees</a>
 </div>
@@ -490,7 +494,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
     <p>Join Global Academy and experience a school year full of celebrations, competitions, and unforgettable moments.</p>
   </div>
   <div class="cta-btns">
-    <a href="admissions.html" class="btn btn-navy btn-lg"><i class="fas fa-pen"></i> Apply for Admission</a>
+    <a href="admission.html" class="btn btn-navy btn-lg"><i class="fas fa-pen"></i> Apply for Admission</a>
     <a href="campus-tour.html" class="btn btn-ghost" style="border-color:var(--navy);color:var(--navy)"><i class="fas fa-school"></i> Book a Tour</a>
   </div>
 </section>
@@ -499,7 +503,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
 <footer>
   <div class="footer-top">
     <div class="footer-brand"><h3>Global Academy</h3><p>Empowering minds and building future leaders through quality education, discipline, and innovation since 2005.</p></div>
-    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="admissions.html">Admissions</a></li><li><a href="faculty.html">Faculty</a></li></ul></div>
+    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="admission.html">Admissions</a></li><li><a href="faculty.html">Faculty</a></li><li><a href="results.html">Results</a></li><li><a href="alumni.html">Alumni</a></li></ul></div>
     <div class="footer-col"><h4>Events</h4><ul><li><a href="#" onclick="filterByType('academic')">Academic</a></li><li><a href="#" onclick="filterByType('cultural')">Cultural</a></li><li><a href="#" onclick="filterByType('sports')">Sports</a></li><li><a href="#" onclick="filterByType('community')">Community</a></li></ul></div>
     <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">info@globalacademy.edu</a></li><li><a href="#">+07.08722, 43710</a></li><li><a href="index.html#fees">Pay Fees Online</a></li><li><a href="index.html#contact">Find Us</a></li></ul></div>
   </div>
@@ -526,7 +530,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Close</button>
-      <a href="admissions.html" class="btn btn-gold"><i class="fas fa-pen"></i> Apply Now</a>
+      <a href="admission.html" class="btn btn-gold"><i class="fas fa-pen"></i> Apply Now</a>
     </div>
   </div>
 </div>
@@ -539,13 +543,13 @@ footer{background:var(--navy);color:rgba(255,255,255,.7);padding:48px 5% 24px}
 <script type="module">
 /* ═══ Firebase Imports ═══ */
 import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, query, orderBy }
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 /* ═══ Firebase Init ═══ */
 const firebaseConfig = {
-  apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPLi",
+  apiKey:            "AIzaSyC618HPLLdXBhD7phy_L47w5d36U9GIPlI",
   authDomain:        "school-website-cms.firebaseapp.com",
   projectId:         "school-website-cms",
   storageBucket:     "school-website-cms.firebasestorage.app",
@@ -683,7 +687,7 @@ function renderFeatured() {
       </div>
       <div class="fc-actions">
         <button class="btn btn-gold" onclick="openModal('${ev.id}')"><i class="fas fa-info-circle"></i> View Details</button>
-        <a href="admissions.html" class="btn btn-outline"><i class="fas fa-pen"></i> Apply Now</a>
+        <a href="admission.html" class="btn btn-outline"><i class="fas fa-pen"></i> Apply Now</a>
       </div>
     </div>`;
   document.getElementById('featuredCard').classList.add('in');

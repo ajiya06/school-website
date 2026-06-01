@@ -636,6 +636,9 @@ textarea.mform-control{resize:vertical;min-height:80px}
       </button>
 
       <div class="nav-section-label">Content Management</div>
+      <button class="nav-item" data-page="announcements">
+        <i class="fas fa-megaphone"></i> Announcements
+      </button>
       <button class="nav-item" data-page="notices">
         <i class="fas fa-bullhorn"></i> Notice Board
       </button>
@@ -830,6 +833,23 @@ textarea.mform-control{resize:vertical;min-height:80px}
     </div>
 
     <!-- ══ NOTICE BOARD PAGE ══ -->
+    <!-- ══ ANNOUNCEMENTS PAGE ══ -->
+    <div class="page" id="page-announcements">
+      <div class="card">
+        <div class="card-header">
+          <div><h3>Announcements</h3><p>Manage the scrolling marquee text on the homepage</p></div>
+          <button class="btn-sm btn-gold-sm" onclick="openAddModal('announcement')"><i class="fas fa-plus"></i> Add Announcement</button>
+        </div>
+        <div class="card-body">
+          <div style="background:var(--gold-lt);border:1px solid rgba(232,160,32,.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:var(--navy)">
+            <i class="fas fa-info-circle" style="color:var(--gold-dk);margin-right:6px"></i>
+            The latest announcement automatically appears in the scrolling marquee on the homepage. Only the most recent one is shown.
+          </div>
+          <div id="announcementsGrid"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="page" id="page-notices">
       <div class="card">
         <div class="card-header">
@@ -914,7 +934,7 @@ textarea.mform-control{resize:vertical;min-height:80px}
         <div class="card">
           <div class="card-header"><div><h3>Change Password</h3><p>Update your admin password</p></div></div>
           <div class="card-body">
-            <div class="mform-row full"><div class="mform-group"><label>Current Password</label><input class="mform-control" type="password" placeholder="Current password"/></div></div>
+            <div class="mform-row full"><div class="mform-group"><label>Current Password</label><input class="mform-control" type="password" placeholder="Current password" id="currentPass"/></div></div>
             <div class="mform-row full"><div class="mform-group"><label>New Password</label><input class="mform-control" type="password" placeholder="New password" id="newPass"/></div></div>
             <div class="mform-row full"><div class="mform-group"><label>Confirm New Password</label><input class="mform-control" type="password" placeholder="Confirm password" id="confirmPass"/></div></div>
             <button class="btn-sm btn-gold-sm" style="margin-top:8px" onclick="changePassword()"><i class="fas fa-lock"></i> Update Password</button>
@@ -942,7 +962,7 @@ textarea.mform-control{resize:vertical;min-height:80px}
               </div>
               <div style="background:var(--off);border-radius:10px;padding:16px;border:1px solid var(--border)">
                 <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:6px">PASSWORD</div>
-                <div style="font-weight:600;color:var(--navy)" id="dispPass">admin@1234</div>
+                <div style="font-weight:600;color:var(--navy)" id="dispPass">••••••••</div>
               </div>
             </div>
           </div>
@@ -1015,7 +1035,7 @@ const storage = getStorage(app);
 let DB = {
   admissions: [], tours: [], facApps: [],
   notices: [], events: [], faculty: [],
-  results: [], alumni: [], gallery: []
+  results: [], alumni: [], gallery: [], announcements: []
 };
 
 let pendingDeleteFn = null;
@@ -1101,12 +1121,13 @@ async function loadFirestoreData() {
     } catch(e) { console.warn('Load error [' + col + ']:', e.message); }
   };
   await Promise.all([
-    load('notices',  'notices',  renderNotices),
-    load('events',   'events',   renderEvents),
-    load('faculty',  'faculty',  renderFaculty),
-    load('results',  'results',  renderResults),
-    load('alumni',   'alumni',   renderAlumni),
-    load('gallery',  'gallery',  renderGalleryAdmin),
+    load('notices',       'notices',       renderNotices),
+    load('events',        'events',        renderEvents),
+    load('faculty',       'faculty',       renderFaculty),
+    load('results',       'results',       renderResults),
+    load('alumni',        'alumni',        renderAlumni),
+    load('gallery',       'gallery',       renderGalleryAdmin),
+    load('announcements', 'announcements', renderAnnouncements),
   ]);
   updateBadges();
   listenToSubmissions();
@@ -1181,14 +1202,14 @@ function updateTopbarDate() {
 /* ════ NAVIGATION ════ */
 const pageTitles = {
   dashboard:'Dashboard','admissions':'Admission Enquiries','tours':'Campus Tour Bookings',
-  'faculty-apps':'Faculty Applications','notices':'Notice Board','events':'Events Manager',
+  'faculty-apps':'Faculty Applications','announcements':'Announcements','notices':'Notice Board','events':'Events Manager',
   'faculty-mgmt':'Faculty Members','results':'Results Manager','alumni':'Alumni Manager',
   settings:'Settings'
 };
 const pageSubs = {
   dashboard:'Welcome back, Admin','admissions':'View & manage all admission form submissions',
   'tours':'All scheduled campus visit bookings','faculty-apps':'Review job applications from teachers',
-  'notices':'Add, edit and delete notices','events':'Manage school events',
+  'announcements':'Manage homepage marquee announcements','notices':'Add, edit and delete notices','events':'Manage school events',
   'faculty-mgmt':'Add, edit and remove faculty members','results':'Upload and manage exam results',
   'alumni':'Manage alumni profiles','settings':'Account and school settings'
 };
@@ -1464,7 +1485,7 @@ async function changeStatus(type, id) {
   const idx   = cycle.indexOf(item.status);
   item.status = cycle[(idx + 1) % cycle.length];
   // Update in Firestore
-  const collMap = { admissions:'admissions', tours:'campus_tours', facApps:'faculty_apps', notice:'notices', event:'events', faculty:'faculty', result:'results', alumni:'alumni', gallery:'gallery' };
+  const collMap = { admissions:'admissions', tours:'campus_tours', facApps:'faculty_apps', notice:'notices', event:'events', faculty:'faculty', result:'results', alumni:'alumni', gallery:'gallery', announcement:'announcements' };
   try {
     if (typeof id === 'string' && collMap[type]) {
       await updateDoc(doc(db, collMap[type], id), { status: item.status });
@@ -1614,6 +1635,23 @@ const addForms = {
       } catch(e) { showToast('Failed to save result: ' + e.message, 'error'); }
     }
   },
+  announcement: {
+    title: 'Add Announcement',
+    fields: `
+      <div class="mform-row full"><div class="mform-group"><label>Announcement Text</label><textarea class="mform-control" id="af-ann-text" rows="3" placeholder="e.g. School will remain closed on 20th June due to state holiday. PTM scheduled on Saturday 10 AM – 1 PM…"></textarea></div></div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px"><i class="fas fa-info-circle" style="color:var(--gold-dk)"></i> This text will scroll in the marquee on the homepage.</div>`,
+    save: async () => {
+      const text = document.getElementById('af-ann-text')?.value?.trim();
+      if (!text) { showToast('Please enter announcement text.', 'error'); return; }
+      const item = { text, timestamp: serverTimestamp() };
+      try {
+        const docRef = await addDoc(collection(db, 'announcements'), item);
+        DB.announcements.push({ id: docRef.id, ...item });
+        renderAnnouncements(); closeModal();
+        showToast('Announcement added successfully.', 'success');
+      } catch(e) { showToast('Failed to save: ' + e.message, 'error'); }
+    }
+  },
   gallery: {
     title: 'Add Gallery Photo',
     fields: `
@@ -1679,7 +1717,7 @@ async function saveAddModal(type) {
 
 /* ════ EDIT MODALS ════ */
 function openEditModal(type, id) {
-  const dataMap = { notice: DB.notices, event: DB.events, faculty: DB.faculty, result: DB.results, alumni: DB.alumni };
+  const dataMap = { notice: DB.notices, event: DB.events, faculty: DB.faculty, result: DB.results, alumni: DB.alumni, announcement: DB.announcements };
   const arr  = dataMap[type];
   const item = arr?.find(i => i.id === id);
   if (!item) return;
@@ -1708,6 +1746,8 @@ function openEditModal(type, id) {
       <div class="mform-group"><label>Pass Rate</label><input class="mform-control" id="ef-pass" value="${item.passRate}"/></div></div>
       <div class="mform-row full"><div class="mform-group"><label>Toppers</label><input class="mform-control" id="ef-toppers" value="${item.toppers}"/></div></div>
       <div class="mform-row full"><div class="mform-group"><label>Description</label><textarea class="mform-control" id="ef-desc" rows="2">${item.description}</textarea></div></div>`,
+    announcement: `
+      <div class="mform-row full"><div class="mform-group"><label>Announcement Text</label><textarea class="mform-control" id="ef-ann-text" rows="3" placeholder="Type the announcement text…">${item.text||''}</textarea></div></div>`,
     alumni: `
       <div class="mform-row"><div class="mform-group"><label>Full Name</label><input class="mform-control" id="ef-name" value="${item.name||''}"/></div>
       <div class="mform-group"><label>Batch Year</label><input class="mform-control" id="ef-batch" value="${item.batch||''}"/></div></div>
@@ -1736,6 +1776,7 @@ async function saveEdit(type, id) {
     event:   { title:val('ef-title'), date:val('ef-date'), type:val('ef-type'), description:val('ef-desc') },
     faculty: { name:val('ef-name'), role:val('ef-role'), dept:val('ef-dept'), exp:val('ef-exp'), img:val('ef-img') },
     result:  { title:val('ef-title'), grade:val('ef-grade'), passRate:val('ef-pass'), toppers:val('ef-toppers'), description:val('ef-desc') },
+    announcement: { text: val('ef-ann-text') },
     alumni:  { name:val('ef-name'), batch:val('ef-batch'), profession:val('ef-prof'), img:val('ef-img'), message:val('ef-msg') },
   };
 
@@ -1744,7 +1785,7 @@ async function saveEdit(type, id) {
     await updateDoc(doc(db, collMap[type], id), updatedData[type]);
     // Update local cache
     Object.assign(item, updatedData[type]);
-    const renderMap = { notice:renderNotices, event:renderEvents, faculty:renderFaculty, result:renderResults, alumni:renderAlumni };
+    const renderMap = { notice:renderNotices, event:renderEvents, faculty:renderFaculty, result:renderResults, alumni:renderAlumni, announcement:renderAnnouncements };
     renderMap[type]?.();
     closeModal();
     showToast(`${capitalize(type)} updated successfully.`, 'success');
@@ -1832,19 +1873,41 @@ function exportCSV(type) {
 
 /* ════ SETTINGS ════ */
 async function changePassword() {
+  const cp = document.getElementById('currentPass')?.value || '';
   const np = document.getElementById('newPass').value;
-  const cp = document.getElementById('confirmPass').value;
-  if (!np || !cp)    { showToast('Please fill in both fields.', 'error'); return; }
-  if (np !== cp)     { showToast('Passwords do not match.', 'error'); return; }
-  if (np.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
+  const rp = document.getElementById('confirmPass').value;
+  if (!cp)       { showToast('Please enter your current password.', 'error'); return; }
+  if (!np || !rp){ showToast('Please fill in all password fields.', 'error'); return; }
+  if (np !== rp) { showToast('New passwords do not match.', 'error'); return; }
+  if (np.length < 6){ showToast('New password must be at least 6 characters.', 'error'); return; }
+  if (cp === np) { showToast('New password must be different from current password.', 'error'); return; }
+
+  const user = auth.currentUser;
+  if (!user) { showToast('You are not logged in. Please refresh and try again.', 'error'); return; }
+
   try {
-    await updatePassword(auth.currentUser, np);
+    // Step 1: Re-authenticate with current password
+    const { EmailAuthProvider, reauthenticateWithCredential } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js");
+    const credential = EmailAuthProvider.credential(user.email, cp);
+    await reauthenticateWithCredential(user, credential);
+
+    // Step 2: Update password
+    await updatePassword(user, np);
+
     document.getElementById('dispPass').textContent = '••••••••';
-    document.getElementById('newPass').value  = '';
+    document.getElementById('currentPass').value = '';
+    document.getElementById('newPass').value     = '';
     document.getElementById('confirmPass').value = '';
     showToast('Password updated successfully.', 'success');
   } catch(e) {
-    showToast('Failed to update password. Please log out, log in again, then retry.', 'error');
+    const msg = e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential'
+      ? 'Current password is incorrect. Please try again.'
+      : e.code === 'auth/too-many-requests'
+      ? 'Too many attempts. Please try again later.'
+      : e.code === 'auth/requires-recent-login'
+      ? 'Session expired. Please log out and log in again, then retry.'
+      : 'Failed to update password: ' + e.message;
+    showToast(msg, 'error');
   }
 }
 function saveSettings() {
@@ -1866,6 +1929,30 @@ function showToast(msg, type = 'default') {
   toast.innerHTML = `<i class="${icon[type]||icon.default}"></i> ${msg}`;
   wrap.appendChild(toast);
   setTimeout(() => { toast.style.animation = 'toastOut .3s both'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+/* ════ ANNOUNCEMENTS RENDER ════ */
+function renderAnnouncements() {
+  const grid = document.getElementById('announcementsGrid');
+  if (!grid) return;
+  if (!DB.announcements.length) {
+    grid.innerHTML = `<div class="empty-state"><i class="fas fa-megaphone"></i><p>No announcements yet. Click "Add Announcement" to create one.</p></div>`;
+    return;
+  }
+  // Sort by timestamp desc
+  const sorted = [...DB.announcements].sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
+  grid.innerHTML = sorted.map((a, i) => `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--off);border-radius:10px;border:1px solid var(--border);margin-bottom:10px${i===0?';border-left:3px solid var(--gold)':''}">
+      <div style="flex:1">
+        ${i===0 ? '<div style="font-size:.68rem;font-weight:700;color:var(--gold-dk);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-star"></i> Active (shown on homepage)</div>' : ''}
+        <div style="font-size:.88rem;color:var(--navy);font-weight:500;line-height:1.5">${a.text||''}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:6px">${a.timestamp ? new Date(a.timestamp.seconds*1000).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : 'Just now'}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="act-btn act-edit" onclick="openEditModal('announcement','${a.id}')"><i class="fas fa-pen"></i></button>
+        <button class="act-btn act-del" onclick="confirmDelete('announcement','${a.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join('');
 }
 
 /* ════ GALLERY ADMIN RENDER ════ */
@@ -1987,6 +2074,7 @@ function switchUploadTab(btn, tab) {
   document.getElementById('fileTab').style.display = tab === 'file' ? '' : 'none';
 }
 window.switchUploadTab = switchUploadTab;
+window.renderAnnouncements = renderAnnouncements;
 window.renderGalleryAdmin = renderGalleryAdmin;
 window.saveGalleryItem  = saveGalleryItem;
 </script>

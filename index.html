@@ -184,6 +184,81 @@
       color: var(--gold-dark);
     }
 
+    /* ── MEGA MENU ─────────────────────────────────────── */
+    .has-mega { position: relative; }
+    .has-mega > a {
+      display: flex; align-items: center; gap: 4px; cursor: pointer;
+    }
+    .has-mega > a .chevron {
+      font-size: .65rem; transition: transform .25s;
+    }
+    .has-mega:hover > a .chevron,
+    .has-mega.open > a .chevron { transform: rotate(180deg); }
+
+    .mega-menu {
+      position: absolute; top: calc(100% + 14px); left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: var(--white); border-radius: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.14);
+      border: 1px solid var(--border);
+      padding: 1.1rem; width: 340px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 9999;
+    }
+    .has-mega:hover .mega-menu,
+    .has-mega.open .mega-menu {
+      opacity: 1; pointer-events: all;
+      transform: translateX(-50%) translateY(0);
+    }
+    .mega-item {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .65rem .8rem; border-radius: 10px;
+      text-decoration: none; color: var(--navy);
+      font-size: .82rem; font-weight: 600;
+      transition: background .18s, color .18s;
+      border: 1px solid transparent;
+    }
+    .mega-item:hover {
+      background: var(--gold-lt); color: var(--gold-dk);
+      border-color: rgba(232,160,32,.25);
+    }
+    .mega-item i {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--navy); color: var(--gold);
+      display: grid; place-items: center; font-size: .78rem;
+      flex-shrink: 0; transition: background .18s;
+    }
+    .mega-item:hover i { background: var(--gold-dk); color: var(--white); }
+    .mega-item span { line-height: 1.2; }
+    .mega-divider {
+      grid-column: 1/-1; height: 1px;
+      background: var(--border); margin: .2rem 0;
+    }
+
+    /* Mobile mega menu */
+    .mobile-sub {
+      display: none; flex-direction: column;
+      background: rgba(26,35,64,.04); border-radius: 8px;
+      margin: .25rem 0 .25rem .75rem; padding: .35rem;
+      gap: .15rem;
+    }
+    .mobile-sub.open { display: flex; }
+    .mobile-sub a {
+      font-size: .85rem; color: var(--navy); padding: .5rem .75rem;
+      border-radius: 6px; display: flex; align-items: center; gap: .5rem;
+      border-bottom: none !important;
+    }
+    .mobile-sub a:hover { background: var(--gold-lt); color: var(--gold-dk); }
+    .mobile-sub a i { width: 20px; text-align: center; color: var(--gold-dk); }
+    .mobile-academics-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; cursor: pointer;
+    }
+    .mobile-academics-toggle .m-chev { font-size: .65rem; transition: transform .25s; }
+    .mobile-academics-toggle.open .m-chev { transform: rotate(180deg); }
+
     .navbar-actions {
       display: flex;
       align-items: center;
@@ -240,8 +315,8 @@
     .hero {
       position: relative;
       min-height: 420px;
-       background: linear-gradient(135deg, var(--navy) 0%, #2d3f6e 60%, #3a5080 100%);
-      background-image: url(img1.png);
+      /* background: linear-gradient(135deg, var(--navy) 0%, #2d3f6e 60%, #3a5080 100%); */
+      background-image: url(img/img1.png);
       display: flex;
       align-items: center;
       overflow: hidden;
@@ -1016,12 +1091,38 @@
       Global Academy
     </a>
     <ul class="navbar-links">
-      <li><a href="#">Home</a></li>
+      <li><a href="index.html" class="active">Home</a></li>
       <li><a href="about.html">About Us</a></li>
       <li><a href="admission.html">Admissions</a></li>
-      <li><a href="#programs">Academics</a></li>
-      <li><a href="faculty.html" target="_blank">Faculty</a></li>
+      <li class="has-mega" id="megaAcademics">
+        <a href="#programs">Academics <i class="fas fa-chevron-down chevron"></i></a>
+        <div class="mega-menu">
+          <a class="mega-item" href="index.html#programs">
+            <i class="fas fa-school"></i><span>Primary School<br><small style="font-weight:400;color:var(--muted)">Grades 1–5</small></span>
+          </a>
+          <a class="mega-item" href="index.html#programs">
+            <i class="fas fa-book-open"></i><span>Secondary School<br><small style="font-weight:400;color:var(--muted)">Grades 6–10</small></span>
+          </a>
+          <a class="mega-item" href="index.html#programs">
+            <i class="fas fa-graduation-cap"></i><span>Senior Secondary<br><small style="font-weight:400;color:var(--muted)">Grades 11–12</small></span>
+          </a>
+          <a class="mega-item" href="campus-life.html">
+            <i class="fas fa-tree"></i><span>Campus Life<br><small style="font-weight:400;color:var(--muted)">Activities & Clubs</small></span>
+          </a>
+          <div class="mega-divider"></div>
+          <a class="mega-item" href="results.html">
+            <i class="fas fa-chart-bar"></i><span>Academic Results<br><small style="font-weight:400;color:var(--muted)">Class-wise results</small></span>
+          </a>
+          <a class="mega-item" href="events.html">
+            <i class="fas fa-calendar-alt"></i><span>Events<br><small style="font-weight:400;color:var(--muted)">School calendar</small></span>
+          </a>
+        </div>
+      </li>
+      <li><a href="faculty.html">Faculty</a></li>
       <li><a href="campus-life.html">Campus Life</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="alumni.html">Alumni</a></li>
       <li><a href="#contact">Contact Us</a></li>
     </ul>
     <div class="navbar-actions">
@@ -1034,11 +1135,28 @@
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#">Home</a>
-    <!-- <a href="#about">About Us</a> -->
-    <a href="campus-life.html">Campus Life</a>
+    <a href="index.html">Home</a>
+    <a href="about.html">About Us</a>
     <a href="admission.html">Admissions</a>
+    <div>
+      <div class="mobile-academics-toggle" id="mobAcadToggle">
+        <span>Academics</span>
+        <i class="fas fa-chevron-down m-chev"></i>
+      </div>
+      <div class="mobile-sub" id="mobAcadSub">
+        <a href="index.html#programs"><i class="fas fa-school"></i> Primary School</a>
+        <a href="index.html#programs"><i class="fas fa-book-open"></i> Secondary School</a>
+        <a href="index.html#programs"><i class="fas fa-graduation-cap"></i> Senior Secondary</a>
+        <a href="results.html"><i class="fas fa-chart-bar"></i> Academic Results</a>
+        <a href="events.html"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="campus-life.html"><i class="fas fa-tree"></i> Campus Life</a>
+      </div>
+    </div>
     <a href="faculty.html">Faculty</a>
+    <a href="campus-life.html">Campus Life</a>
+    <a href="events.html">Events</a>
+    <a href="results.html">Results</a>
+    <a href="alumni.html">Alumni</a>
     <a href="#contact">Contact Us</a>
     <a href="#" class="btn btn-gold" style="text-align:center;">Pay Fees</a>
   </div>
@@ -1068,7 +1186,7 @@
           <div class="lbl">Teachers</div>
         </div>
       </div>
-      <div class="stat-item">
+      <div class="stat-item" style="cursor:pointer" onclick="window.location='results.html'">
         <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
         <div class="stat-info">
           <div class="val">95%</div>
@@ -1101,20 +1219,6 @@
       <a href="#programs" class="btn btn-outline-dark" style="align-self:flex-start;">Learn more</a>
     </div>
     <div class="q-card reveal">
-
-      <!-- <div class="pay-fees-box reveal">
-    
-      <h2>Pay Fees Online</h2>
-    <div class="payment-logos">
-      <div class="pay-logo">VISA</div>
-      <div class="pay-logo">Mastercard</div>
-      <div class="pay-logo">RuPay</div>
-      <div class="pay-logo">UPI</div>
-    </div>
-    <a href="#" class="btn btn-gold" style="width:100%;text-align:center;font-size:1rem;">Pay Now</a>
-    </div> -->
-
-
       <div class="q-card-header">
         <div class="q-card-icon"><i class="fa-solid fa-wallet fee-icon"></i></div>
         <div>
@@ -1122,14 +1226,9 @@
           <div class="q-card-sub">Pay your tuition fees online securely</div>
         </div>
       </div>
-      <a href="#" class="btn btn-outline-dark" id="pay-now" style="align-self:flex-start;">Pay Now</a>
+      <a href="#" class="btn btn-outline-dark" style="align-self:flex-start;">Pay Now</a>
+    </div>
 
-
-
-
-
-
-    
   </section>
   
 
@@ -1276,10 +1375,12 @@
       <div class="footer-col">
         <h4>Quick Links</h4>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#about">About Us</a></li>
-          <li><a href="#programs">Academics</a></li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="index.html#programs">Academics</a></li>
           <li><a href="admission.html">Admissions</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="results.html">Results</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -1288,7 +1389,7 @@
           <li><a href="campus-tour.html">Book Campus Tour</a></li>
           <li><a href="faculty-apply.html">Join Our Faculty Team</a></li>
           <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="#">Alumni</a></li>
+          <li><a href="alumni.html">Alumni</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -1458,7 +1559,27 @@
 
   loadNotices();
   loadMarquee();
-  
+
+  /* ── MEGA MENU ── */
+  const megaAcademics = document.getElementById('megaAcademics');
+  if (megaAcademics) {
+    document.addEventListener('click', e => {
+      if (!megaAcademics.contains(e.target)) {
+        megaAcademics.classList.remove('open');
+      }
+    });
+  }
+
+  /* ── MOBILE ACADEMICS TOGGLE ── */
+  const mobAcadToggle = document.getElementById('mobAcadToggle');
+  const mobAcadSub    = document.getElementById('mobAcadSub');
+  if (mobAcadToggle) {
+    mobAcadToggle.addEventListener('click', () => {
+      mobAcadToggle.classList.toggle('open');
+      mobAcadSub.classList.toggle('open');
+    });
+  }
+
     /* ---- Mobile Menu Toggle ---- */
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
